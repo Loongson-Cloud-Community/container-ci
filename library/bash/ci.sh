@@ -40,7 +40,7 @@ main()
         update_versions_file "versions.txt" "${versions[*]}"
     fi
     
-    git_commit "${versions[*]}"
+    # git_commit "${versions[*]}"
 
     log INFO "All Versions:\n$(cat versions.txt)"
 }
