@@ -1,4 +1,4 @@
-FROM alpine:{{ .alpine.version }}
+FROM lcr.loongnix.cn/library/alpine:{{ .alpine.version }}
 
 {{ if env.version == "devel" then ( -}}
 # https://git.savannah.gnu.org/cgit/bash.git/log/?h=devel
