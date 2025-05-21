@@ -1,0 +1,153 @@
+{
+  "3.0": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "patch": "16",
+      "version": "3.0.16"
+    },
+    "patch": {
+      "version": "22"
+    },
+    "version": "3.0.22"
+  },
+  "3.1": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "version": "3.1"
+    },
+    "patch": {
+      "version": "23"
+    },
+    "version": "3.1.23"
+  },
+  "3.2": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "patch": "57"
+    },
+    "patch": {
+      "version": "57"
+    },
+    "version": "3.2.57"
+  },
+  "4.0": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "version": "4.0"
+    },
+    "patch": {
+      "version": "44"
+    },
+    "version": "4.0.44"
+  },
+  "4.1": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "version": "4.1"
+    },
+    "patch": {
+      "version": "17"
+    },
+    "version": "4.1.17"
+  },
+  "4.2": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "patch": "53"
+    },
+    "patch": {
+      "version": "53"
+    },
+    "version": "4.2.53"
+  },
+  "4.3": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "patch": "30",
+      "version": "4.3.30"
+    },
+    "patch": {
+      "version": "48"
+    },
+    "version": "4.3.48"
+  },
+  "4.4": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "patch": "18",
+      "version": "4.4.18"
+    },
+    "patch": {
+      "version": "23"
+    },
+    "version": "4.4.23"
+  },
+  "5.0": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "version": "5.0"
+    },
+    "patch": {
+      "version": "18"
+    },
+    "version": "5.0.18"
+  },
+  "5.1": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "patch": "16"
+    },
+    "patch": {
+      "version": "16"
+    },
+    "version": "5.1.16"
+  },
+  "5.2": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "baseline": {
+      "patch": "37"
+    },
+    "patch": {
+      "version": "37"
+    },
+    "version": "5.2.37"
+  },
+  "5.3-rc": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "version": "5.3-rc1"
+  },
+  "devel": {
+    "alpine": {
+      "version": "3.21"
+    },
+    "commit": {
+      "description": "fix for command substitution string parsing that resulted in top-level unwind-protects being run in the wrong spot; fix for delimiter byte being part of invalid multibyte character in read builtin",
+      "version": "535a8150b65ee6888f54f602274dbbdcd77c788e"
+    },
+    "version": "20250504"
+  }
+}

@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    triggers {
+        cron('H * * * *')
+    }
+
+    environment {
+        GIT_URL="10.130.0.141:3000/container-images-ci/library-bash.git"
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: "http://${GIT_URL}"
+            }
+        }
+        
+        stage('Process') {
+            steps {
+                script {
+                withCredentials([usernamePassword(
+                        credentialsId: 'gogs-credentials',
+                        usernameVariable: 'GIT_USERNAME',
+                        passwordVariable: 'GIT_PASSWORD'
+                    )]) {
+                        sh 'env'
+                        sh script: './ci.sh', returnStdout: false
+                    }
+                }
+            }
+        }
+    }
+}
