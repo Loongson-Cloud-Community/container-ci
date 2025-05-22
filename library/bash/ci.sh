@@ -13,7 +13,7 @@ git_commit()
     git config user.name "qiangxuhui"
     git config user.email "qiangxuhui@loongson.cn"
     git commit -m "Add versions: $versions"
-    git push http://${GIT_USERNAME}:${GIT_PASSWORD}@${GIT_URL} HEAD:main
+    git push origin main
 }
 
 main()
