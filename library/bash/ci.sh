@@ -10,8 +10,8 @@ git_commit()
     git add versions.txt
     git add sources
 
-    git config user.name "qiangxuhui"
-    git config user.email "qiangxuhui@loongson.cn"
+    git config user.name "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
     git commit -m "Add versions: $versions"
     git push origin main
 }
