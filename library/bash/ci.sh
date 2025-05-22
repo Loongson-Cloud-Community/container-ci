@@ -10,8 +10,8 @@ git_commit()
     git add versions.txt
     git add sources
 
-    git config user.name "bot"
-    git config user.email "bot@loongson.xa"
+    git config user.name "qiangxuhui"
+    git config user.email "qiangxuhui@loongson.cn"
     git commit -m "Add versions: $versions"
     git push http://${GIT_USERNAME}:${GIT_PASSWORD}@${GIT_URL} HEAD:main
 }
@@ -40,7 +40,7 @@ main()
         update_versions_file "versions.txt" "${versions[*]}"
     fi
     
-    # git_commit "${versions[*]}"
+    git_commit "${versions[*]}"
 
     log INFO "All Versions:\n$(cat versions.txt)"
 }
