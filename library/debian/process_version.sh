@@ -73,7 +73,7 @@ build_rootfs()
     docker run --privileged -v "$(pwd)"/"$OUT_DIR":/v -w /v \
         -e https_proxy="$https_proxy" \
         -e http_proxy="$http_proxy" \
-        debuerreotype:latest \
+        debuerreotype/debuerreotype:latest \
         /opt/debuerreotype/examples/debian.sh --ports --arch "$ARCH" . "$SUITE" "@$timestamp"
 }
 
