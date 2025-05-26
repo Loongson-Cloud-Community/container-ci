@@ -11,7 +11,7 @@ git_commit()
 
     git config user.name "github-actions[bot]"
     git config user.email "github-actions[bot]@users.noreply.github.com"
-    git commit -m "Add versions: $versions"
+    git commit -m "library bash: add versions $versions"
     git pull --rebase
     git push origin main
 }
