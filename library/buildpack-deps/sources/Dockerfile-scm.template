@@ -1,0 +1,18 @@
+{{ include "shared" -}}
+FROM buildpack-deps:{{ env.codename }}-curl
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+{{ if env.codename | IN("focal", "groovy") then ( -}}
+		bzr \
+{{ ) else "" end -}}
+		git \
+		mercurial \
+		openssh-client \
+		subversion \
+		\
+# procps is very common in build systems, and is a reasonably small package
+		procps \
+	; \
+	{{ apt_get_dist_clean }}

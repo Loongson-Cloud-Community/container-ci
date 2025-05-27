@@ -1,0 +1,28 @@
+{{ include "shared" -}}
+FROM {{ env.dist }}:{{ env.codename }}
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		ca-certificates \
+		curl \
+		gnupg \
+		netbase \
+{{ if env.codename | IN(
+	# we want versions of "sq" that contain https://gitlab.com/sequoia-pgp/sequoia/-/commit/b41e1504cd29097328cb21f95808c9972188499e (and thus "sq keyserver" subcommands; 0.26+)
+	# https://packages.debian.org/sq
+	"bullseye", # 0.24
+	# https://packages.ubuntu.com/sq
+	"jammy",    # 0.25
+	"focal",    # no sq
+	empty # trailing comma
+) then "" else ( -}}
+		sq \
+{{ ) end -}}
+		wget \
+{{ if env.dist == "ubuntu" then ( -}}
+# https://bugs.debian.org/929417
+		tzdata \
+{{ ) else "" end -}}
+	; \
+	{{ apt_get_dist_clean }}

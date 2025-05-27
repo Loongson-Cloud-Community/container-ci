@@ -1,0 +1,10 @@
+{
+  "debian/trixie": {
+    "suite": "testing",
+    "variants": [
+      "curl",
+      "scm",
+      ""
+    ]
+  }
+}
