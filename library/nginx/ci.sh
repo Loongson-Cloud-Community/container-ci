@@ -29,7 +29,7 @@ main()
     fi
 
     # 4. 提交仓库
-    #git_commit "library" "nginx" "${versions[*]}"
+    git_commit "library" "nginx" "${versions[*]}"
 
     log INFO "All Versions:\n$(cat versions.txt)"
 }
