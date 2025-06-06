@@ -1,0 +1,18 @@
+name: 'docker::library::auto_merged_after_scan_prs'
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:  # 手动触发按钮
+
+jobs:
+  auto_merged_after_scan_prs:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run docker_library_pr.sh
+        run: |
+          date
+          pushd ci_utils && ./docker_library_pr.sh && popd
