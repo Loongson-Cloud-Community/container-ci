@@ -7,8 +7,9 @@ source "$(dirname $0)/lib.sh"
 git_commit() 
 {
     versions=$(echo "$1" | tr '\n' ' ')
-    git add versions.txt
-    git add sources
+    # git add processed_versions.txt
+    # git add sources
+	git add .
 
     git config user.name "github-actions[bot]"
     git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -40,7 +41,7 @@ main()
 
     git_commit "${versions[*]}"
 
-    log INFO "All Versions:\n$(cat versions.txt)"
+    log INFO "All Versions:\n$(cat processed_versions.txt)"
 }
 
 main
