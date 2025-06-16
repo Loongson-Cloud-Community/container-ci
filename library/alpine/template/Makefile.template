@@ -1,0 +1,16 @@
+image:
+	wget -O rootfs.tar.gz {{ url }}
+	docker build \
+		--build-arg ROOTFS=rootfs.tar.gz \
+{%- set tag_list = tags.split(',') %}
+{%- for tag in tag_list %}
+		-t lcr.loongnix.cn/library/alpine:{{ tag }} \
+{%- endfor %}
+		.
+
+push:
+{%- set tag_list = tags.split(',') %}
+{%- for tag in tag_list %}
+	docker push lcr.loongnix.cn/library/alpine:{{ tag }}
+{%- endfor %}
+
