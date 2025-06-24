@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-alpine="$(
-	bashbrew cat --format '{{ .TagEntry.Tags | join "\n" }}' https://github.com/docker-library/official-images/raw/HEAD/library/alpine:latest \
-		| grep -E '^[0-9]+[.][0-9]+$'
-)"
-[ "$(wc -l <<<"$alpine")" = 1 ]
+#alpine="$(
+#	bashbrew cat --format '{{ .TagEntry.Tags | join "\n" }}' https://github.com/docker-library/official-images/raw/HEAD/library/alpine:latest \
+#		| grep -E '^[0-9]+[.][0-9]+$'
+#)"
+#[ "$(wc -l <<<"$alpine")" = 1 ]
+alpine='3.22'
 export alpine
 
 #debian="$(
