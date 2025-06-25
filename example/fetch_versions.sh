@@ -19,7 +19,7 @@ get_github_tags()
 
 fetch_versions() {
     local versions=$(get_github_tags "$ORG" "$PROJ" \
-            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]$' \
+            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
             | sort -rV \
             | head -2
     )

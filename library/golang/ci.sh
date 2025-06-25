@@ -7,8 +7,7 @@ source "$(dirname $0)/lib.sh"
 git_commit() 
 {
     versions=$(echo "$1" | tr '\n' ' ')
-    git add versions.txt
-    git add sources
+    git add versions.txt sources
 
     git config user.name "github-actions[bot]"
     git config user.email "github-actions[bot]@users.noreply.github.com"
