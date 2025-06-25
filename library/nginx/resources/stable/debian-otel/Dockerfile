@@ -3,9 +3,9 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM nginx:1.27.4
+FROM nginx:1.29.0
 
-ENV OTEL_VERSION     0.1.1
+ENV OTEL_VERSION     0.1.2
 
 RUN set -x; \
     NGINX_GPGKEY_PATH=/etc/apt/keyrings/nginx-archive-keyring.gpg; \

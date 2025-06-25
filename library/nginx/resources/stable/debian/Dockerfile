@@ -7,8 +7,8 @@ FROM debian:trixie-slim
 
 LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
 
-ENV NGINX_VERSION   1.27.4
-ENV NJS_VERSION     0.8.9
+ENV NGINX_VERSION   1.29.0
+ENV NJS_VERSION     0.9.0
 ENV NJS_RELEASE     1~trixie
 ENV PKG_RELEASE     1~trixie
 ENV DYNPKG_RELEASE  1~trixie
