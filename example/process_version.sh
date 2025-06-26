@@ -7,10 +7,10 @@ set -u
 
 source "$(dirname $0)/lib.sh"
 
-readonly REGISTRY='lcr.loongnix.cn'
 readonly ORG=''
 readonly PROJ=''
 readonly ARCH='loong64'
+readonly REGISTRY='lcr.loongnix.cn'
 readonly IMAGE="$REGISTRY/$ORG/$PROJ"
 
 readonly RESOURCES="resources"
