@@ -1,1 +1,42 @@
-{}
+{
+  "4.1.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    },
+    "openssl": {
+      "sha256": "712590fd20aaa60ec75d778fe5b810d6b829ca7fb1e530577917a131f9105539",
+      "version": "3.3.3"
+    },
+    "otp": {
+      "sha256": "2672f0c52b9ff39695b9c8f99cd1846ed9e47e21cd5b045ccdd08719a3019652",
+      "version": "27.3.4.1"
+    },
+    "ubuntu": {
+      "version": "24.04"
+    },
+    "version": "4.1.0"
+  },
+  "4.1.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    },
+    "openssl": {
+      "sha256": "712590fd20aaa60ec75d778fe5b810d6b829ca7fb1e530577917a131f9105539",
+      "version": "3.3.3"
+    },
+    "otp": {
+      "sha256": "2672f0c52b9ff39695b9c8f99cd1846ed9e47e21cd5b045ccdd08719a3019652",
+      "version": "27.3.4.1"
+    },
+    "ubuntu": {
+      "version": "24.04"
+    },
+    "version": "4.1.1"
+  }
+}
