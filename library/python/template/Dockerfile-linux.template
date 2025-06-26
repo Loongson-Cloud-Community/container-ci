@@ -9,11 +9,11 @@
 		env.version | rtrimstr("-rc")
 -}}
 {{ if is_alpine then ( -}}
-FROM ghcr.io/loong64/alpine:{{ env.variant | ltrimstr("alpine") }}
+FROM lcr.loongnix.cn/library/alpine:{{ env.variant | ltrimstr("alpine") }}
 {{ ) elif is_slim then ( -}}
-FROM ghcr.io/loong64/debian:{{ env.variant | ltrimstr("slim-") }}-slim
+FROM lcr.loongnix.cn/library/debian:{{ env.variant | ltrimstr("slim-") }}-slim
 {{ ) else ( -}}
-FROM ghcr.io/loong64/buildpack-deps:{{ env.variant }}
+FROM lcr.loongnix.cn/library/buildpack-deps:{{ env.variant }}
 {{ ) end -}}
 
 # ensure local python is preferred over distribution python
