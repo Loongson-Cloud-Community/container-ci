@@ -70,8 +70,8 @@ git_commit()
 
     git config user.name "github-actions[bot]"
     git config user.email "github-actions[bot]@users.noreply.github.com"
-    echo "$org $proj: add versions ${versions[@]}"
-    git commit -m "$org $proj: add versions ${versions[@]}"
+    echo "$ORG $PROJ: add versions ${versions[@]}"
+    git commit -m "$ORG $PROJ: add versions ${versions[@]}"
     git pull --rebase
     git push origin main
 }

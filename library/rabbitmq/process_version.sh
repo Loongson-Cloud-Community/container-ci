@@ -7,8 +7,8 @@ set -u
 
 source "$(dirname $0)/lib.sh"
 
-readonly ORG=''
-readonly PROJ=''
+readonly ORG='library'
+readonly PROJ='rabbitmq'
 readonly ARCH='loong64'
 readonly REGISTRY='lcr.loongnix.cn'
 readonly IMAGE="$REGISTRY/$ORG/$PROJ"
@@ -24,13 +24,21 @@ version="$1"
 declare -ar ALPINE_TAGS=(
     "alpine"
     "$version-alpine"
-    "$version-alpine$ALPINE_VERSION"
 )
 
 declare -ar DEBIAN_TAGS=(
     "latest"
     "$version"
-    "$version-$DEBIAN_VERSION"
+)
+
+declare -ar ALPINE_MANAGEMENT_TAGS=(
+    "alpine-management"
+    "$version-alpine-management"
+)
+
+declare -ar DEBIAN_MANAGEMENT_TAGS=(
+    "management"
+    "$version-management"
 )
 
 declare -ar DEBIAN_SLIM_TAGS=(
@@ -41,7 +49,8 @@ declare -ar DEBIAN_SLIM_TAGS=(
 declare -Ar VARIANTS=(
     ['alpine']="${ALPINE_TAGS[@]}"
     ['debian']="${DEBIAN_TAGS[@]}"
-    ['debian-slim']="${DEBIAN_SLIM_TAGS[@]}"
+    ['alpine-management']="${ALPINE_MANAGEMENT_TAGS[@]}"
+    ['debian-management']="${DEBIAN_MANAGEMENT_TAGS[@]}"
 )
 
 # docker_build $Dockerfile $targets $context
@@ -83,27 +92,30 @@ prepare()
 
     pushd "$RESOURCES"
 
+    ./update.sh $version
     popd
 }
 
-# build_variant alpine-slim
+# build_variant alpine-slim context
 build_variant()
 {
     local variant="$1"
+    local context="$2"
     local targets=()
     local tags=${VARIANTS["$variant"]}
     for tag in ${tags[@]}; do
     # 同时构建 lcr.loongnix./x/y:tag 和 y:tag 以解决存在镜像依赖的情况
         targets+=("$IMAGE:$tag" "$PROJ:$tag")
     done
-    docker_build "$CONTEXT_PREFIX/$variant/Dockerfile" "${targets[*]}" "$CONTEXT_PREFIX/$variant"
+    docker_build "$context/Dockerfile" "${targets[*]}" "$context"
 }
 
 build()
 {
-    for variant in ${!VARIANTS[@]}; do
-        build_variant "$variant"
-    done
+    build_variant "alpine" "$CONTEXT_PREFIX/$version/alpine"
+    build_variant "debian" "$CONTEXT_PREFIX/$version/debian"
+    build_variant "alpine-management" "$CONTEXT_PREFIX/$version/alpine/management"
+    build_variant "debian-management" "$CONTEXT_PREFIX/$version/debian/management"
 }
 
 upload()
