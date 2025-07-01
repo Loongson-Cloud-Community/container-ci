@@ -1,0 +1,13 @@
+{
+  "2.4.63": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    },
+    "patches": "",
+    "sha256": "88fc236ab99b2864b248de7d49a008ec2afd7551e64dce8b95f58f32f94c46ab",
+    "version": "2.4.63"
+  }
+}
