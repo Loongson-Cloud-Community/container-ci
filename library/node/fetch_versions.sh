@@ -15,7 +15,7 @@ get_github_tags()
 }
 
 fetch_versions() {
-    local majors=(20 22 24)
+    local majors=(20 22 23 24)
     local all_versions=()
 
     local all_tags
