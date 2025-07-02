@@ -1,0 +1,6 @@
+{
+    "otp_version": "*",
+    "otp_download_sha256": "*",
+    "rebar3_version": "*",
+    "rebar3_download_sha256": "*"
+}
