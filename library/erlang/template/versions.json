@@ -1,6 +1,6 @@
 {
-  "otp_version": "28.0.1",
-  "otp_download_sha256": "a1d26330e3089d4d70a752210f8794385e8844e3d19684835810f1a59a752158",
+  "otp_version": "27.3.4.1",
+  "otp_download_sha256": "2672f0c52b9ff39695b9c8f99cd1846ed9e47e21cd5b045ccdd08719a3019652",
   "rebar3_version": "3.25.0",
   "rebar3_download_sha256": "7d3f42dc0e126e18fb73e4366129f11dd37bad14d404f461e0a3129ce8903440"
 }
