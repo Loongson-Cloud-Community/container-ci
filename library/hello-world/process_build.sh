@@ -21,7 +21,7 @@ readonly CONTEXT_PREFIX="$RESOURCES"
 
 declare -ar TAGS=(
     "latest"
-    "linux"
+    "linux-loong64"
 )
 
 declare -Ar VARIANTS=(
