@@ -1,7 +1,7 @@
 {
-    "6.2.18": {
-        "version": "6.2.18",
-        "url": "http://download.redis.io/releases/redis-6.2.18.tar.gz",
+    "6.2.19": {
+        "version": "6.2.19",
+        "url": "http://download.redis.io/releases/redis-6.2.19.tar.gz",
         "debian": {
             "version": "13"
         },
@@ -57,6 +57,6 @@
                 }
             }
         },
-        "sha256": "470c75bac73d7390be4dd66479c6f29e86371c5d380ce0c7efb4ba2bbda3612d"
+        "sha256": "73be4202261c2e2e3534ec2c3dcfbb338cceff40481ecf46c3578cb9e5fdea74"
     }
 }
