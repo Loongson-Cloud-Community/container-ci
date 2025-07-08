@@ -10,7 +10,7 @@ docker run --rm --privileged  lcr.loongnix.cn/tonistiigi/binfmt:latest --install
 docker build --platform linux/amd64 -f Dockerfile.build -t lcr.loongnix.cn/library/hello-world:build --push .
 
 find */ \( -name hello -or -name hello.txt \) -delete
-docker run --rm hello-world:build sh -c 'find \( -name hello -or -name hello.txt -or -name .host-arch \) -print0 | xargs -0 tar --create' | tar --extract --verbose
+docker run --rm lcr.loongnix.cn/library/hello-world:build sh -c 'find \( -name hello -or -name hello.txt -or -name .host-arch \) -print0 | xargs -0 tar --create' | tar --extract --verbose
 
 find -name hello -type f -exec dirname '{}' ';' | xargs -n1 -i'{}' cp Dockerfile-linux.template '{}/Dockerfile'
 find -name hello.txt -type f -exec dirname '{}' ';' | xargs -n1 -i'{}' cp Dockerfile-windows.template '{}/Dockerfile'
@@ -83,6 +83,6 @@ rm -f "targets/Dockerfile"
 # 显示最终结果
 echo "操作完成，targets 目录内容:"
 ls -lh targets/ || echo "无法列出 targets 目录内容" >&2
-cd targets && docker buildx bake --push 
+cd targets && docker buildx bake --push  --provenance=false 
 #cd targets
 cd ../ && rm -rf targets
