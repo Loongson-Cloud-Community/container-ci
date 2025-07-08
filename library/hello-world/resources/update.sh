@@ -5,6 +5,7 @@ cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 set -x
 
+docker buildx rm build-hello
 docker buildx create --name build-hello --driver=docker-container --driver-opt=image=lcr.loongnix.cn/library/buildkit:0.12.3
 docker buildx inspect --bootstrap build-hello
 docker buildx use build-hello
