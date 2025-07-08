@@ -1,0 +1,4 @@
+FROM scratch
+ARG ARCH
+COPY hello-${ARCH} /
+CMD ["/hello"]
