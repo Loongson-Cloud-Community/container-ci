@@ -5,9 +5,13 @@ cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 set -x
 
+docker buildx create --name build-hello --driver=docker-container --driver-opt=image=lcr.loongnix.cn/library/buildkit:0.12.3
+docker buildx inspect --bootstrap build-hello
+docker buildx use build-hello
+
 docker run --rm --privileged  lcr.loongnix.cn/tonistiigi/binfmt:latest --install x86_64
 
-docker build --platform linux/amd64 -f Dockerfile.build -t lcr.loongnix.cn/library/hello-world:build --push .
+#docker build --platform linux/amd64 -f Dockerfile.build -t lcr.loongnix.cn/library/hello-world:build --push .
 
 find */ \( -name hello -or -name hello.txt \) -delete
 docker run --rm lcr.loongnix.cn/library/hello-world:build sh -c 'find \( -name hello -or -name hello.txt -or -name .host-arch \) -print0 | xargs -0 tar --create' | tar --extract --verbose
@@ -86,3 +90,4 @@ ls -lh targets/ || echo "无法列出 targets 目录内容" >&2
 cd targets && docker buildx bake --push  --provenance=false 
 #cd targets
 cd ../ && rm -rf targets
+docker buildx use default && docker buildx use default
