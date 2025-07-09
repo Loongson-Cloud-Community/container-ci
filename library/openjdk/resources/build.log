@@ -1,0 +1,885 @@
+构建日志 - 2025年 07月 09日 星期三 11:10:26 CST
+处理目录: 11-anolisos-23.1
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:11-anolisos-23.1 \
+	 -t lcr.loongnix.cn/library/openjdk:11.0.25_9-anolisos-23.1 \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:11-anolisos-23.1 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+2740b480ff6b: Preparing
+cf15bfaedab6: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+62cbc2202850: Mounted from nacos/nacos-server
+2740b480ff6b: Pushed
+6fa60f7eb81a: Pushed
+cf15bfaedab6: Pushed
+11-anolisos-23.1: digest: sha256:5161fbaa1d1477d908efe147c881d4a01063756341ed0c09e903a7a13c1095bb size: 1161
+docker push lcr.loongnix.cn/library/openjdk:11.0.25_9-anolisos-23.1
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+2740b480ff6b: Preparing
+cf15bfaedab6: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+6fa60f7eb81a: Layer already exists
+cf15bfaedab6: Layer already exists
+62cbc2202850: Layer already exists
+2740b480ff6b: Layer already exists
+11.0.25_9-anolisos-23.1: digest: sha256:5161fbaa1d1477d908efe147c881d4a01063756341ed0c09e903a7a13c1095bb size: 1161
+----------------------------------------
+处理目录: 11-debian-12
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:11 \
+	 -t lcr.loongnix.cn/library/openjdk:11-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:11.0.25_9 \
+	 -t lcr.loongnix.cn/library/openjdk:11.0.25_9-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:11-debian-sid \
+	 -t lcr.loongnix.cn/library/openjdk:11.0.25_9-debian-sid \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:11 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+2ae641c201fa: Preparing
+2552c4aa3c90: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+2ae641c201fa: Layer already exists
+828e724fdea7: Layer already exists
+2552c4aa3c90: Layer already exists
+112984f7210d: Layer already exists
+11: digest: sha256:926711ea1dc07c85e7553ba06cdcee1118957758e9d5d67d771c272d5826c315 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:11-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+2ae641c201fa: Preparing
+2552c4aa3c90: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+112984f7210d: Layer already exists
+2552c4aa3c90: Layer already exists
+828e724fdea7: Layer already exists
+2ae641c201fa: Layer already exists
+11-debian-12: digest: sha256:926711ea1dc07c85e7553ba06cdcee1118957758e9d5d67d771c272d5826c315 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:11.0.25_9 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+2ae641c201fa: Preparing
+2552c4aa3c90: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+2ae641c201fa: Layer already exists
+2552c4aa3c90: Layer already exists
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+11.0.25_9: digest: sha256:926711ea1dc07c85e7553ba06cdcee1118957758e9d5d67d771c272d5826c315 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:11.0.25_9-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+2ae641c201fa: Preparing
+2552c4aa3c90: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+2ae641c201fa: Layer already exists
+2552c4aa3c90: Layer already exists
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+11.0.25_9-debian-12: digest: sha256:926711ea1dc07c85e7553ba06cdcee1118957758e9d5d67d771c272d5826c315 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:11-debian-sid 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+2ae641c201fa: Preparing
+2552c4aa3c90: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+2ae641c201fa: Layer already exists
+2552c4aa3c90: Layer already exists
+11-debian-sid: digest: sha256:926711ea1dc07c85e7553ba06cdcee1118957758e9d5d67d771c272d5826c315 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:11.0.25_9-debian-sid
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+2ae641c201fa: Preparing
+2552c4aa3c90: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+2552c4aa3c90: Layer already exists
+2ae641c201fa: Layer already exists
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+11.0.25_9-debian-sid: digest: sha256:926711ea1dc07c85e7553ba06cdcee1118957758e9d5d67d771c272d5826c315 size: 1161
+----------------------------------------
+处理目录: 11-openeuler-22.03-LTS
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:11-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:11.0.25_9-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:11-openeuler \
+	 -t lcr.loongnix.cn/library/openjdk:11.0.25_9-openeuler \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:11-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+f78e0776d04a: Preparing
+996e72f31cdb: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+521e18ec0b5d: Mounted from openeuler/openeuler
+9c6c99980c08: Mounted from openeuler/openeuler
+f78e0776d04a: Pushed
+238f93895bee: Pushed
+996e72f31cdb: Pushed
+11-openeuler-22.03-LTS: digest: sha256:441bbdb700f030bcf195ba12da4a7aec0722e8b7ccf453f3674ad0f94094d4d5 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:11.0.25_9-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+f78e0776d04a: Preparing
+996e72f31cdb: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+996e72f31cdb: Layer already exists
+238f93895bee: Layer already exists
+9c6c99980c08: Layer already exists
+f78e0776d04a: Layer already exists
+521e18ec0b5d: Layer already exists
+11.0.25_9-openeuler-22.03-LTS: digest: sha256:441bbdb700f030bcf195ba12da4a7aec0722e8b7ccf453f3674ad0f94094d4d5 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:11-openeuler 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+f78e0776d04a: Preparing
+996e72f31cdb: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+238f93895bee: Layer already exists
+996e72f31cdb: Layer already exists
+521e18ec0b5d: Layer already exists
+9c6c99980c08: Layer already exists
+f78e0776d04a: Layer already exists
+11-openeuler: digest: sha256:441bbdb700f030bcf195ba12da4a7aec0722e8b7ccf453f3674ad0f94094d4d5 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:11.0.25_9-openeuler
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+f78e0776d04a: Preparing
+996e72f31cdb: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+521e18ec0b5d: Layer already exists
+996e72f31cdb: Layer already exists
+9c6c99980c08: Layer already exists
+238f93895bee: Layer already exists
+f78e0776d04a: Layer already exists
+11.0.25_9-openeuler: digest: sha256:441bbdb700f030bcf195ba12da4a7aec0722e8b7ccf453f3674ad0f94094d4d5 size: 1373
+----------------------------------------
+处理目录: 17-anolisos-23.1
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:17-anolisos-23.1 \
+	 -t lcr.loongnix.cn/library/openjdk:17.0.13_11-anolisos-23.1 \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:17-anolisos-23.1 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+83acaff72eb9: Preparing
+7fc0cf2835a8: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+6fa60f7eb81a: Layer already exists
+62cbc2202850: Layer already exists
+83acaff72eb9: Pushed
+7fc0cf2835a8: Pushed
+17-anolisos-23.1: digest: sha256:d586b877d64ea52bd30ee7d9a671a82ef2b1694e1b0a64340e4801e4235cd392 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:17.0.13_11-anolisos-23.1
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+83acaff72eb9: Preparing
+7fc0cf2835a8: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+83acaff72eb9: Layer already exists
+6fa60f7eb81a: Layer already exists
+7fc0cf2835a8: Layer already exists
+62cbc2202850: Layer already exists
+17.0.13_11-anolisos-23.1: digest: sha256:d586b877d64ea52bd30ee7d9a671a82ef2b1694e1b0a64340e4801e4235cd392 size: 1161
+----------------------------------------
+处理目录: 17-debian-12
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:17 \
+	 -t lcr.loongnix.cn/library/openjdk:17-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:17.0.13_11 \
+	 -t lcr.loongnix.cn/library/openjdk:17.0.13_11-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:17-debian-sid \
+	 -t lcr.loongnix.cn/library/openjdk:17.0.13_11-debian-sid \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:17 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+9288b9bc57ea: Preparing
+247787dc4ef2: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+9288b9bc57ea: Pushed
+247787dc4ef2: Pushed
+17: digest: sha256:458e307fbb480e9828f05c2a657acf339e6805d16c52ab2bdfa22390931a1673 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:17-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+9288b9bc57ea: Preparing
+247787dc4ef2: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+247787dc4ef2: Layer already exists
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+9288b9bc57ea: Layer already exists
+17-debian-12: digest: sha256:458e307fbb480e9828f05c2a657acf339e6805d16c52ab2bdfa22390931a1673 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:17.0.13_11 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+9288b9bc57ea: Preparing
+247787dc4ef2: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+9288b9bc57ea: Layer already exists
+247787dc4ef2: Layer already exists
+17.0.13_11: digest: sha256:458e307fbb480e9828f05c2a657acf339e6805d16c52ab2bdfa22390931a1673 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:17.0.13_11-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+9288b9bc57ea: Preparing
+247787dc4ef2: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+9288b9bc57ea: Layer already exists
+247787dc4ef2: Layer already exists
+17.0.13_11-debian-12: digest: sha256:458e307fbb480e9828f05c2a657acf339e6805d16c52ab2bdfa22390931a1673 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:latest 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+----------------------------------------
+处理目录: 17-openeuler-22.03-LTS
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:17-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:17.0.13_11-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:17-openeuler \
+	 -t lcr.loongnix.cn/library/openjdk:17.0.13_11-openeuler \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:17-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+36aa8147d0b9: Preparing
+50ec8a4c51c0: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+521e18ec0b5d: Layer already exists
+238f93895bee: Layer already exists
+9c6c99980c08: Layer already exists
+36aa8147d0b9: Pushed
+50ec8a4c51c0: Pushed
+17-openeuler-22.03-LTS: digest: sha256:c4317af82183e2c0f707330592a50c22ddf7469819f5cb53e189c5537638d184 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:17.0.13_11-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+36aa8147d0b9: Preparing
+50ec8a4c51c0: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+521e18ec0b5d: Layer already exists
+50ec8a4c51c0: Layer already exists
+36aa8147d0b9: Layer already exists
+9c6c99980c08: Layer already exists
+238f93895bee: Layer already exists
+17.0.13_11-openeuler-22.03-LTS: digest: sha256:c4317af82183e2c0f707330592a50c22ddf7469819f5cb53e189c5537638d184 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:17-openeuler 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+36aa8147d0b9: Preparing
+50ec8a4c51c0: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+521e18ec0b5d: Layer already exists
+36aa8147d0b9: Layer already exists
+50ec8a4c51c0: Layer already exists
+238f93895bee: Layer already exists
+9c6c99980c08: Layer already exists
+17-openeuler: digest: sha256:c4317af82183e2c0f707330592a50c22ddf7469819f5cb53e189c5537638d184 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:17.0.13_11-openeuler
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+36aa8147d0b9: Preparing
+50ec8a4c51c0: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+36aa8147d0b9: Layer already exists
+50ec8a4c51c0: Layer already exists
+238f93895bee: Layer already exists
+9c6c99980c08: Layer already exists
+521e18ec0b5d: Layer already exists
+17.0.13_11-openeuler: digest: sha256:c4317af82183e2c0f707330592a50c22ddf7469819f5cb53e189c5537638d184 size: 1373
+----------------------------------------
+处理目录: 21-anolisos-23.1
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:21-anolisos-23.1 \
+	 -t lcr.loongnix.cn/library/openjdk:21.0.5_11-anolisos-23.1 \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:21-anolisos-23.1 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+a17e183a8ded: Preparing
+2442227db3d0: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+6fa60f7eb81a: Layer already exists
+62cbc2202850: Layer already exists
+a17e183a8ded: Pushed
+2442227db3d0: Pushed
+21-anolisos-23.1: digest: sha256:0bf68964eb97caba1cd6bc451ce01b622ba069b5b869cbdc743fabe99e1d9bf2 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:21.0.5_11-anolisos-23.1
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+a17e183a8ded: Preparing
+2442227db3d0: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+2442227db3d0: Layer already exists
+6fa60f7eb81a: Layer already exists
+a17e183a8ded: Layer already exists
+62cbc2202850: Layer already exists
+21.0.5_11-anolisos-23.1: digest: sha256:0bf68964eb97caba1cd6bc451ce01b622ba069b5b869cbdc743fabe99e1d9bf2 size: 1161
+----------------------------------------
+处理目录: 21-debian-12
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:21 \
+	 -t lcr.loongnix.cn/library/openjdk:21-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:21.0.5_11 \
+	 -t lcr.loongnix.cn/library/openjdk:21.0.5_11-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:latest \
+	 -t lcr.loongnix.cn/library/openjdk:21-debian-sid \
+	 -t lcr.loongnix.cn/library/openjdk:21.0.5_11-debian-sid \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:21 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+0dd8288e8f83: Preparing
+1467a21bbc4f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+0dd8288e8f83: Pushed
+1467a21bbc4f: Pushed
+21: digest: sha256:3b910df78e11e2320f4256f1f1f2561d4a1fd702c4c348b96d27b63e7bc5281b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:21-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+0dd8288e8f83: Preparing
+1467a21bbc4f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+1467a21bbc4f: Layer already exists
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+0dd8288e8f83: Layer already exists
+21-debian-12: digest: sha256:3b910df78e11e2320f4256f1f1f2561d4a1fd702c4c348b96d27b63e7bc5281b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:21.0.5_11 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+0dd8288e8f83: Preparing
+1467a21bbc4f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+0dd8288e8f83: Layer already exists
+828e724fdea7: Layer already exists
+1467a21bbc4f: Layer already exists
+112984f7210d: Layer already exists
+21.0.5_11: digest: sha256:3b910df78e11e2320f4256f1f1f2561d4a1fd702c4c348b96d27b63e7bc5281b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:21.0.5_11-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+0dd8288e8f83: Preparing
+1467a21bbc4f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+0dd8288e8f83: Layer already exists
+828e724fdea7: Layer already exists
+1467a21bbc4f: Layer already exists
+112984f7210d: Layer already exists
+21.0.5_11-debian-12: digest: sha256:3b910df78e11e2320f4256f1f1f2561d4a1fd702c4c348b96d27b63e7bc5281b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:latest 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+0dd8288e8f83: Preparing
+1467a21bbc4f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+1467a21bbc4f: Layer already exists
+0dd8288e8f83: Layer already exists
+latest: digest: sha256:3b910df78e11e2320f4256f1f1f2561d4a1fd702c4c348b96d27b63e7bc5281b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:21-debian-sid 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+0dd8288e8f83: Preparing
+1467a21bbc4f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+112984f7210d: Layer already exists
+1467a21bbc4f: Layer already exists
+828e724fdea7: Layer already exists
+0dd8288e8f83: Layer already exists
+21-debian-sid: digest: sha256:3b910df78e11e2320f4256f1f1f2561d4a1fd702c4c348b96d27b63e7bc5281b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:21.0.5_11-debian-sid
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+0dd8288e8f83: Preparing
+1467a21bbc4f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+1467a21bbc4f: Layer already exists
+0dd8288e8f83: Layer already exists
+21.0.5_11-debian-sid: digest: sha256:3b910df78e11e2320f4256f1f1f2561d4a1fd702c4c348b96d27b63e7bc5281b size: 1161
+----------------------------------------
+处理目录: 21-openeuler-22.03-LTS
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:21-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:21.0.5_11-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:21-openeuler \
+	 -t lcr.loongnix.cn/library/openjdk:21.0.5_11-openeuler \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:21-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+4e82a68a1c69: Preparing
+631afd34fa9e: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+238f93895bee: Layer already exists
+9c6c99980c08: Layer already exists
+521e18ec0b5d: Layer already exists
+4e82a68a1c69: Pushed
+631afd34fa9e: Pushed
+21-openeuler-22.03-LTS: digest: sha256:43c23c005d130259f9c2684d162eb7d6a8ac5b0ce58514606c426ddb941d8f31 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:21.0.5_11-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+4e82a68a1c69: Preparing
+631afd34fa9e: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+521e18ec0b5d: Layer already exists
+4e82a68a1c69: Layer already exists
+9c6c99980c08: Layer already exists
+631afd34fa9e: Layer already exists
+238f93895bee: Layer already exists
+21.0.5_11-openeuler-22.03-LTS: digest: sha256:43c23c005d130259f9c2684d162eb7d6a8ac5b0ce58514606c426ddb941d8f31 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:21-openeuler 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+4e82a68a1c69: Preparing
+631afd34fa9e: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+4e82a68a1c69: Layer already exists
+9c6c99980c08: Layer already exists
+238f93895bee: Layer already exists
+631afd34fa9e: Layer already exists
+521e18ec0b5d: Layer already exists
+21-openeuler: digest: sha256:43c23c005d130259f9c2684d162eb7d6a8ac5b0ce58514606c426ddb941d8f31 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:21.0.5_11-openeuler
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+4e82a68a1c69: Preparing
+631afd34fa9e: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+4e82a68a1c69: Layer already exists
+631afd34fa9e: Layer already exists
+521e18ec0b5d: Layer already exists
+9c6c99980c08: Layer already exists
+238f93895bee: Layer already exists
+21.0.5_11-openeuler: digest: sha256:43c23c005d130259f9c2684d162eb7d6a8ac5b0ce58514606c426ddb941d8f31 size: 1373
+----------------------------------------
+处理目录: 23-anolisos-23.1
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:23-anolisos-23.1 \
+	 -t lcr.loongnix.cn/library/openjdk:23_37-anolisos-23.1 \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:23-anolisos-23.1 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+230ea307fb29: Preparing
+d42eb17250fe: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+62cbc2202850: Layer already exists
+6fa60f7eb81a: Layer already exists
+230ea307fb29: Pushed
+d42eb17250fe: Pushed
+23-anolisos-23.1: digest: sha256:28eb9a947c9257131288c862db96116336e5afab3578a0af36b1bc563577209f size: 1161
+docker push lcr.loongnix.cn/library/openjdk:23_37-anolisos-23.1
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+230ea307fb29: Preparing
+d42eb17250fe: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+62cbc2202850: Layer already exists
+d42eb17250fe: Layer already exists
+230ea307fb29: Layer already exists
+6fa60f7eb81a: Layer already exists
+23_37-anolisos-23.1: digest: sha256:28eb9a947c9257131288c862db96116336e5afab3578a0af36b1bc563577209f size: 1161
+----------------------------------------
+处理目录: 23-debian-12
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:23 \
+	 -t lcr.loongnix.cn/library/openjdk:23-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:23_37 \
+	 -t lcr.loongnix.cn/library/openjdk:23_37-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:23-debian-sid \
+	 -t lcr.loongnix.cn/library/openjdk:23_37-debian-sid \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:23 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+181547203fe7: Preparing
+1a81083c065f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+181547203fe7: Pushed
+1a81083c065f: Pushed
+23: digest: sha256:5cc4407c35a5cb29d530858b778c2c83cf88d21749c8b5031561f00fa1a9c16b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:23-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+181547203fe7: Preparing
+1a81083c065f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+1a81083c065f: Layer already exists
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+181547203fe7: Layer already exists
+23-debian-12: digest: sha256:5cc4407c35a5cb29d530858b778c2c83cf88d21749c8b5031561f00fa1a9c16b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:23_37 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+181547203fe7: Preparing
+1a81083c065f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+181547203fe7: Layer already exists
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+1a81083c065f: Layer already exists
+23_37: digest: sha256:5cc4407c35a5cb29d530858b778c2c83cf88d21749c8b5031561f00fa1a9c16b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:23_37-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+181547203fe7: Preparing
+1a81083c065f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+181547203fe7: Layer already exists
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+1a81083c065f: Layer already exists
+23_37-debian-12: digest: sha256:5cc4407c35a5cb29d530858b778c2c83cf88d21749c8b5031561f00fa1a9c16b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:23-debian-sid 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+181547203fe7: Preparing
+1a81083c065f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+181547203fe7: Layer already exists
+1a81083c065f: Layer already exists
+112984f7210d: Layer already exists
+23-debian-sid: digest: sha256:5cc4407c35a5cb29d530858b778c2c83cf88d21749c8b5031561f00fa1a9c16b size: 1161
+docker push lcr.loongnix.cn/library/openjdk:23_37-debian-sid
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+181547203fe7: Preparing
+1a81083c065f: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+1a81083c065f: Layer already exists
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+181547203fe7: Layer already exists
+23_37-debian-sid: digest: sha256:5cc4407c35a5cb29d530858b778c2c83cf88d21749c8b5031561f00fa1a9c16b size: 1161
+----------------------------------------
+处理目录: 23-openeuler-22.03-LTS
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:23-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:23_37-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:23-openeuler \
+	 -t lcr.loongnix.cn/library/openjdk:23_37-openeuler \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:23-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+bfb48964d157: Preparing
+f6927c105135: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+238f93895bee: Layer already exists
+521e18ec0b5d: Layer already exists
+9c6c99980c08: Layer already exists
+bfb48964d157: Pushed
+f6927c105135: Pushed
+23-openeuler-22.03-LTS: digest: sha256:34a06a7c6c686c04ef42d39aedc09fa4d1ff309feda62b7a5fc198e7ef8e5eeb size: 1373
+docker push lcr.loongnix.cn/library/openjdk:23_37-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+bfb48964d157: Preparing
+f6927c105135: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+f6927c105135: Layer already exists
+521e18ec0b5d: Layer already exists
+9c6c99980c08: Layer already exists
+bfb48964d157: Layer already exists
+238f93895bee: Layer already exists
+23_37-openeuler-22.03-LTS: digest: sha256:34a06a7c6c686c04ef42d39aedc09fa4d1ff309feda62b7a5fc198e7ef8e5eeb size: 1373
+docker push lcr.loongnix.cn/library/openjdk:23-openeuler 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+bfb48964d157: Preparing
+f6927c105135: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+f6927c105135: Layer already exists
+bfb48964d157: Layer already exists
+9c6c99980c08: Layer already exists
+521e18ec0b5d: Layer already exists
+238f93895bee: Layer already exists
+23-openeuler: digest: sha256:34a06a7c6c686c04ef42d39aedc09fa4d1ff309feda62b7a5fc198e7ef8e5eeb size: 1373
+docker push lcr.loongnix.cn/library/openjdk:23_37-openeuler
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+bfb48964d157: Preparing
+f6927c105135: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+9c6c99980c08: Layer already exists
+bfb48964d157: Layer already exists
+238f93895bee: Layer already exists
+f6927c105135: Layer already exists
+521e18ec0b5d: Layer already exists
+23_37-openeuler: digest: sha256:34a06a7c6c686c04ef42d39aedc09fa4d1ff309feda62b7a5fc198e7ef8e5eeb size: 1373
+----------------------------------------
+处理目录: 8-anolisos-23.1
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:8-anolisos-23.1 \
+	 -t lcr.loongnix.cn/library/openjdk:8u432_b06-anolisos-23.1 \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:8-anolisos-23.1 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+7e498ff4b11f: Preparing
+a91289132f35: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+6fa60f7eb81a: Layer already exists
+62cbc2202850: Layer already exists
+7e498ff4b11f: Pushed
+a91289132f35: Pushed
+8-anolisos-23.1: digest: sha256:7155b5175041e6ffc46edde8555a1e0767a0d924a62a26b0b8ffb4a77034bf75 size: 1161
+docker push lcr.loongnix.cn/library/openjdk:8u432_b06-anolisos-23.1
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+7e498ff4b11f: Preparing
+a91289132f35: Preparing
+6fa60f7eb81a: Preparing
+62cbc2202850: Preparing
+7e498ff4b11f: Layer already exists
+62cbc2202850: Layer already exists
+6fa60f7eb81a: Layer already exists
+a91289132f35: Layer already exists
+8u432_b06-anolisos-23.1: digest: sha256:7155b5175041e6ffc46edde8555a1e0767a0d924a62a26b0b8ffb4a77034bf75 size: 1161
+----------------------------------------
+处理目录: 8-debian-12
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:8 \
+	 -t lcr.loongnix.cn/library/openjdk:8-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:8u432_b06 \
+	 -t lcr.loongnix.cn/library/openjdk:8u432_b06-debian-12 \
+	 -t lcr.loongnix.cn/library/openjdk:8-debian-sid \
+	 -t lcr.loongnix.cn/library/openjdk:8u432_b06-debian-sid \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:8 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+be36e064e26b: Preparing
+cb5c3209da1d: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+be36e064e26b: Pushed
+cb5c3209da1d: Pushed
+8: digest: sha256:b71faed5caa4d627f77b977c8e0316b1d468597e6c08076fef44ba50671e85eb size: 1161
+docker push lcr.loongnix.cn/library/openjdk:8-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+be36e064e26b: Preparing
+cb5c3209da1d: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+cb5c3209da1d: Layer already exists
+112984f7210d: Layer already exists
+be36e064e26b: Layer already exists
+8-debian-12: digest: sha256:b71faed5caa4d627f77b977c8e0316b1d468597e6c08076fef44ba50671e85eb size: 1161
+docker push lcr.loongnix.cn/library/openjdk:8u432_b06 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+be36e064e26b: Preparing
+cb5c3209da1d: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+cb5c3209da1d: Layer already exists
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+be36e064e26b: Layer already exists
+8u432_b06: digest: sha256:b71faed5caa4d627f77b977c8e0316b1d468597e6c08076fef44ba50671e85eb size: 1161
+docker push lcr.loongnix.cn/library/openjdk:8u432_b06-debian-12 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+be36e064e26b: Preparing
+cb5c3209da1d: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+112984f7210d: Layer already exists
+828e724fdea7: Layer already exists
+cb5c3209da1d: Layer already exists
+be36e064e26b: Layer already exists
+8u432_b06-debian-12: digest: sha256:b71faed5caa4d627f77b977c8e0316b1d468597e6c08076fef44ba50671e85eb size: 1161
+docker push lcr.loongnix.cn/library/openjdk:8-debian-sid 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+be36e064e26b: Preparing
+cb5c3209da1d: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+cb5c3209da1d: Layer already exists
+828e724fdea7: Layer already exists
+112984f7210d: Layer already exists
+be36e064e26b: Layer already exists
+8-debian-sid: digest: sha256:b71faed5caa4d627f77b977c8e0316b1d468597e6c08076fef44ba50671e85eb size: 1161
+docker push lcr.loongnix.cn/library/openjdk:8u432_b06-debian-sid
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+be36e064e26b: Preparing
+cb5c3209da1d: Preparing
+828e724fdea7: Preparing
+112984f7210d: Preparing
+828e724fdea7: Layer already exists
+cb5c3209da1d: Layer already exists
+be36e064e26b: Layer already exists
+112984f7210d: Layer already exists
+8u432_b06-debian-sid: digest: sha256:b71faed5caa4d627f77b977c8e0316b1d468597e6c08076fef44ba50671e85eb size: 1161
+----------------------------------------
+处理目录: 8-jre-sid
+执行: make image
+docker build \
+	-t lcr.loongnix.cn/library/openjdk:8-jre-sid \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:8-jre-sid
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+62c4d26652fe: Preparing
+e2ba29ffe824: Preparing
+f1b3cfa531f5: Preparing
+94156157cc53: Preparing
+9fba0d59d693: Preparing
+112984f7210d: Preparing
+112984f7210d: Waiting
+94156157cc53: Pushed
+f1b3cfa531f5: Pushed
+112984f7210d: Layer already exists
+62c4d26652fe: Pushed
+9fba0d59d693: Pushed
+e2ba29ffe824: Pushed
+8-jre-sid: digest: sha256:ca71c042ba1f6d71fb18f795ea313604c3dceaf7038f9d075cc4e7c096ab0c9f size: 1578
+----------------------------------------
+处理目录: 8-openeuler-22.03-LTS
+执行: make image
+docker build \
+	 -t lcr.loongnix.cn/library/openjdk:8-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:8u432_b06-openeuler-22.03-LTS \
+	 -t lcr.loongnix.cn/library/openjdk:8-openeuler \
+	 -t lcr.loongnix.cn/library/openjdk:8u432_b06-openeuler \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:8-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+e32241715360: Preparing
+1c8dc556f927: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+238f93895bee: Layer already exists
+521e18ec0b5d: Layer already exists
+9c6c99980c08: Layer already exists
+e32241715360: Pushed
+1c8dc556f927: Pushed
+8-openeuler-22.03-LTS: digest: sha256:f31011539399e24cb305ac93bdce93efc7f91c51a15dcf15d6089ec525db16c5 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:8u432_b06-openeuler-22.03-LTS 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+e32241715360: Preparing
+1c8dc556f927: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+1c8dc556f927: Layer already exists
+238f93895bee: Layer already exists
+e32241715360: Layer already exists
+9c6c99980c08: Layer already exists
+521e18ec0b5d: Layer already exists
+8u432_b06-openeuler-22.03-LTS: digest: sha256:f31011539399e24cb305ac93bdce93efc7f91c51a15dcf15d6089ec525db16c5 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:8-openeuler 
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+e32241715360: Preparing
+1c8dc556f927: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+238f93895bee: Layer already exists
+521e18ec0b5d: Layer already exists
+9c6c99980c08: Layer already exists
+1c8dc556f927: Layer already exists
+e32241715360: Layer already exists
+8-openeuler: digest: sha256:f31011539399e24cb305ac93bdce93efc7f91c51a15dcf15d6089ec525db16c5 size: 1373
+docker push lcr.loongnix.cn/library/openjdk:8u432_b06-openeuler
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+e32241715360: Preparing
+1c8dc556f927: Preparing
+238f93895bee: Preparing
+9c6c99980c08: Preparing
+521e18ec0b5d: Preparing
+9c6c99980c08: Layer already exists
+e32241715360: Layer already exists
+521e18ec0b5d: Layer already exists
+238f93895bee: Layer already exists
+1c8dc556f927: Layer already exists
+8u432_b06-openeuler: digest: sha256:f31011539399e24cb305ac93bdce93efc7f91c51a15dcf15d6089ec525db16c5 size: 1373
+----------------------------------------
+处理目录: 8-sid
+执行: make image
+docker build \
+	-t lcr.loongnix.cn/library/openjdk:8-sid \
+	.
+执行: make push
+docker push lcr.loongnix.cn/library/openjdk:8-sid
+The push refers to repository [lcr.loongnix.cn/library/openjdk]
+452ab7883fc2: Preparing
+976e8ad899ed: Preparing
+e5230ee2a090: Preparing
+112984f7210d: Preparing
+112984f7210d: Layer already exists
+976e8ad899ed: Pushed
+e5230ee2a090: Pushed
+452ab7883fc2: Pushed
+8-sid: digest: sha256:733a96b51117b35676ff8d0d5e14aaaf3c3b85db0f081efc5474f13ec91181d7 size: 1161
+----------------------------------------
+所有目录处理完成
