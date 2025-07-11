@@ -75,6 +75,11 @@ build_rootfs()
         -e http_proxy="$http_proxy" \
         debuerreotype/debuerreotype:latest \
         /opt/debuerreotype/examples/debian.sh --ports --arch "$ARCH" . "$SUITE" "@$timestamp"
+
+    # 修改 rootfs url 为固定的 snapshot url
+    snapshotUrl=$(cat ./"$OUT_DIR"/"$time_version"/"$ARCH"/snapshot-url)
+    ./modify-rootfs-url.sh "$OUT_DIR/$time_version/$ARCH/$SUITE/rootfs.tar.xz" "$snapshotUrl"
+    ./modify-rootfs-url.sh "$OUT_DIR/$time_version/$ARCH/$SUITE/slim/rootfs.tar.xz" "$snapshotUrl"
 }
 
 build_images()
