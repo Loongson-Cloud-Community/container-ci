@@ -1,0 +1,20 @@
+name: 'library::ruby'
+
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # 手动触发按钮
+
+jobs:
+  generate-ruby-dockerfile:
+    if: github.repository == 'Loongson-Cloud-Community/container-ci'
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run ci.sh
+        run: |
+          date
+          pushd library/ruby && ./ci.sh && popd
