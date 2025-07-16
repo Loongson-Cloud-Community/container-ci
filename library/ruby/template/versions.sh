@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
 fetch_ruby_dist_info(){
 	local version=$1
 	wget -qO- https://github.com/ruby/www.ruby-lang.org/raw/master/_data/releases.yml | \
@@ -40,8 +43,6 @@ append_version(){
 		'($version_json) + ($versions_json)' >versions.json
 
 }
-
-set -x;
 
 append_version "$1"
 

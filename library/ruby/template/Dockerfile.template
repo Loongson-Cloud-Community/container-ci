@@ -6,11 +6,11 @@
 		env.variant | startswith("slim-")
 -}}
 {{ if is_alpine then ( -}}
-FROM alpine:{{ env.variant | ltrimstr("alpine") }}
+FROM lcr.loongnix.cn/library/alpine:{{ env.variant | ltrimstr("alpine") }}
 {{ ) elif is_slim then ( -}}
-FROM debian:{{ env.variant | ltrimstr("slim-") }}-slim
+FROM lcr.loongnix.cn/library/debian:{{ env.variant | ltrimstr("slim-") }}-slim
 {{ ) else ( -}}
-FROM buildpack-deps:{{ env.variant }}
+FROM lcr.loongnix.cn/library/buildpack-deps:{{ env.variant }}
 {{ ) end -}}
 
 {{ if is_slim then ( -}}
@@ -190,6 +190,10 @@ RUN set -eux; \
 	\
 	cd /usr/src/ruby; \
 	\
+	{ [ '3.4.0' = $RUBY_VERSION ] || [ '3.4.1' = $RUBY_VERSION ]; } &&  { wget -qO fix-loongarch64-build.patch https://github.com/ruby/ruby/commit/9bbcbc3f368cbfdbfa914b276cd523cb0fc527ec.patch; \
+    patch -p1 -i fix-loongarch64-build.patch; \
+    rm fix-loongarch64-build.patch; \
+	}; \
 {{ if is_alpine then ( -}}
 # https://github.com/docker-library/ruby/issues/196
 # https://bugs.ruby-lang.org/issues/14387#note-13 (patch source)
@@ -225,9 +229,10 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	apt-mark manual $savedAptMark > /dev/null; \
 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1 || index(so, "/usr/src/") == 1 ) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 		| sort -u \
 		| xargs -r dpkg-query --search \
+		| grep -v 'diversion by' \
 		| cut -d: -f1 \
 		| sort -u \
 		| xargs -r apt-mark manual \

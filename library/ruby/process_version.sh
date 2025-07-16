@@ -38,6 +38,16 @@ prepare()
     popd
 }
 
+make_image_with_retry(){
+	local build_dir="$1"
+	for ((i=1;i<=10;i++)); do
+		log INFO "第$i次构建 $build_dir"
+      	if make image -C $build_dir; then
+         	return
+      	fi
+	done
+}
+
 docker_build(){
     local version="$1"
     local image="${REGISTRY}/${ORG}/${PROJ}:${version}"
@@ -48,7 +58,7 @@ docker_build(){
 
 	for dockerfile in $dockerfiles; do
 		local build_dir=$(dirname $dockerfile)
-		make image -C $build_dir
+		make_image_with_retry "$build_dir"
 	done
 
 	log INFO "Successfully built image: $image"
