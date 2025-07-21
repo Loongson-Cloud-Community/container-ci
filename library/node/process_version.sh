@@ -217,7 +217,7 @@ test_node()
 {
     local tag=$1
     local shell=$(get_shell "$tag")
-    docker run -it --rm -v $(pwd):/test $IMAGE:$tag $shell /test/test.sh
+    docker run -i --rm -v $(pwd):/test $IMAGE:$tag $shell /test/test.sh
 }
 
 main()
