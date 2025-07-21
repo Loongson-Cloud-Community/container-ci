@@ -1,0 +1,4 @@
+# synatx = docker/dockerfile:1.17.1
+FROM alpine:3.21
+
+RUN ls
