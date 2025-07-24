@@ -31,5 +31,16 @@
     "patches": "",
     "sha256": "120b35a2ebf264f277e20f9a94f870f2063342fbff0861404660d7dd0ab1ac29",
     "version": "2.4.64"
+  },
+  "2.4.65": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    },
+    "patches": "",
+    "sha256": "58b8be97d9940ec17f7656c0c6b9f41b618aac468b894b534148e3296c53b8b3",
+    "version": "2.4.65"
   }
 }
