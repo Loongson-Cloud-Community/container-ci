@@ -1,0 +1,20 @@
+{
+  "2.10.11": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "fec538f237a226f858a4d9c05bf7a8f00c0640f15658166bddec864c5868aa79"
+    },
+    "version": "2.10.11"
+  },
+  "2.9.9": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "990e1b71100050f9b7f8d7d2b01aa9e1ad0ce00bd1199a41468ab04c4cba17f1"
+    },
+    "version": "2.9.9"
+  }
+}
