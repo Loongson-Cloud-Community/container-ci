@@ -1,20 +1,13 @@
-FROM lcr.loongnix.cn/library/debian:trixie-slim
+FROM lcr.loongnix.cn/library/buildpack-deps:trixie
 
 LABEL org.opencontainers.image.source=https://github.com/rust-lang/docker-rust
 
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.88.0
+    RUST_VERSION=1.86.0
 
 RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        ca-certificates \
-        gcc \
-        libc6-dev \
-        wget \
-        ; \
     dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
 		i386) rustArch='i686-unknown-linux-gnu'; rustupSha256='a5db2c4b29d23e9b318b955dd0337d6b52e93933608469085c924e0d05b1df1f' ;; \
@@ -35,8 +28,4 @@ RUN set -eux; \
     chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
     rustup --version; \
     cargo --version; \
-    rustc --version; \
-    apt-get remove -y --auto-remove \
-        wget \
-        ; \
-    rm -rf /var/lib/apt/lists/*;
+    rustc --version;

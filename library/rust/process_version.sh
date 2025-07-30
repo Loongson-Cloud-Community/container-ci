@@ -45,6 +45,7 @@ make_image_with_retry(){
       	if make image -C $build_dir; then
          	return
       	fi
+		sleep 10
 	done
 }
 
