@@ -19,7 +19,7 @@ readonly CONTEXT_PREFIX="$RESOURCES"
 readonly ALPINE_VERSION="3.22"
 readonly DEBIAN_VERSION='trixie'
 
-version="$1"
+version="${1#v}"
 
 declare -ar ALPINE_TAGS=(
     "latest"
@@ -54,7 +54,7 @@ docker_build() {
     cmd+=" -f $dockerfile"
     cmd+=" --build-arg https_proxy=$https_proxy"
     cmd+=" --build-arg http_proxy=$http_proxy"
-    cmd+=" --build-arg no_proxy=$no_proxy"
+    #cmd+=" --build-arg no_proxy=$no_proxy"
     cmd+=" --network=host"
 
     local target_str=""
@@ -81,7 +81,7 @@ prepare()
 {
     local version="$1"
     log INFO "Preparing version $version"
-    validata_version "$version"
+    #validata_version "$version"
 
     pushd "$RESOURCES"
 
@@ -122,7 +122,6 @@ upload()
 
 main()
 {
-    local version="$1"
     prepare "$version"
     build "$version"
     upload "$version"

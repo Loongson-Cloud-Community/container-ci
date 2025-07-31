@@ -1,4 +1,94 @@
 {
+  "2.1.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "4dbc35a45ad92a2b38969791e49371c26c0ac4c89ccf5dd4c151913e058d5f3d"
+    },
+    "version": "2.1.0"
+  },
+  "2.1.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "1bca797f94232115f52d9e7d041cc48e5b910a0cc553f5d9568c493e7607ff61"
+    },
+    "version": "2.1.2"
+  },
+  "2.1.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "6b232eb939fad186aa38ceb6ab4b588a9833a4672a67454516393c3416cb3259"
+    },
+    "version": "2.1.4"
+  },
+  "2.1.6": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "e545b61fedbdbc82f351ec4ae415bf3c7410fc9ee1898a9dc7056b206a743ee8"
+    },
+    "version": "2.1.6"
+  },
+  "2.1.7": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "f2586c586afc21e02fbddcc09e6748daf6bf64bf3e9d457474ff30a67a6ffd7c"
+    },
+    "version": "2.1.7"
+  },
+  "2.1.8": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "2ce97baa25ce4573ae4165cd85441512d5388e1a093722d7e2c6446fc6cff48b"
+    },
+    "version": "2.1.8"
+  },
+  "2.1.9": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "96ecbc5a3e724b928f183089c73b1abedc39d55c9148478c26490cdc0dbedc9b"
+    },
+    "version": "2.1.9"
+  },
+  "2.10.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "c8f9a0d2ca728b006e5a8081d774f9cd4987db4eec3b2142fbbcb3beea60a716"
+    },
+    "version": "2.10.0"
+  },
+  "2.10.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "574a1c9dc898d569b5a3a25e9ac5061d9709741fb3d69179ada5540876a82d6a"
+    },
+    "version": "2.10.1"
+  },
+  "2.10.10": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "f2e82320afcb462ab50473781ce94635cfb736d0f371571c856a35245e0712f9"
+    },
+    "version": "2.10.10"
+  },
   "2.10.11": {
     "alpine": {
       "version": "3.22"
@@ -7,6 +97,780 @@
       "loong64": "fec538f237a226f858a4d9c05bf7a8f00c0640f15658166bddec864c5868aa79"
     },
     "version": "2.10.11"
+  },
+  "2.10.12": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "d1bca7f0c4cd4f685406bf8dab774a1714f9c177539fbc0bd08c5d42aca56f4f"
+    },
+    "version": "2.10.12"
+  },
+  "2.10.14": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "955edd3003e1b95e6139f0a19c610c6bb1736550676d918e4ff1fd336e0fa4bd"
+    },
+    "version": "2.10.14"
+  },
+  "2.10.16": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "9618b3da02cd569f87968995177a1eccb9caaae25afa8d5e0aaa920f7afeb46b"
+    },
+    "version": "2.10.16"
+  },
+  "2.10.17": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "f3a617dc1850bd07d81450aaa9695a106e21cc067e9ed3b9646a3f82bf12cffc"
+    },
+    "version": "2.10.17"
+  },
+  "2.10.18": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "fc0f3bf5734f49115803669c0be690e65f225562762f1deea1393697df9360af"
+    },
+    "version": "2.10.18"
+  },
+  "2.10.19": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "2dccc7f564a0f56e663588c3f3cbeb22e8ad01d1400eea0af62ddf32360662ad"
+    },
+    "version": "2.10.19"
+  },
+  "2.10.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "970e08910e3d4a55a9265c4cda27a1f548f07f10035dfabd8bcae01fd80fac12"
+    },
+    "version": "2.10.2"
+  },
+  "2.10.20": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "c5216bb2304bb3aeaef1152a11bb47fa90474075a21c2de8e798fdcc1a7ee2f3"
+    },
+    "version": "2.10.20"
+  },
+  "2.10.21": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "8fd8a195eef3eeb0f6764352e117c4a34b5d0ee28b84c25baf87b76a17a4b0fc"
+    },
+    "version": "2.10.21"
+  },
+  "2.10.22": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "ba4abafa3cf16ee4c36e3405c2f07305467544ff315a631b6c916826f4e47442"
+    },
+    "version": "2.10.22"
+  },
+  "2.10.23": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "362e4324b037be9ba2e99ffe8415eba76c672222bbd901f1654e8908f38c0b5f"
+    },
+    "version": "2.10.23"
+  },
+  "2.10.24": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "78ff28147af39ab69144d87b3b6422985993e32b32c484c16ee01d525d4968d0"
+    },
+    "version": "2.10.24"
+  },
+  "2.10.25": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "b884f26b416f4815509ee06d18858120ecb65d857fffbb4144d0973f5325f0ae"
+    },
+    "version": "2.10.25"
+  },
+  "2.10.26": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "1ca368f6786180c7e8d92bef3ce0907762f1bcbee3a86ce899f6d97a2c7a5dc2"
+    },
+    "version": "2.10.26"
+  },
+  "2.10.27": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "d28bd9b8270ee71cbcfab98780fc676f70566fbc775bc8e3922648c3cf47f627"
+    },
+    "version": "2.10.27"
+  },
+  "2.10.28": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "3dfdac9168c07030cef511eefff89da4a6ec172c1e970e471af4a9a4a84640e9"
+    },
+    "version": "2.10.28"
+  },
+  "2.10.29": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "f4921962f7cc7ca62065645ea386a541c6d92fd299d83d178543dd4297471571"
+    },
+    "version": "2.10.29"
+  },
+  "2.10.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "716db2c9a5c56e03779c8939643c5d31903cb24e81d45b857be0f86a847db09b"
+    },
+    "version": "2.10.3"
+  },
+  "2.10.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "65b3f863c061faf2153043756c7c8f6f8be9284ec0509314c3a48282b83de70b"
+    },
+    "version": "2.10.4"
+  },
+  "2.10.5": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "7112c7bafa33c8bfec2f3ec33e66ea08feef3ef921ea8ccea188f684a37080d3"
+    },
+    "version": "2.10.5"
+  },
+  "2.10.6": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "83728c87482b9cca633b28641dbba8ae68a38a670d3a06eb517f89f37ca1b223"
+    },
+    "version": "2.10.6"
+  },
+  "2.10.7": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "12d964d91ed151be0791b6ec3cec0713efc73e7723af8468c24a9410a2f08c46"
+    },
+    "version": "2.10.7"
+  },
+  "2.10.8": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "2adee5c4cb655622fa548a99c2a729c87e22f3e0289d99501c805498abbcffa9"
+    },
+    "version": "2.10.8"
+  },
+  "2.10.9": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "772945e7854191fca657b2248a8a57f219327984999e9e031f71469861355b61"
+    },
+    "version": "2.10.9"
+  },
+  "2.11.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "2e45e135565ab8efe810034cce749804e9aa0b80a404a91ae2963d252242e813"
+    },
+    "version": "2.11.0"
+  },
+  "2.11.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "3e0942bdb7568d6a545fd830f8df01302aeb16f9fb1b5dbe579b252149d96932"
+    },
+    "version": "2.11.1"
+  },
+  "2.11.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "d970cc03a016fc414e811e7e2e92d4f815e2a4406045b17b8a216db5d6ddaccc"
+    },
+    "version": "2.11.2"
+  },
+  "2.11.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "7b275069485d77cd1aa3446289b44c2c0653a9bce1f5586cb2e58f41b907072f"
+    },
+    "version": "2.11.3"
+  },
+  "2.11.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "21fbeb36577675bb197928c109e242e787ca8dcc42e376959fb935c6ac8fea95"
+    },
+    "version": "2.11.4"
+  },
+  "2.11.5": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "0c0ee42ed863512261b769531f68950b60748391c00ef8caa13909ba8d358305"
+    },
+    "version": "2.11.5"
+  },
+  "2.11.6": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "bb8479c490bc1d1b6f67f871a8e3515eaeced537be89c807ebe126c27bc347ce"
+    },
+    "version": "2.11.6"
+  },
+  "2.2.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "527b512b0c067d49446c12b2ccbd4ad7bc3089d929c00e6fa1e516f7aea15928"
+    },
+    "version": "2.2.0"
+  },
+  "2.2.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "f437277c8ab59e5f90875064ad0f70162002fda720b29482d80fc5937ad6e200"
+    },
+    "version": "2.2.1"
+  },
+  "2.2.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "716c9a05ead397b0fd43d24b7857892ebdc9dc281177752bf6d811e29fe45d71"
+    },
+    "version": "2.2.2"
+  },
+  "2.2.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "add69b4388f45a38f10a64aa08c7e2dc52e32e1fb6f0ead0b0b69b46a6ce8e45"
+    },
+    "version": "2.2.3"
+  },
+  "2.2.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "499492c8f5b62da7adc5551c47d12bc50fa39cb68eb569ee8a44eb5ec5231c81"
+    },
+    "version": "2.2.4"
+  },
+  "2.2.5": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "4063b3186484e1a55eefd9b353fa18de794464ee97256a0602721696a8c21d0f"
+    },
+    "version": "2.2.5"
+  },
+  "2.2.6": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "5bd35bc08e4862b89257e131699cc9aff32e175038a7f5ecb0216e0adfb0e874"
+    },
+    "version": "2.2.6"
+  },
+  "2.3.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "eaac785f283359f0f2f98859a66e38bb70029b3d695bd4f68f2ca883671625c8"
+    },
+    "version": "2.3.0"
+  },
+  "2.3.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "0fb971f47eb4a092ca89eacc5143571e9fa03c961b8be67323a4b89df4c5f2d7"
+    },
+    "version": "2.3.1"
+  },
+  "2.3.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "969014f5aa62a36e7500f77bfda15d73b33a4116a9689e29124f288b99b7a668"
+    },
+    "version": "2.3.2"
+  },
+  "2.3.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "c6c3771c54abf127ca2b4be79bffe3e55f0941fb7057ec9bb2d01f7e5879996f"
+    },
+    "version": "2.3.3"
+  },
+  "2.3.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "91321d6e93bff0818d922b59244673ee8b55078675ea1f3d54055f206257a0cd"
+    },
+    "version": "2.3.4"
+  },
+  "2.4.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "a419387d7f53819b22db91d990bd2f70d2e664d505dd640650d8b58c45a00705"
+    },
+    "version": "2.4.0"
+  },
+  "2.5.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "f1314d6930927ceaa40a5062dcc28c0f2aa055328839fffb6ede0d40232ce3ef"
+    },
+    "version": "2.5.0"
+  },
+  "2.6.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "83721757aa25a91075e9ad10d015bc2cd2e108c035096e086fad3ec1ad840dc1"
+    },
+    "version": "2.6.0"
+  },
+  "2.6.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "b6bf2b697088c8a1e22d46e0c12098c861b82570d7fbedbb49a62c90a2b73b0f"
+    },
+    "version": "2.6.1"
+  },
+  "2.6.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "679c982e5fd5dc0ef96a90472fd2c3f69176a4fb18aa2838d6c52364498d6713"
+    },
+    "version": "2.6.2"
+  },
+  "2.6.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "1d7067dfbe18da3212c37a3f90c2f2362b75583e104508031ac1ca19f02aa9de"
+    },
+    "version": "2.6.3"
+  },
+  "2.6.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "25a12d401b288357a66e7eff2aa6fa8036cb4ac3aaa239e672ad30c683972e30"
+    },
+    "version": "2.6.4"
+  },
+  "2.6.5": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "5060867b35034965d6998ee6e0df4d895d27f3670c62c3eb5b034e9130e75029"
+    },
+    "version": "2.6.5"
+  },
+  "2.6.6": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "719664cbff6d637cda8f65958aad113bff42be4f6f250e03fff59e527d7e4f7c"
+    },
+    "version": "2.6.6"
+  },
+  "2.7.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "d747b7b3f58f1ebd23a063f4b5d3c32e8826e21bb939c26b6a74f149ca4259cd"
+    },
+    "version": "2.7.0"
+  },
+  "2.7.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "302c047d945e9ae08a5cb916a09af153fece48e9d6d0c729441bc2ae68dffa04"
+    },
+    "version": "2.7.1"
+  },
+  "2.7.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "55b007ea6a3940803eb47ac85449c8e8a9183a33b8afc4dc440f5813ef357792"
+    },
+    "version": "2.7.2"
+  },
+  "2.7.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "d459fc5af347617189aef8954c4798d877576a177ac017bd4b8bd64465578d55"
+    },
+    "version": "2.7.3"
+  },
+  "2.7.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "466b688b82ea7533f1bb407e0b0731f76bfffe499ea8468f2d03639a1e121703"
+    },
+    "version": "2.7.4"
+  },
+  "2.8.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "a9d71c4f69bdf20c99023f6c5df03733635e13b4015c8806b9c4b4b175f2bcde"
+    },
+    "version": "2.8.0"
+  },
+  "2.8.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "e7b8edd62b873300b7b142422608c9b803a48cb68ea814b2ba03d66d4d58faff"
+    },
+    "version": "2.8.1"
+  },
+  "2.8.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "7f00d141f605113b7c4438059e2132859d981745012edf04b21e149568e67d5d"
+    },
+    "version": "2.8.2"
+  },
+  "2.8.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "b9fb9504368d8d70f9249d2812c6badc754e6d8b33be720cb5b3d682f8ad730a"
+    },
+    "version": "2.8.3"
+  },
+  "2.8.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "b8f3d93cedac571580d4cd93785ca1fe062db938c858f65ca81d08ea132ab603"
+    },
+    "version": "2.8.4"
+  },
+  "2.9.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "7867f94b0d2193491e63bf21190a6de9ebf5770aed1f680d6d7fb4a7a96ebeab"
+    },
+    "version": "2.9.0"
+  },
+  "2.9.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "32823e6829db789928eda04b54dc401568f0e4875bf2f65062ba743e18ec7f4e"
+    },
+    "version": "2.9.1"
+  },
+  "2.9.10": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "60b5a140a10f32a22832d4480715a25b32340faac4fb52de7677fe25cb56d2c4"
+    },
+    "version": "2.9.10"
+  },
+  "2.9.11": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "24b8286a3ce6b0f954b3522111e6450e4a14a7990296d4a2a6295d68a22b73b8"
+    },
+    "version": "2.9.11"
+  },
+  "2.9.12": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "50b825be4d157122a493f974fb2abaac852ea64f751c1a6f6390083fd02cca4e"
+    },
+    "version": "2.9.12"
+  },
+  "2.9.14": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "f6e8e05cfa41a2d7913920b8da6482d105bbd350570d7514dc757bd173137efe"
+    },
+    "version": "2.9.14"
+  },
+  "2.9.15": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "9fa45055f614a3e5acdfce7b5c07ca3d561e69ca500011af6c6b75ac03f13c53"
+    },
+    "version": "2.9.15"
+  },
+  "2.9.16": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "4b18f2f2bae31df85c9cd31a6b5114bbf7f4975e2f26e2a8b3eb974b110ac169"
+    },
+    "version": "2.9.16"
+  },
+  "2.9.17": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "002576bb828e034f105d39751c27fd7717a3584ddc3b55eb52a765f0028f5929"
+    },
+    "version": "2.9.17"
+  },
+  "2.9.18": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "c474c342dcbc62345f2301d3264dd460e4c8c488e7e4f0ac734dfc4eb841a9f4"
+    },
+    "version": "2.9.18"
+  },
+  "2.9.19": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "e6a300d8859bcf4ab112c501db9ec7f166f25461831a7a0e08c1ad56f1a4f99d"
+    },
+    "version": "2.9.19"
+  },
+  "2.9.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "814255b5fe49c38503d885c9a217db569d82a629f50e0cdcb3191409bf0d8825"
+    },
+    "version": "2.9.2"
+  },
+  "2.9.20": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "03ae43cc8bc01a286a377a19db7480da9ee16e57de34220e3d207bb2075a50ba"
+    },
+    "version": "2.9.20"
+  },
+  "2.9.21": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "75ed9e26f1d76e85079efdaa5b5991af90a077850e18006bdc0844fa505082f1"
+    },
+    "version": "2.9.21"
+  },
+  "2.9.22": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "afbdde02bd05de8d12390736481dd1f00f5775607a1a694e620a77cb7a3167a2"
+    },
+    "version": "2.9.22"
+  },
+  "2.9.23": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "698519a15a2f144c8d6cf7eb39b11ffc0b8109956a8fd2c50280d79522a62761"
+    },
+    "version": "2.9.23"
+  },
+  "2.9.24": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "c2e59a003605b220e81fcc1ff6e39b6ffcaa5dd9ed40fe416f8334d7679c7c52"
+    },
+    "version": "2.9.24"
+  },
+  "2.9.25": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "b6dbd563179cdb024206f7354205685bcb196ede4eef88770505b0db591509b9"
+    },
+    "version": "2.9.25"
+  },
+  "2.9.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "494454bfe612a9d19005125d45d7720665bc4b13148cbce226a3e4811d5fef8b"
+    },
+    "version": "2.9.3"
+  },
+  "2.9.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "354349272ddf7ff1e560ccc3a67d53f1c94c6822cc70e0f937f123576e446bd1"
+    },
+    "version": "2.9.4"
+  },
+  "2.9.5": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "e314856fdf215afae00fcb1206a3cf85c66973bfb31e37112f9d06daa65a9960"
+    },
+    "version": "2.9.5"
+  },
+  "2.9.6": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "f4d4e63fca3841724ba2b1fbb0b8e17b94bd65f72eb84a89afab26f9b697b982"
+    },
+    "version": "2.9.6"
+  },
+  "2.9.7": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "4321857a78f3b091673861de1f9c79169e618036fc4ef700c00c91862ccb2257"
+    },
+    "version": "2.9.7"
+  },
+  "2.9.8": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "de13fb12a1bd87f8aaadda081b89b5e64d0834532fb6f859bcced14b9cbe1958"
+    },
+    "version": "2.9.8"
   },
   "2.9.9": {
     "alpine": {
