@@ -7,12 +7,12 @@ source "$(dirname $0)/lib.sh"
 git_commit() 
 {
     versions=$(echo "$1" | tr '\n' ' ')
-	git add .
+    git add .
 
     git config user.name "qiangxuhui"
     git config user.email "qiangxuhui@loongson.cn"
-    git commit -m "Add versions: $versions"
-	git pull --rebase
+    git commit -m "library rust: Add versions: $versions"
+    git pull --rebase
     git push origin main
 }
 
