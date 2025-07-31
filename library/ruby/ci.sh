@@ -4,6 +4,9 @@ set -eo pipefail
 
 source "$(dirname $0)/lib.sh"
 
+readonly ORG='library'
+readonly PROJ='ruby'
+
 git_commit() 
 {
     versions=$(echo "$1" | tr '\n' ' ')
@@ -11,7 +14,7 @@ git_commit()
 
     git config user.name "qiangxuhui"
     git config user.email "qiangxuhui@loongson.cn"
-    git commit -m "library ruby: Add versions: $versions"
+    git commit -m "$ORG $PROJ: Add versions: $versions"
     git pull --rebase
     git push origin main
 }
