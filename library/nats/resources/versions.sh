@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -Eeuo pipefail
-set -x
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -22,7 +21,7 @@ export alpine
 for version in "${versions[@]}"; do
     export version
 
-    sha256file=$(wget -qO- http://cloud.loongnix.xa/releases/loongarch64/nats-io/nats-server/${version}/SHA256SUMS)
+    sha256file=$(wget -qO- http://cloud.loongnix.cn/releases/loongarch64/nats-io/nats-server/${version}/SHA256SUMS)
     echo $sha256file
 
     for arch in loong64; do

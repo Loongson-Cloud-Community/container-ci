@@ -3,8 +3,8 @@
 set -eo pipefail
 set -u
 
-readonly ORG=''
-readonly PROJ=''
+readonly ORG='nats-io'
+readonly PROJ='nats-server'
 
 declare -a IGNORE_VERSIONS=()
 
@@ -19,7 +19,7 @@ get_github_tags()
 
 fetch_versions() {
     local versions=$(get_github_tags "$ORG" "$PROJ" \
-            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
             | sort -rV \
             | head -2
     )

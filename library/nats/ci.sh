@@ -4,8 +4,8 @@ set -eo pipefail
 
 source "$(dirname $0)/lib.sh"
 
-readonly ORG=''
-readonly PROJ=''
+readonly ORG='library'
+readonly PROJ='nats'
 main()
 {
     # 1.获取要构建的版本
