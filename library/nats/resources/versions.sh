@@ -21,11 +21,10 @@ export alpine
 for version in "${versions[@]}"; do
     export version
 
-    sha256file=$(wget -qO- http://cloud.loongnix.cn/releases/loongarch64/nats-io/nats-server/${version}/SHA256SUMS)
-    echo $sha256file
+    sha256file=$(wget -qO- https://github.com/nats-io/nats-server/releases/download/v${version}/SHA256SUMS)
 
     for arch in loong64; do
-        archsha=$(echo $sha256file | grep "$arch.tar.gz" | cut -d ' ' -f1)
+        archsha=$(echo "$sha256file" | grep "$arch.tar.gz" | cut -d ' ' -f1)
         export ${arch}sha256=$archsha
     done
 
