@@ -20,7 +20,7 @@ create_pr()
 {
     # 1.创建临时工作目录
     local -r org='library'
-    local -r pro='bash'
+    local -r pro='golang'
     local -r version=$1
     local -r wkdir=$(mktemp -d)
     local -r docker_library_url='https://github.com/Loongson-Cloud-Community/docker-library.git'

@@ -7,7 +7,7 @@ readonly IGNORE_VERSIONS=()
 fetch_versions() {
     local versions=$(wget -qO- "$BASE_URL" \
         | jq -r '.[].version' \
-        |  grep -oP 'go\K\d+\.\d+')
+        |  grep -oP 'go\K\d+\.\d+.\d+')
 
     (echo "$versions" \
         | sort -V \
