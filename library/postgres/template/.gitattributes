@@ -1,4 +1,0 @@
-/*/**/Dockerfile               linguist-generated
-/*/**/docker-ensure-initdb.sh  linguist-generated
-/*/**/docker-entrypoint.sh     linguist-generated
-/Dockerfile*.template          linguist-language=Dockerfile
