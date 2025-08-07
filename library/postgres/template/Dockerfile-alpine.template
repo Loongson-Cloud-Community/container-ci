@@ -2,7 +2,7 @@
 	def alpine_version:
 		env.variant | ltrimstr("alpine")
 -}}
-FROM alpine:{{ alpine_version }}
+FROM lcr.loongnix.cn/library/alpine:{{ alpine_version }}
 
 # 70 is the standard uid/gid for "postgres" in Alpine
 # https://git.alpinelinux.org/aports/tree/main/postgresql-common/postgresql-common.pre-install?h=3.22-stable
@@ -24,17 +24,7 @@ RUN set -eux; \
 		gnupg \
 	; \
 	\
-	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-	\
-# verify the signature
-	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	gpgconf --kill all; \
-	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
-	\
+    wget -O /usr/local/bin/gosu "https://github.com/Loongson-Cloud-Community/gosu/releases/download/1.17/gosu-loong64"; \
 # clean up fetch dependencies
 	apk del --no-network .gosu-deps; \
 	\
@@ -75,6 +65,12 @@ RUN set -eux; \
 		--directory /usr/src/postgresql \
 		--strip-components 1 \
 	; \
+    wget -O /config.guess 'https://raw.githubusercontent.com/Loongson-Cloud-Community/container-ci/refs/heads/main/library/redis/template-7/config.guess'; \
+    wget -O /config.sub 'https://raw.githubusercontent.com/Loongson-Cloud-Community/container-ci/refs/heads/main/library/redis/template-7/config.sub'; \
+    find /usr/src/postgresql -name "config.guess" -exec sh -c 'set -ex; rm -f $1; cp /config.guess $1' _ {} \; ; \
+    find /usr/src/postgresql -name "config.sub" -exec sh -c 'set -ex; rm -f $1; cp /config.sub $1' _ {} \; ; \
+    rm /config.guess; \
+    rm /config.sub; \
 	rm postgresql.tar.bz2; \
 	\
 	apk add --no-cache --virtual .build-deps \
