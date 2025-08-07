@@ -13,18 +13,24 @@ readonly SOURCES_DIR='sources'
 readonly DEBIAN_VARIANT='trixie'
 readonly ALPINE_VARIANT='alpine3.21'
 
-version="$1"
+# convert X.Y.X to X.Y
+orig_version="$1"
+version="${1%.*}"
 
 image_name="${REGISTRY}/${ORG}/${PROJ}"
 debian_images=(
     "$image_name:$version"
+    "$image_name:$orig_version"
     "$image_name:$version-$DEBIAN_VARIANT"
+    "$image_name:$orig_version-$DEBIAN_VARIANT"
 )
 
 alpine_images=(
     "$image_name:alpine"
     "$image_name:$version-alpine"
+    "$image_name:$orig_version-alpine"
     "$image_name:$version-$ALPINE_VARIANT"
+    "$image_name:$orig_version-$ALPINE_VARIANT"
 )
 
 # Prepare $version
@@ -109,7 +115,6 @@ upload()
 
 main()
 {
-    version=$1
     prepare $version
     build $version
     upload $version
