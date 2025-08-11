@@ -20,16 +20,22 @@ readonly ALPINE_VERSION="3.21"
 readonly DEBIAN_VERSION='trixie'
 
 version="$1"
+xy_version="${version%.*}"
+x_version="${version%%.*}"
 
 declare -ar ALPINE_TAGS=(
     "alpine"
     "$version-alpine"
+    "$xy_version-alpine"
+    "$x_version-alpine"
     "$version-alpine$ALPINE_VERSION"
 )
 
 declare -ar DEBIAN_TAGS=(
     "latest"
     "$version"
+    "$xy_version"
+    "$x_version"
     "$version-$DEBIAN_VERSION"
 )
 
@@ -83,6 +89,11 @@ prepare()
 
     pushd "$RESOURCES"
 
+    ./update.sh "$version" || {
+        log ERROR "update.sh script failed for version: $version"
+        exit 1
+    }
+
     popd
 }
 
@@ -118,10 +129,9 @@ upload()
 
 main()
 {
-    local version="$1"
     prepare "$version"
     build "$version"
     upload "$version"
 }
 
-main "$1"
+main
