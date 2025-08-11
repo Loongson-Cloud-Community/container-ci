@@ -5,8 +5,15 @@ set -u
 
 readonly ORG=''
 readonly PROJ=''
+readonly TAGS_COUNT='2'
+readonly STRIP_VERSION_PREFIX='true'
 
 declare -a IGNORE_VERSIONS=()
+
+# x.y.z
+#readonly VERSION_REGEX='^[0-9]+.[0-9]+.[0-9]+$'
+# vx.y.z
+readonly VERSION_REGEX='^v[0-9]+.[0-9]+.[0-9]+$'
 
 # Usage: get_github_tags $org $proj
 # Return: (tags)
@@ -14,21 +21,30 @@ get_github_tags()
 {
     local org=$1
     local proj=$2
-    curl -s https://api.github.com/repos/$org/$proj/tags | jq -r '.[].name'
+    git ls-remote --tags https://github.com/${org}/${proj}.git \
+    | cut -d'/' -f3- \
+    | cut -d'^' -f1 \
+    | grep -E "$VERSION_REGEX" \
+    | sort -V \
+    | uniq \
+    | tail -"$TAGS_COUNT"
 }
 
 fetch_versions() {
-    local versions=$(get_github_tags "$ORG" "$PROJ" \
-            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
-            | sort -rV \
-            | head -2
-    )
-    ## 过滤 忽略和已构建的版本
-    (echo "$versions" \
-        | grep -Fvx -f <(printf "%s\n" ${IGNORE_VERSIONS[@]}) \
-        | grep -Fvx -f versions.txt
-    ) || true
+    local versions
+    versions=$(get_github_tags "$ORG" "$PROJ")
 
+    # strip vx.y.z to x.y.z
+    if [[ "$STRIP_VERSION_PREFIX" == 'true' ]]; then
+        versions=$(echo "$versions" \
+            | grep -oP '[0-9]+\.[0-9]+\.[0-9]+' \
+            || true)
+    fi
+    # 过滤 忽略和已构建的版本
+    echo "$versions" \
+        | grep -Fvx -f <(printf "%s\n" "${IGNORE_VERSIONS[@]}") \
+        | grep -Fvx -f versions.txt \
+        || true
 }
 
 fetch_versions
