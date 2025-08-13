@@ -1,66 +1,30 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-[ -f versions.json ] # run "versions.sh" first
+readonly ALPINE_VERSION_VARIANTS=(
+	'3.21'
+	'3.22'
+)
 
-cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
-
-jqt='.jq-template.awk'
-if [ -n "${BASHBREW_SCRIPTS:-}" ]; then
-	jqt="$BASHBREW_SCRIPTS/jq-template.awk"
-elif [ "$BASH_SOURCE" -nt "$jqt" ]; then
-	# https://github.com/docker-library/bashbrew/blob/master/scripts/jq-template.awk
-	wget -qO "$jqt" 'https://github.com/docker-library/bashbrew/raw/9f6a35772ac863a0241f147c820354e4008edf38/scripts/jq-template.awk'
-fi
-
-if [ "$#" -eq 0 ]; then
-	versions="$(jq -r 'keys | map(@sh) | join(" ")' versions.json)"
-	eval "set -- $versions"
-fi
-
-generated_warning() {
-	cat <<-EOH
-		#
-		# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
-		#
-		# PLEASE DO NOT EDIT IT DIRECTLY.
-		#
-
-	EOH
+generate_alpine(){
+	local postgres_version=$1
+	# 1. 从 alpine-versions.json 中读取信息
+    local info=$(jq -cr ".\"$postgres_version\"" alpine-versions.json)
+	for alpine_version in ${ALPINE_VERSION_VARIANTS[@]}; do
+		local build_dir="${postgres_version}/alpine${alpine_version}"
+		mkdir -p $build_dir
+		echo $info | jinja2 -D alpine_version=$alpine_version Dockerfile-alpine.template - > "${build_dir}/Dockerfile"
+		local tags="$postgres_version-alpine$alpine_version"
+		jinja2 -D tags=$tags Makefile.template > "${build_dir}/Makefile"
+        cp docker-ensure-initdb.sh $build_dir/
+        cp docker-entrypoint.sh $build_dir/
+	done
 }
 
-for version; do
-	export version
+main() {
+    local postgres_version=$1
+    generate_alpine "$postgres_version"
+}
 
-	major="$(jq -r '.[env.version].major' versions.json)"
+main "$1"
 
-	variants="$(jq -r '.[env.version].variants | map(@sh) | join(" ")' versions.json)"
-	eval "variants=( $variants )"
-
-	rm -rf "$version"
-
-	for variant in "${variants[@]}"; do
-		export variant
-
-		dir="$version/$variant"
-		mkdir -p "$dir"
-
-		echo "processing $dir ..."
-
-		case "$variant" in
-			alpine*)
-				template='Dockerfile-alpine.template'
-				;;
-			*)
-				template='Dockerfile-debian.template'
-				;;
-		esac
-
-		{
-			generated_warning
-			gawk -f "$jqt" "$template"
-		} > "$dir/Dockerfile"
-
-		cp -a docker-entrypoint.sh docker-ensure-initdb.sh "$dir/"
-	done
-done
