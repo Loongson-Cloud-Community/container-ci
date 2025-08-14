@@ -37,4 +37,5 @@ main() {
 
 }
 
+set -x
 main "$1"

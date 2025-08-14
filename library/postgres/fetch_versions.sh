@@ -3,11 +3,10 @@ set -eo pipefail
 
 fetch_versions(){
 
-	local versions=$(gh api repos/postgres/postgres/tags --paginate --jq '.[].name' \
-        | grep 'REL_' \
-        | grep -v 'BETA' \
-        | grep -v 'RC' \
-        | sed -r 's:REL_(\d+)_(\d+):\1.\2:g' \
+    local versions=$(wget -qO- 'https://ftp.postgresql.org/pub/source/' \
+        | grep -oE '>v.*<' \
+        | sed -r 's:>v(.*)/<:\1:g' \
+        | grep -v 'beta' \
         | sort -V)
 
     echo "$versions" \
