@@ -1,4 +1,4 @@
-FROM lcr.loongnix.cn/library/alpine:3.21
+FROM lcr.loongnix.cn/library/alpine:3.22
 
 RUN set -eux; \
     addgroup -g 70 -S postgres; \

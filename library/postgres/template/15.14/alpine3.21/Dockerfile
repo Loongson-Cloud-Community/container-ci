@@ -32,9 +32,9 @@ ENV LANG en_US.utf8
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-ENV PG_MAJOR 13
-ENV PG_VERSION 13.22
-ENV PG_SHA256 d36d83dc89e625502cf6fb1d0529642ba1266bd614b4e4a41cefd1dddcf09080
+ENV PG_MAJOR 15
+ENV PG_VERSION 15.14
+ENV PG_SHA256 06dd75d305cd3870ee62b3932e661c624543eaf9ae2ba37cdec0a4f8edd051d2
 
 ENV DOCKER_PG_LLVM_DEPS \
         llvm19-dev \
@@ -86,6 +86,10 @@ RUN set -eux; \
 		zlib-dev \
 # https://www.postgresql.org/docs/10/static/release-10.html#id-1.11.6.9.5.13
 		icu-dev \
+# https://www.postgresql.org/docs/14/release-14.html#id-1.11.6.5.5.3.7
+		lz4-dev \
+# https://www.postgresql.org/docs/15/release-15.html "--with-zstd to enable Zstandard builds"
+		zstd-dev \
 	; \
 	\
 	cd /usr/src/postgresql; \
@@ -132,6 +136,8 @@ RUN set -eux; \
 		--with-libxslt \
 		--with-icu \
 		--with-llvm \
+        --with-lz4 \
+        --with-zstd \
 	; \
 	make -j "$(nproc)" world-bin; \
 	make install-world-bin; \
