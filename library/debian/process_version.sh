@@ -129,7 +129,7 @@ main()
     prepare "$version"
     build_rootfs "$version"
     build_images "$version"
-    upload_rootfs "$version"
+    #upload_rootfs "$version"
     upload_images "$version"
 }
 
