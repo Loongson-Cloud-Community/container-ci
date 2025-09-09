@@ -3,8 +3,6 @@
 # usage: process_version.sh 20250521T073957Z
 
 set -eo pipefail
-set -u
-set -x
 
 source "$(dirname $0)/lib.sh"
 

@@ -3,7 +3,6 @@
 # Usage: process_version.sh $version
 
 set -eo pipefail
-set -u
 
 source "$(dirname $0)/lib.sh"
 
