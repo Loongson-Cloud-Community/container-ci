@@ -15,7 +15,7 @@ RUN ARCH= && \
     esac && \
     set -ex && \
     apk add --no-cache --virtual .build-deps wget gnupg tar && \
-    wget --no-verbose https://cloud.loongnix.cn/releases/loongarch64/influxdata/telegraf/${TELEGRAF_VERSION}/telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz && \
+    wget --no-verbose https://dl.influxdata.com/telegraf/releases/telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz && \
     mkdir -p /usr/src /etc/telegraf && \
     tar --no-same-permissions --no-same-owner -C /usr/src -xzf telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz && \
     mv /usr/src/telegraf*/etc/telegraf/telegraf.conf /etc/telegraf/ && \
