@@ -23,7 +23,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" && \
       loong64) ARCH='loong64';; \
       *)     echo "Unsupported architecture: ${dpkgArch}"; exit 1;; \
     esac && \
-    wget https://cloud.loongnix.cn/releases/loongarch64/influxdata/telegraf/${TELEGRAF_VERSION}/telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb && \
+    wget https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb && \
     dpkg -i telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb && \
     rm -f telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb*
 
