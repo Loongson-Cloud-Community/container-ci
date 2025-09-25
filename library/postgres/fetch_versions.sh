@@ -7,6 +7,7 @@ fetch_versions(){
         | grep -oE '>v.*<' \
         | sed -r 's:>v(.*)/<:\1:g' \
         | grep -v 'beta' \
+        | grep -v 'rc' \
         | sort -V)
 
     echo "$versions" \
