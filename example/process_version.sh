@@ -15,8 +15,8 @@ readonly IMAGE="$REGISTRY/$ORG/$PROJ"
 readonly RESOURCES="resources"
 readonly CONTEXT_PREFIX="$RESOURCES"
 
-readonly ALPINE_VERSION="3.21"
-readonly DEBIAN_VERSION='trixie'
+readonly ALPINE_VERSION="3.22"
+readonly DEBIAN_VERSION='forky'
 
 version="$1"
 xy_version="${version%.*}"

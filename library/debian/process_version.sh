@@ -14,6 +14,7 @@ readonly ARCH='loong64'
 readonly OUT_DIR='out'
 
 readonly -A DEBIAN_VERSIONS=(
+    ["14"]="forky"
     ["13"]="trixie"
     ["12"]="bookworm"
     ["11"]="bullseye"
