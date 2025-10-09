@@ -246,6 +246,9 @@ RUN set -eux; \
 	chown -fR rabbitmq:rabbitmq "$RABBITMQ_DATA_DIR" /etc/rabbitmq /etc/rabbitmq/conf.d /tmp/rabbitmq-ssl /var/log/rabbitmq; \
 	chmod 1777 "$RABBITMQ_DATA_DIR" /etc/rabbitmq /etc/rabbitmq/conf.d /tmp/rabbitmq-ssl /var/log/rabbitmq; \
 	ln -sf "$RABBITMQ_DATA_DIR/.erlang.cookie" /root/.erlang.cookie; \
+        \
+        # fix escript permission denied \
+        chmod -R o+rx /opt/erlang/lib/erlang/bin /opt/erlang/lib; \
 	\
 	apk add --no-cache \
 # grab su-exec for easy step-down from root
