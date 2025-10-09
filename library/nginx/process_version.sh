@@ -17,7 +17,7 @@ readonly CONTEXT_PREFIX="$RESOURCES/stable"
 
 readonly ALPINE_VERSION="3.21"
 
-declare -r DEBIAN_CODENAME='trixie'
+declare -r DEBIAN_CODENAME='forky'
 
 # 1.28.0-1
 version="${1%-*}"
