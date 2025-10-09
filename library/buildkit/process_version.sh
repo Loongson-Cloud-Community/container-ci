@@ -73,6 +73,30 @@ validata_version()
 prepare()
 {
     local version="$1"
+    log INFO "Prepare buildx"
+    # 检查buildx是否存在
+    if ! command -v docker buildx &> /dev/null; then
+        echo "Docker Buildx未安装，开始下载安装..."
+
+        # 创建临时目录
+        mkdir -p tmp-buildx && cd tmp-buildx
+
+        #  下载文件（添加错误处理）
+        if ! wget -q https://cloud.loongnix.cn/releases/loongarch64/docker/buildx/0.12.0-rc1/buildx-linux-loong64.tar.gz; then
+            echo "下载失败，请检查网络或链接有效性"
+            exit 1
+        fi
+
+        # 解压并安装
+        tar -xzf buildx-linux-loong64.tar.gz
+        mkdir -p ~/.docker/cli-plugins
+        mv bin/buildx/docker-buildx ~/.docker/cli-plugins/docker-buildx
+        chmod +x ~/.docker/cli-plugins/docker-buildx
+
+        echo "Buildx安装完成！"
+    else
+        echo "Docker Buildx已安装，版本：$(docker buildx version)"
+    fi
     log INFO "Preparing version $version"
     validata_version "$version"
 
