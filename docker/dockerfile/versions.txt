@@ -58,3 +58,13 @@ dockerfile/1.17.0-rc1
 dockerfile/1.17.0-rc1-labs
 dockerfile/1.17.1
 dockerfile/1.17.1-labs
+dockerfile/1.18.0
+dockerfile/1.18.0-labs
+dockerfile/1.18.0-rc1
+dockerfile/1.18.0-rc1-labs
+dockerfile/1.18.0-rc2
+dockerfile/1.18.0-rc2-labs
+dockerfile/1.19.0
+dockerfile/1.19.0-labs
+dockerfile/1.19.0-rc1
+dockerfile/1.19.0-rc1-labs
