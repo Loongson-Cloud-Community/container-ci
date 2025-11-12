@@ -68,5 +68,7 @@ dockerfile/1.19.0
 dockerfile/1.19.0-labs
 dockerfile/1.19.0-rc1
 dockerfile/1.19.0-rc1-labs
+dockerfile/1.20.0
+dockerfile/1.20.0-labs
 dockerfile/1.20.0-rc1
 dockerfile/1.20.0-rc1-labs
