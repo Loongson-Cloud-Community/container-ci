@@ -3,9 +3,9 @@ image:
 		--build-arg ROOTFS=rootfs.tar.gz \
 		--build-arg https_proxy=$(https_proxy) \
 		--build-arg http_proxy=$(http_proxy) \
-		-t lcr.loongnix.cn/library/php:8.3.27-zts-alpine3.22 \
+		-t lcr.loongnix.cn/library/php:8.3.27-apache-trixie \
 		.
 
 push:
-	docker push lcr.loongnix.cn/library/php:8.3.27-zts-alpine3.22
+	docker push lcr.loongnix.cn/library/php:8.3.27-apache-trixie
 

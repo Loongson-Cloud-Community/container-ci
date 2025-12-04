@@ -2,7 +2,11 @@
   "8.3.27": {
     "php_version": "8.3.27",
     "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.27/php-8.3.27.tar.xz",
-    "php_asc_url": "",
     "php_sha256": "57d09c5486327dda1e526fdb8f9d92b4ec4fbeaba52bb2663285af673237b4c6"
+  },
+  "8.3.28": {
+    "php_version": "8.3.28",
+    "php_url": "https://www.php.net/distributions/php-8.3.28.tar.xz",
+    "php_sha256": "25e3860f30198a386242891c0bf9e2955931f7b666b96c3e3103d36a2a322326"
   }
 }

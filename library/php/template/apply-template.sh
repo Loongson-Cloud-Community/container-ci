@@ -35,7 +35,11 @@ debian_apply_single(){
 
 
     # 拷贝脚本
-    cp docker-scripts/docker-php-* "${build_dir}/"
+    if test 'apache' = "$target_type"; then
+        cp docker-scripts/* "${build_dir}/"
+    else
+        cp docker-scripts/docker-php-* "${build_dir}/"
+    fi
 
     # 生成 makefile
     local tags="${php_version}-${target_type}-${debian_version}"
@@ -55,13 +59,13 @@ alpine_apply() {
 
 debian_apply() {
     local php_version=$1
-    local debian_version=trixie
-    local php_info=$(jq -cr --arg php_vesion $php_version '.[$php_vesion]' versions.json)
-    echo "${php_info}" | jinja2 -D debian_version=trixie templates/Dockerfile-debian-cli.template - > "${php_version}/${debian_version}/cli/Dockerfile"
-    echo "${php_info}" | jinja2 -D debian_version=trixie templates/Dockerfile-debian-fpm.template - > "${php_version}/${debian_version}/fpm/Dockerfile"
-    echo "${php_info}" | jinja2 -D debian_version=trixie templates/Dockerfile-debian-zts.template - > "${php_version}/${debian_version}/zts/Dockerfile"
-
+    for debian_version in trixie; do
+        for target_type in cli fpm zts apache; do
+            debian_apply_single "${php_version}" "${debian_version}" "${target_type}"
+        done
+    done
 }
 
 # alpine_apply '8.3.27'
-debian_apply_single '8.3.27' 'trixie' 'cli'
+# debian_apply '8.3.27'
+debian_apply_single '8.3.27' 'trixie' 'apache'
