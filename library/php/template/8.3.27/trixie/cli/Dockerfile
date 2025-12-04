@@ -4,40 +4,46 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/alpine:{{ alpine_version }} 
+FROM lcr.loongnix.cn/library/debian:trixie-slim
 
+RUN if grep 'debian-ports' /etc/apt/sources.list.d/debian.sources; then \
+        rm -rf /etc/apt/sources.list.d/debian.sources; \
+        echo 'deb [trusted=yes] http://mirrors.aliyun.com/debian-ports sid main' > /etc/apt/sources.list.d/debian-ports.list; \
+    fi;
 
-RUN sed -i 's:dl-cdn.alpinelinux.org:mirrors.aliyun.com/:g' /etc/apk/repositories
+# prevent Debian's PHP packages from being installed
+# https://github.com/docker-library/php/pull/542
+RUN set -eux; \
+	{ \
+		echo 'Package: php*'; \
+		echo 'Pin: release *'; \
+		echo 'Pin-Priority: -1'; \
+	} > /etc/apt/preferences.d/no-debian-php
 
 # dependencies required for running "phpize"
-# these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
+# (see persistent deps below)
 ENV PHPIZE_DEPS \
 		autoconf \
-		dpkg-dev dpkg \
+		dpkg-dev \
 		file \
 		g++ \
 		gcc \
 		libc-dev \
 		make \
-		pkgconf \
+		pkg-config \
 		re2c \
         bison
 
 # persistent / runtime deps
-RUN apk add --no-cache \
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		$PHPIZE_DEPS \
 		ca-certificates \
 		curl \
-		openssl \
-		tar \
-		xz
-
-# ensure www-data user exists
-RUN set -eux; \
-	adduser -u 82 -D -S -G www-data www-data
-# 82 is the standard uid/gid for "www-data" in Alpine
-# https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.14-stable
-# https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.14-stable
-# https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
+		xz-utils \
+	; \
+	apt-get dist-clean
 
 ENV PHP_INI_DIR /usr/local/etc/php
 RUN set -eux; \
@@ -58,12 +64,17 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
+ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
 
-ENV PHP_VERSION {{ php_version }}
-ENV PHP_URL="{{ php_url }}" PHP_ASC_URL="{{ php_asc_url }}"
-ENV PHP_SHA256="{{ php_sha256 }}"
+ENV PHP_VERSION 8.3.27
+ENV PHP_URL="https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.27/php-8.3.27.tar.xz" PHP_ASC_URL=""
+ENV PHP_SHA256="57d09c5486327dda1e526fdb8f9d92b4ec4fbeaba52bb2663285af673237b4c6"
 
+# asc 文件下载
 RUN set -eux; \
+	\
+	savedAptMark="$(apt-mark showmanual)"; \
+	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
 	\
@@ -72,28 +83,24 @@ RUN set -eux; \
 	if [ -n "$PHP_SHA256" ]; then \
 		echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
 	fi;
-	
 
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
-	apk add --no-cache --virtual .build-deps \
-		$PHPIZE_DEPS \
-		argon2-dev \
-		coreutils \
-		curl-dev \
-		gnu-libiconv-dev \
+	\
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		libargon2-dev \
+		libcurl4-openssl-dev \
+		libonig-dev \
+		libreadline-dev \
 		libsodium-dev \
+		libsqlite3-dev \
+		libssl-dev \
 		libxml2-dev \
-		linux-headers \
-		oniguruma-dev \
-		openssl-dev \
-		readline-dev \
-		sqlite-dev \
-        patch \
+		zlib1g-dev \
 	; \
-# make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
-	rm -vf /usr/include/iconv.h; \
 	\
 	export \
 		CFLAGS="$PHP_CFLAGS" \
@@ -106,6 +113,11 @@ RUN set -eux; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+	debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
+# https://bugs.php.net/bug.php?id=74125
+	if [ ! -d /usr/include/curl ]; then \
+		ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
+	fi; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
@@ -133,7 +145,7 @@ RUN set -eux; \
 		--with-sqlite3=/usr \
 		\
 		--with-curl \
-		--with-iconv=/usr \
+		--with-iconv \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
@@ -141,10 +153,15 @@ RUN set -eux; \
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
-		--without-pcre-jit \
+        --without-pcre-jit \
+		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+		--with-libdir="lib/$debMultiarch" \
+		\
+# https://github.com/docker-library/php/pull/939#issuecomment-730501748
+		--enable-embed \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -165,15 +182,20 @@ RUN set -eux; \
 	cd /; \
 	docker-php-source delete; \
 	\
-	runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)"; \
-	apk add --no-cache $runDeps; \
-	\
-	apk del --no-network .build-deps; \
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+	apt-mark auto '.*' > /dev/null; \
+	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
+	find /usr/local -type f -executable -exec ldd '{}' ';' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+		| sort -u \
+		| xargs -rt dpkg-query --search \
+# https://manpages.debian.org/trixie/dpkg/dpkg-query.1.en.html#S (we ignore diversions and it'll be really unusual for more than one package to provide any given .so file)
+		| awk 'sub(":$", "", $1) { print $1 }' \
+		| sort -u \
+		| xargs -r apt-mark manual \
+	; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	apt-get dist-clean; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \

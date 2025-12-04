@@ -4,8 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/alpine:{{ alpine_version }} 
-
+FROM lcr.loongnix.cn/library/alpine:3.22
 
 RUN sed -i 's:dl-cdn.alpinelinux.org:mirrors.aliyun.com/:g' /etc/apk/repositories
 
@@ -58,12 +57,12 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-
-ENV PHP_VERSION {{ php_version }}
-ENV PHP_URL="{{ php_url }}" PHP_ASC_URL="{{ php_asc_url }}"
-ENV PHP_SHA256="{{ php_sha256 }}"
+ENV PHP_VERSION 8.3.27
+ENV PHP_URL="https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.27/php-8.3.27.tar.xz" PHP_ASC_URL=""
+ENV PHP_SHA256="57d09c5486327dda1e526fdb8f9d92b4ec4fbeaba52bb2663285af673237b4c6"
 
 RUN set -eux; \
+	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
 	\
@@ -72,7 +71,6 @@ RUN set -eux; \
 	if [ -n "$PHP_SHA256" ]; then \
 		echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
 	fi;
-	
 
 COPY docker-php-source /usr/local/bin/
 
@@ -90,8 +88,8 @@ RUN set -eux; \
 		openssl-dev \
 		readline-dev \
 		sqlite-dev \
-        patch \
 	; \
+	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
 	rm -vf /usr/include/iconv.h; \
 	\
@@ -138,13 +136,19 @@ RUN set -eux; \
 		--with-readline \
 		--with-zlib \
 		\
-# https://github.com/docker-library/php/pull/1259
-		--enable-phpdbg \
-		--enable-phpdbg-readline \
-		--without-pcre-jit \
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
+		--disable-phpdbg \
+		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+		\
+		--disable-cgi \
+		\
+		--enable-fpm \
+		--with-fpm-user=www-data \
+		--with-fpm-group=www-data \
+        --without-pcre-jit \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
@@ -191,4 +195,55 @@ RUN docker-php-ext-enable opcache
 RUN docker-php-ext-enable sodium
 
 ENTRYPOINT ["docker-php-entrypoint"]
-CMD ["php", "-a"]
+WORKDIR /var/www/html
+
+RUN set -eux; \
+	cd /usr/local/etc; \
+	if [ -d php-fpm.d ]; then \
+		# for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
+		sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
+		cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
+	else \
+		# PHP 5.x doesn't use "include=" by default, so we'll create our own simple config that mimics PHP 7+ for consistency
+		mkdir php-fpm.d; \
+		cp php-fpm.conf.default php-fpm.d/www.conf; \
+		{ \
+			echo '[global]'; \
+			echo 'include=etc/php-fpm.d/*.conf'; \
+		} | tee php-fpm.conf; \
+	fi; \
+	{ \
+		echo '[global]'; \
+		echo 'error_log = /proc/self/fd/2'; \
+		echo; echo '; https://github.com/docker-library/php/pull/725#issuecomment-443540114'; echo 'log_limit = 8192'; \
+		echo; \
+		echo '[www]'; \
+		echo '; php-fpm closes STDOUT on startup, so sending logs to /proc/self/fd/1 does not work.'; \
+		echo '; https://bugs.php.net/bug.php?id=73886'; \
+		echo 'access.log = /proc/self/fd/2'; \
+		echo; \
+		echo 'clear_env = no'; \
+		echo; \
+		echo '; Ensure worker stdout and stderr are sent to the main error log.'; \
+		echo 'catch_workers_output = yes'; \
+		echo 'decorate_workers_output = no'; \
+	} | tee php-fpm.d/docker.conf; \
+	{ \
+		echo '[global]'; \
+		echo 'daemonize = no'; \
+		echo; \
+		echo '[www]'; \
+		echo 'listen = 9000'; \
+	} | tee php-fpm.d/zz-docker.conf; \
+	mkdir -p "$PHP_INI_DIR/conf.d"; \
+	{ \
+		echo '; https://github.com/docker-library/php/issues/878#issuecomment-938595965'; \
+		echo 'fastcgi.logging = Off'; \
+	} > "$PHP_INI_DIR/conf.d/docker-fpm.ini"
+
+# Override stop signal to stop process gracefully
+# https://github.com/php/php-src/blob/17baa87faddc2550def3ae7314236826bc1b1398/sapi/fpm/php-fpm.8.in#L163
+STOPSIGNAL SIGQUIT
+
+EXPOSE 9000
+CMD ["php-fpm"]

@@ -4,8 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/alpine:{{ alpine_version }} 
-
+FROM lcr.loongnix.cn/library/alpine:3.21
 
 RUN sed -i 's:dl-cdn.alpinelinux.org:mirrors.aliyun.com/:g' /etc/apk/repositories
 
@@ -59,11 +58,12 @@ ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 
-ENV PHP_VERSION {{ php_version }}
-ENV PHP_URL="{{ php_url }}" PHP_ASC_URL="{{ php_asc_url }}"
-ENV PHP_SHA256="{{ php_sha256 }}"
+ENV PHP_VERSION 8.3.27
+ENV PHP_URL="https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.27/php-8.3.27.tar.xz" PHP_ASC_URL=""
+ENV PHP_SHA256="57d09c5486327dda1e526fdb8f9d92b4ec4fbeaba52bb2663285af673237b4c6"
 
 RUN set -eux; \
+	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
 	\
@@ -72,7 +72,6 @@ RUN set -eux; \
 	if [ -n "$PHP_SHA256" ]; then \
 		echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
 	fi;
-	
 
 COPY docker-php-source /usr/local/bin/
 
@@ -90,8 +89,9 @@ RUN set -eux; \
 		openssl-dev \
 		readline-dev \
 		sqlite-dev \
-        patch \
 	; \
+    wget -O /loongarch64-zend.patch https://patch-diff.githubusercontent.com/raw/php/php-src/pull/13914.patch; \
+	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
 	rm -vf /usr/include/iconv.h; \
 	\
@@ -141,10 +141,18 @@ RUN set -eux; \
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
 		--enable-phpdbg-readline \
-		--without-pcre-jit \
+		\
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
+		\
+# https://github.com/docker-library/php/pull/939#issuecomment-730501748
+		--enable-embed \
+		\
+		--enable-zts \
+# https://externals.io/message/118859
+		--disable-zend-signals \
+        --without-pcre-jit \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \

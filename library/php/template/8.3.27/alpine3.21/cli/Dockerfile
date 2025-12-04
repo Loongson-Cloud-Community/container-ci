@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/alpine:{{ alpine_version }} 
+FROM lcr.loongnix.cn/library/alpine:3.21 
 
 
 RUN sed -i 's:dl-cdn.alpinelinux.org:mirrors.aliyun.com/:g' /etc/apk/repositories
@@ -59,9 +59,9 @@ ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 
-ENV PHP_VERSION {{ php_version }}
-ENV PHP_URL="{{ php_url }}" PHP_ASC_URL="{{ php_asc_url }}"
-ENV PHP_SHA256="{{ php_sha256 }}"
+ENV PHP_VERSION 8.3.27
+ENV PHP_URL="https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.27/php-8.3.27.tar.xz" PHP_ASC_URL=""
+ENV PHP_SHA256="57d09c5486327dda1e526fdb8f9d92b4ec4fbeaba52bb2663285af673237b4c6"
 
 RUN set -eux; \
 	mkdir -p /usr/src; \

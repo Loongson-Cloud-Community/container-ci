@@ -6,6 +6,8 @@
 
 FROM lcr.loongnix.cn/library/alpine:{{ alpine_version }}
 
+RUN sed -i 's:dl-cdn.alpinelinux.org:mirrors.aliyun.com/:g' /etc/apk/repositories
+
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 ENV PHPIZE_DEPS \
@@ -68,9 +70,7 @@ RUN set -eux; \
 	\
 	if [ -n "$PHP_SHA256" ]; then \
 		echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
-	fi; \
-	\
-	curl -fsSL -o php.tar.xz.asc "$PHP_ASC_URL"
+	fi;
 
 COPY docker-php-source /usr/local/bin/
 
@@ -88,10 +88,7 @@ RUN set -eux; \
 		openssl-dev \
 		readline-dev \
 		sqlite-dev \
-        patch \
-        wget \
 	; \
-    wget -O /loongarch64-zend.patch https://patch-diff.githubusercontent.com/raw/php/php-src/pull/13914.patch; \
 	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
 	rm -vf /usr/include/iconv.h; \
@@ -106,9 +103,7 @@ RUN set -eux; \
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
-    find ./ -name '*.S' | grep 'loong64' || patch -p1 < /loongarch64-zend.patch ; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
-    ./buildconf -f; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
