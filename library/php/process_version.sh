@@ -6,7 +6,7 @@ source "$(dirname $0)/lib.sh"
 
 readonly REGISTRY='lcr.loongnix.cn'
 readonly ORG='library'
-readonly PROJ='ruby'
+readonly PROJ='php'
 
 # Prepare $version
 prepare()
@@ -27,11 +27,6 @@ prepare()
 
     ./apply-templates.sh "$version" || {
         log ERROR "${template_dir}/apply-templates.sh script failed for version: $version"
-        exit 1
-    }
-
-	./apply-templates-makefile.sh "$version" || {
-        log ERROR "${template_dir}/apply-templates-makefile.sh script failed for version: $version"
         exit 1
     }
 

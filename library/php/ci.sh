@@ -5,7 +5,7 @@ set -eo pipefail
 source "$(dirname $0)/lib.sh"
 
 readonly ORG='library'
-readonly PROJ='ruby'
+readonly PROJ='php'
 
 git_commit() 
 {

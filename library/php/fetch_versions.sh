@@ -3,16 +3,18 @@ set -eo pipefail
 
 fetch_versions(){
 
-    #local versions=$(gh api repos/python/cpython/tags --paginate --jq '.[].name' | \
-	#	grep -vE '[abcr]+' |
-    #  	grep -E '^v3' | \
-    #  	grep -Eo 'v3\.[0-9]+' | \
-    #  	grep -Eo '3\.[0-9]+' | \
-    #  	sort -uV)
-	local versions=$(wget -qO- https://github.com/ruby/www.ruby-lang.org/raw/master/_data/releases.yml | \
-		yq -r '@json' | \
-		jq -r 'map(.version) | .[]' | \
-		grep -vE '[a-z]' | sort -V)
+	local versions=`gh api repos/php/php-src/tags --paginate --jq '.[].name' \
+        | grep 'php-' \
+        | grep -v 'RC' \
+        | grep -v 'rc' \
+        | grep -v 'b' \
+        | grep -v 'dev' \
+        | grep -v 'pre' \
+        | grep -v 'pl' \
+        | grep -v 'REL' \
+        | grep -v 'alpha' \
+        | awk -F '-' '{print $2}' \
+        | sort -V`
 
     echo "$versions" \
         | grep -Fxv -f ignore_versions.txt \
