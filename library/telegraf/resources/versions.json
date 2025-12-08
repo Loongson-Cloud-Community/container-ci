@@ -196,5 +196,14 @@
       "version": "trixie"
     },
     "version": "1.36.4"
+  },
+  "1.37.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    },
+    "version": "1.37.0"
   }
 }
