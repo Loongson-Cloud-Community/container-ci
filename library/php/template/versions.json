@@ -1,12 +1,42 @@
 {
-  "8.3.27": {
-    "php_version": "8.3.27",
-    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.27/php-8.3.27.tar.xz",
-    "php_sha256": "57d09c5486327dda1e526fdb8f9d92b4ec4fbeaba52bb2663285af673237b4c6"
+  "8.3.16": {
+    "php_version": "8.3.16",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.16/php-8.3.16.tar.xz",
+    "php_sha256": "ef3d2a0135af3c05ec3cb490144e2f3f41059c41254d4a23dd938c3c0d558d72"
+  },
+  "8.3.15": {
+    "php_version": "8.3.15",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.15/php-8.3.15.tar.xz",
+    "php_sha256": "2101d7eda6bc9496ed218e7ec2a73652c07d988d31307dd19838b54eb964e6bb"
+  },
+  "8.3.0": {
+    "php_version": "8.3.0",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.0/php-8.3.0.tar.xz",
+    "php_sha256": "0d1772d0026c7d2c88caf9a80713d7fd7e9bc1f06298da9dcd6ee02099ab8f33"
   },
   "8.3.28": {
     "php_version": "8.3.28",
     "php_url": "https://www.php.net/distributions/php-8.3.28.tar.xz",
     "php_sha256": "25e3860f30198a386242891c0bf9e2955931f7b666b96c3e3103d36a2a322326"
+  },
+  "8.2.0": {
+    "php_version": "8.2.0",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.2.0/php-8.2.0.tar.xz",
+    "php_sha256": "733e122ca75d6ce164a3fb64be3ee98f382b73c5c94ed665945bfa534d6755b6"
+  },
+  "8.1.0": {
+    "php_version": "8.1.0",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.1.0/php-8.1.0.tar.xz",
+    "php_sha256": "b1d7f381f3721ba7c97366fcaa344c82cb4fae9f1927d43b288516dcfbbddd73"
+  },
+  "8.0.0": {
+    "php_version": "8.0.0",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.0.0/php-8.0.0.tar.xz",
+    "php_sha256": "b73e771ad6935a5ce5176a78b22b906b570c64b3e81ea08dcbf3715d899ac654"
+  },
+  "8.3.27": {
+    "php_version": "8.3.27",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.27/php-8.3.27.tar.xz",
+    "php_sha256": "57d09c5486327dda1e526fdb8f9d92b4ec4fbeaba52bb2663285af673237b4c6"
   }
 }

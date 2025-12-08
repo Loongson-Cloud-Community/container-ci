@@ -103,6 +103,13 @@ RUN set -eux; \
 	; \
 	docker-php-source extract; \
 	cd /usr/src/php; \
+    if ! find ./ -name '*.S' | grep 'loong'; then \
+        apk add wget patch || apt install -y wget patch; \
+        wget -O /loongarch64-zend.patch https://patch-diff.githubusercontent.com/raw/php/php-src/pull/13914.patch; \
+        patch -p1 < /loongarch64-zend.patch; \
+        rm  /loongarch64-zend.patch; \
+        ./buildconf -f; \
+    fi; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	./configure \
 		--build="$gnuArch" \

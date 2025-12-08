@@ -176,6 +176,13 @@ RUN set -eux; \
 	if [ ! -d /usr/include/curl ]; then \
 		ln -sT "/usr/include/$debMultiarch/curl" /usr/local/include/curl; \
 	fi; \
+    if ! find ./ -name '*.S' | grep 'loong'; then \
+        apk add wget patch || apt install -y wget patch; \
+        wget -O /loongarch64-zend.patch https://patch-diff.githubusercontent.com/raw/php/php-src/pull/13914.patch; \
+        patch -p1 < /loongarch64-zend.patch; \
+        rm  /loongarch64-zend.patch; \
+        ./buildconf -f; \
+    fi; \
 	./configure \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
