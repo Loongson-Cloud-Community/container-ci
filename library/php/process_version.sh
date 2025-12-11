@@ -74,7 +74,11 @@ docker_push(){
 
 process()
 {
-    version=$1
+    local version=$1
+    if test 'null' = `./template/sha256.sh "${version}"`; then
+        echo "skip ${version}"
+        return
+    fi
     prepare $version
     docker_build $version
     docker_push $version
