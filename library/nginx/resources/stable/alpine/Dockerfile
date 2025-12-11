@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM nginx:1.29.3-alpine-slim
+FROM nginx:1.29.4-alpine-slim
 
 ENV NJS_VERSION   0.9.4
 ENV NJS_RELEASE   1
