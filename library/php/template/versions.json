@@ -1,4 +1,59 @@
 {
+  "8.4.10": {
+    "php_version": "8.4.10",
+    "php_url": "https://www.php.net/distributions/php-8.4.10.tar.xz",
+    "php_sha256": "14983a9ef8800e6bc2d920739fd386054402f7976ca9cd7f711509496f0d2632"
+  },
+  "8.4.9": {
+    "php_version": "8.4.9",
+    "php_url": "https://www.php.net/distributions/php-8.4.9.tar.xz",
+    "php_sha256": "null"
+  },
+  "8.4.8": {
+    "php_version": "8.4.8",
+    "php_url": "https://www.php.net/distributions/php-8.4.8.tar.xz",
+    "php_sha256": "aa6a4d330b47eacd83e351658ba8c47747a1e4356456219cfb6d75e7838da091"
+  },
+  "8.4.7": {
+    "php_version": "8.4.7",
+    "php_url": "https://www.php.net/distributions/php-8.4.7.tar.xz",
+    "php_sha256": "e29f4c23be2816ed005aa3f06bbb8eae0f22cc133863862e893515fc841e65e3"
+  },
+  "8.4.6": {
+    "php_version": "8.4.6",
+    "php_url": "https://www.php.net/distributions/php-8.4.6.tar.xz",
+    "php_sha256": "089b08a5efef02313483325f3bacd8c4fe311cf1e1e56749d5cc7d059e225631"
+  },
+  "8.4.5": {
+    "php_version": "8.4.5",
+    "php_url": "https://www.php.net/distributions/php-8.4.5.tar.xz",
+    "php_sha256": "0d3270bbce4d9ec617befce52458b763fd461d475f1fe2ed878bb8573faed327"
+  },
+  "8.4.4": {
+    "php_version": "8.4.4",
+    "php_url": "https://www.php.net/distributions/php-8.4.4.tar.xz",
+    "php_sha256": "05a6c9a2cc894dd8be719ecab221b311886d5e0c02cb6fac648dd9b3459681ac"
+  },
+  "8.4.3": {
+    "php_version": "8.4.3",
+    "php_url": "https://www.php.net/distributions/php-8.4.3.tar.xz",
+    "php_sha256": "5c42173cbde7d0add8249c2e8a0c19ae271f41d8c47d67d72bdf91a88dcc7e4b"
+  },
+  "8.4.2": {
+    "php_version": "8.4.2",
+    "php_url": "https://www.php.net/distributions/php-8.4.2.tar.xz",
+    "php_sha256": "92636453210f7f2174d6ee6df17a5811368f556a6c2c2cbcf019321e36456e01"
+  },
+  "8.4.1": {
+    "php_version": "8.4.1",
+    "php_url": "https://www.php.net/distributions/php-8.4.1.tar.xz",
+    "php_sha256": "94c8a4fd419d45748951fa6d73bd55f6bdf0adaefb8814880a67baa66027311f"
+  },
+  "8.4.0": {
+    "php_version": "8.4.0",
+    "php_url": "https://www.php.net/distributions/php-8.4.0.tar.xz",
+    "php_sha256": "null"
+  },
   "8.3.28": {
     "php_version": "8.3.28",
     "php_url": "https://www.php.net/distributions/php-8.3.28.tar.xz",
