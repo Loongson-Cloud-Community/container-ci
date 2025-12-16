@@ -14,6 +14,9 @@ alpine_apply_single(){
     mkdir -p "${build_dir}"
     jinja2 -D base_image_tag=${base_image_tag}  -D nextcloud_version=${nextcloud_version} "dockerfile-templates/Dockerfile-${target_type}-alpine.template" > "${build_dir}/Dockerfile"
     cp -r scripts-and-config/* "${build_dir}/"
+
+    local tags="${nextcloud_version}-${target_type}-alpine"
+    jinja2 -D tags=${tags} "Makefile.template" > "${build_dir}/Makefile"
     
 }
 
