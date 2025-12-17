@@ -43,6 +43,7 @@ RUN set -ex; \
         libwebp-dev \
         libxml2-dev \
         libzip-dev \
+        wget \
     ; \
     \
     debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
@@ -65,6 +66,7 @@ RUN set -ex; \
     ; \
     \
 # pecl will claim success even if one install fails, so we need to perform each install separately
+    pear config-set http_proxy ""; \
     pecl install APCu-5.1.28; \
     pecl install igbinary-3.2.16; \
     pecl install imagick-3.8.1; \
