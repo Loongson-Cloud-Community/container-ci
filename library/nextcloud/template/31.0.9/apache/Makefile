@@ -1,0 +1,11 @@
+image:
+	docker build \
+		--build-arg ROOTFS=rootfs.tar.gz \
+		--build-arg https_proxy=$(https_proxy) \
+		--build-arg http_proxy=$(http_proxy) \
+		-t lcr.loongnix.cn/library/nextcloud:31.0.9-apache \
+		.
+
+push:
+	docker push lcr.loongnix.cn/library/nextcloud:31.0.9-apache
+
