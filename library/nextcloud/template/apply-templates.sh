@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -eu
 
 alpine_apply_single(){
     
@@ -39,4 +39,36 @@ debian_apply_single(){
 
 }
 
-debian_apply_single '31.0.11' '8.3.28-fpm-trixie' 'apache'
+debian_apply() {
+
+    local nextcloud_version=$1
+
+    for target_type in apache fpm; do
+        local base_image_tag="8.3.28-${target_type}-trixie"
+        debian_apply_single "${nextcloud_version}" "${base_image_tag}" "${target_type}"
+    done
+    
+}
+
+alpine_apply() {
+
+    local nextcloud_version=$1
+
+    for target_type in fpm; do
+        local base_image_tag="8.3.28-${target_type}-alpine3.22"
+        alpine_apply_single "${nextcloud_version}" "${base_image_tag}" "${target_type}"
+    done
+
+}
+
+main() {
+
+    local nextcloud_version=$1
+    
+    debian_apply "${nextcloud_version}"
+    alpine_apply "${nextcloud_version}"
+
+}
+
+main "$1"
+
