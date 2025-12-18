@@ -70,6 +70,12 @@ docker_push(){
 
 process()
 {
+    local version="$1"
+    local url="https://github.com/nextcloud-releases/server/releases/download/v${version}/nextcloud-${version}.tar.bz2"
+    if ! curl -f -s "${url}" >/dev/null; then
+        log INFO "skip ${version}"
+        return
+    fi
     prepare $version
     docker_build $version
     docker_push $version
