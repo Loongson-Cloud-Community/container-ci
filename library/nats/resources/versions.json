@@ -422,6 +422,33 @@
     },
     "version": "2.12.0"
   },
+  "2.12.1": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "6e30e0e9b93dea35713b07cc89ec291d6cd2386d02aa9ef2d46f288695708d21"
+    },
+    "version": "2.12.1"
+  },
+  "2.12.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "9b66d798d12afbe643bdee07fb1fbc9f0f7ebfc347cb40a2274a7b4445f914b6"
+    },
+    "version": "2.12.2"
+  },
+  "2.12.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "4a1e5f84d9bd8c3620085ac9e7d26f101ba1bc29ce180bd353404430087f2001"
+    },
+    "version": "2.12.3"
+  },
   "2.2.0": {
     "alpine": {
       "version": "3.22"

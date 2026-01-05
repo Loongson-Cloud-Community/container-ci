@@ -1,5 +1,5 @@
 {
-  "1.89.0": {
+  "1.92.0": {
     "debian_arches": {
       "i386": {
         "rustArch": "i686-unknown-linux-gnu",

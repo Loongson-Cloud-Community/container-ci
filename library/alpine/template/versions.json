@@ -1,6 +1,6 @@
 {
-  "3.22": {
-    "url": "https://cz.alpinelinux.org/alpine/v3.22/releases/loongarch64/alpine-minirootfs-3.22.0-loongarch64.tar.gz",
-    "tags": "3,3.22,3.22.0"
+  "3.23": {
+    "url": "https://cz.alpinelinux.org/alpine/v3.23/releases/loongarch64/alpine-minirootfs-3.23.0-loongarch64.tar.gz",
+    "tags": "3,3.23,3.23.0"
   }
 }

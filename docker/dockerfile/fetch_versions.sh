@@ -20,10 +20,11 @@ get_github_tags()
 fetch_versions() {
  local versions=$(bash scripts/get-tags.sh | jq -r '.[]')  # 直接读取 JSON
 
-    echo "$versions"
     ## 过滤 忽略和已构建的版本
-    (echo "$versions" ) || true
-
+    echo "$versions" \
+        | grep -Fvx -f <(printf "%s\n" "${IGNORE_VERSIONS[@]}") \
+        | grep -Fvx -f versions.txt \
+        || true
 }
 
 fetch_versions

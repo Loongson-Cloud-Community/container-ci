@@ -1,0 +1,172 @@
+{
+  "8.4.15": {
+    "php_version": "8.4.15",
+    "php_url": "https://www.php.net/distributions/php-8.4.15.tar.xz",
+    "php_sha256": "a060684f614b8344f9b34c334b6ba8db1177555997edb5b1aceab0a4b807da7e"
+  },
+  "8.4.14": {
+    "php_version": "8.4.14",
+    "php_url": "https://www.php.net/distributions/php-8.4.14.tar.xz",
+    "php_sha256": "bac90ee7cf738e814c89b6b27d4d2c4b70e50942a420837e1a22f5fd5f9867a3"
+  },
+  "8.4.13": {
+    "php_version": "8.4.13",
+    "php_url": "https://www.php.net/distributions/php-8.4.13.tar.xz",
+    "php_sha256": "b4f27adf30bcf262eacf93c78250dd811980f20f3b90d79a3dc11248681842df"
+  },
+  "8.4.12": {
+    "php_version": "8.4.12",
+    "php_url": "https://www.php.net/distributions/php-8.4.12.tar.xz",
+    "php_sha256": "c1b7978cbb5054eed6c749bde4444afc16a3f2268101fb70a7d5d9b1083b12ad"
+  },
+  "8.4.11": {
+    "php_version": "8.4.11",
+    "php_url": "https://www.php.net/distributions/php-8.4.11.tar.xz",
+    "php_sha256": "04cd331380a8683a5c2503938eb51764d48d507c53ad4208d2c82e0eed779a00"
+  },
+  "8.4.10": {
+    "php_version": "8.4.10",
+    "php_url": "https://www.php.net/distributions/php-8.4.10.tar.xz",
+    "php_sha256": "14983a9ef8800e6bc2d920739fd386054402f7976ca9cd7f711509496f0d2632"
+  },
+  "8.4.9": {
+    "php_version": "8.4.9",
+    "php_url": "https://www.php.net/distributions/php-8.4.9.tar.xz",
+    "php_sha256": "null"
+  },
+  "8.4.8": {
+    "php_version": "8.4.8",
+    "php_url": "https://www.php.net/distributions/php-8.4.8.tar.xz",
+    "php_sha256": "aa6a4d330b47eacd83e351658ba8c47747a1e4356456219cfb6d75e7838da091"
+  },
+  "8.4.7": {
+    "php_version": "8.4.7",
+    "php_url": "https://www.php.net/distributions/php-8.4.7.tar.xz",
+    "php_sha256": "e29f4c23be2816ed005aa3f06bbb8eae0f22cc133863862e893515fc841e65e3"
+  },
+  "8.4.6": {
+    "php_version": "8.4.6",
+    "php_url": "https://www.php.net/distributions/php-8.4.6.tar.xz",
+    "php_sha256": "089b08a5efef02313483325f3bacd8c4fe311cf1e1e56749d5cc7d059e225631"
+  },
+  "8.4.5": {
+    "php_version": "8.4.5",
+    "php_url": "https://www.php.net/distributions/php-8.4.5.tar.xz",
+    "php_sha256": "0d3270bbce4d9ec617befce52458b763fd461d475f1fe2ed878bb8573faed327"
+  },
+  "8.4.4": {
+    "php_version": "8.4.4",
+    "php_url": "https://www.php.net/distributions/php-8.4.4.tar.xz",
+    "php_sha256": "05a6c9a2cc894dd8be719ecab221b311886d5e0c02cb6fac648dd9b3459681ac"
+  },
+  "8.4.3": {
+    "php_version": "8.4.3",
+    "php_url": "https://www.php.net/distributions/php-8.4.3.tar.xz",
+    "php_sha256": "5c42173cbde7d0add8249c2e8a0c19ae271f41d8c47d67d72bdf91a88dcc7e4b"
+  },
+  "8.4.2": {
+    "php_version": "8.4.2",
+    "php_url": "https://www.php.net/distributions/php-8.4.2.tar.xz",
+    "php_sha256": "92636453210f7f2174d6ee6df17a5811368f556a6c2c2cbcf019321e36456e01"
+  },
+  "8.4.1": {
+    "php_version": "8.4.1",
+    "php_url": "https://www.php.net/distributions/php-8.4.1.tar.xz",
+    "php_sha256": "94c8a4fd419d45748951fa6d73bd55f6bdf0adaefb8814880a67baa66027311f"
+  },
+  "8.4.0": {
+    "php_version": "8.4.0",
+    "php_url": "https://www.php.net/distributions/php-8.4.0.tar.xz",
+    "php_sha256": "null"
+  },
+  "8.3.28": {
+    "php_version": "8.3.28",
+    "php_url": "https://www.php.net/distributions/php-8.3.28.tar.xz",
+    "php_sha256": "25e3860f30198a386242891c0bf9e2955931f7b666b96c3e3103d36a2a322326"
+  },
+  "8.3.27": {
+    "php_version": "8.3.27",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.27/php-8.3.27.tar.xz",
+    "php_sha256": "dba3c86e97537a75c151c25fa4a86353dd245e81911613295ad9c42f4ead2c3f"
+  },
+  "8.3.26": {
+    "php_version": "8.3.26",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.26/php-8.3.26.tar.xz",
+    "php_sha256": "911e489ea7f4bda5785ccc31ee55e5b4f6675d519bc1162491f381f27dc452da"
+  },
+  "8.3.25": {
+    "php_version": "8.3.25",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.25/php-8.3.25.tar.xz",
+    "php_sha256": "1555343ff0b6cee10defd2c007ff3870bc008f645bd6de1f758db705c5429cad"
+  },
+  "8.3.24": {
+    "php_version": "8.3.24",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.24/php-8.3.24.tar.xz",
+    "php_sha256": "b4aff8d58ea78aa75e55efe483176cbe0f9e0db9c24108c2376955d82165a4b5"
+  },
+  "8.3.23": {
+    "php_version": "8.3.23",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.23/php-8.3.23.tar.xz",
+    "php_sha256": "65e00210a3bb6f3f8e58e45a27cd4d6aef2196bb530f5777f9ea9931e5a9ff6a"
+  },
+  "8.3.22": {
+    "php_version": "8.3.22",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.22/php-8.3.22.tar.xz",
+    "php_sha256": "9bf4819eb59f5b5e697768c6f608a6a28c60323b6f0a3f3415f24beb4112ae38"
+  },
+  "8.3.21": {
+    "php_version": "8.3.21",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.21/php-8.3.21.tar.xz",
+    "php_sha256": "bfb219e3b16bcfee1771808e979ace4847c6c9255fee1ce237ac2e660e54bcb9"
+  },
+  "8.3.20": {
+    "php_version": "8.3.20",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.20/php-8.3.20.tar.xz",
+    "php_sha256": "08553b1eeb02ac5400a004acf759d0f12b195bd2b2e76b743842a1c233fcc4af"
+  },
+  "8.3.19": {
+    "php_version": "8.3.19",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.19/php-8.3.19.tar.xz",
+    "php_sha256": "50539c90f660c52a7770c8d2b17677acb5f48c7456edc919bc92432f1d7a312d"
+  },
+  "8.3.18": {
+    "php_version": "8.3.18",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.18/php-8.3.18.tar.xz",
+    "php_sha256": "1ced1267050d10cdf0052cbbb82deefa3a1138efeaee292a3c9f6b6b0732bf45"
+  },
+  "8.3.17": {
+    "php_version": "8.3.17",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.17/php-8.3.17.tar.xz",
+    "php_sha256": "4e25de40264b40e37830dfef01f4415ae2f7c49a09442159c50331ddee1c0eed"
+  },
+  "8.3.16": {
+    "php_version": "8.3.16",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.16/php-8.3.16.tar.xz",
+    "php_sha256": "ef3d2a0135af3c05ec3cb490144e2f3f41059c41254d4a23dd938c3c0d558d72"
+  },
+  "8.3.15": {
+    "php_version": "8.3.15",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.15/php-8.3.15.tar.xz",
+    "php_sha256": "2101d7eda6bc9496ed218e7ec2a73652c07d988d31307dd19838b54eb964e6bb"
+  },
+  "8.3.0": {
+    "php_version": "8.3.0",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.3.0/php-8.3.0.tar.xz",
+    "php_sha256": "0d1772d0026c7d2c88caf9a80713d7fd7e9bc1f06298da9dcd6ee02099ab8f33"
+  },
+  "8.2.0": {
+    "php_version": "8.2.0",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.2.0/php-8.2.0.tar.xz",
+    "php_sha256": "733e122ca75d6ce164a3fb64be3ee98f382b73c5c94ed665945bfa534d6755b6"
+  },
+  "8.1.0": {
+    "php_version": "8.1.0",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.1.0/php-8.1.0.tar.xz",
+    "php_sha256": "b1d7f381f3721ba7c97366fcaa344c82cb4fae9f1927d43b288516dcfbbddd73"
+  },
+  "8.0.0": {
+    "php_version": "8.0.0",
+    "php_url": "https://cloud.loongnix.cn/releases/loongarch64/php/php-src/8.0.0/php-8.0.0.tar.xz",
+    "php_sha256": "b73e771ad6935a5ce5176a78b22b906b570c64b3e81ea08dcbf3715d899ac654"
+  }
+}

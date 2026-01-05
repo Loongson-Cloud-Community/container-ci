@@ -9,7 +9,7 @@ latest_version() {
 		grep 'minirootfs' | \
 		grep -v '_rc' | \
 		grep 'loongarch64.tar.gz<' | \
-		grep -o '>alpine-minirootfs-3.22.0-loongarch64.tar.gz<' | \
+		grep -o ">alpine-minirootfs-${version}.*-loongarch64.tar.gz<" | \
 		sed -r 's/>alpine-minirootfs-(.*)-loongarch64.tar.gz</\1/' | \
 		sort -rV | \
 		head -n 1

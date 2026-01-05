@@ -7,7 +7,7 @@ for version in $versions; do
 
 	# 1.创建目录
 	rm -rf $version
-	mkdir $version
+	mkdir -p $version
 
 	# 2.拷贝Dockerfile
 	cp Dockerfile "$version/"

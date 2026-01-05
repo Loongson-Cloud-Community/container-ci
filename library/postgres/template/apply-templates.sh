@@ -4,6 +4,7 @@ set -Eeuo pipefail
 readonly ALPINE_VERSION_VARIANTS=(
 	'3.21'
 	'3.22'
+    '3.23'
 )
 
 generate_alpine(){

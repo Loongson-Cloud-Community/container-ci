@@ -1,7 +1,7 @@
 {
-    "7.4.5": {
-        "version": "7.4.5",
-        "url": "http://download.redis.io/releases/redis-7.4.5.tar.gz",
+    "7.4.7": {
+        "version": "7.4.7",
+        "url": "http://download.redis.io/releases/redis-7.4.7.tar.gz",
         "debian": {
             "version": "13"
         },
@@ -57,6 +57,6 @@
                 }
             }
         },
-        "sha256": "00bb280528f5d7934bec8ab309b8125088c209131e10609cb1563b91365633bb"
+        "sha256": "c97e57b0df330a9e091cacff012bebe763c275398cf36ff44cdba876814b595b"
     }
 }

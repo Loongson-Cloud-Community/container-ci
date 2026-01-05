@@ -113,8 +113,8 @@ process()
     prepare $version
     docker_build $version
     docker_push $version
-	_create_pr "$version" "alpine"
-	_create_pr "$version" "debian"
+#	_create_pr "$version" "alpine"
+#	_create_pr "$version" "debian"
 }
 
 process $1

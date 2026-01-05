@@ -3,15 +3,15 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM debian:trixie-slim
+FROM debian:forky-slim
 
 LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
 
-ENV NGINX_VERSION   1.29.0
-ENV NJS_VERSION     0.9.0
-ENV NJS_RELEASE     1~trixie
-ENV PKG_RELEASE     1~trixie
-ENV DYNPKG_RELEASE  1~trixie
+ENV NGINX_VERSION   1.29.4
+ENV NJS_VERSION     0.9.4
+ENV NJS_RELEASE     1~forky
+ENV PKG_RELEASE     1~forky
+ENV DYNPKG_RELEASE  1~forky
 
 RUN set -x \
 # create nginx user/group first, to be consistent throughout docker variants
@@ -48,7 +48,7 @@ RUN set -x \
     && case "$dpkgArch" in \
         amd64|arm64) \
 # arches officialy built by upstream
-            echo "deb [signed-by=$NGINX_GPGKEY_PATH] https://nginx.org/packages/debian/ trixie nginx" >> /etc/apt/sources.list.d/nginx.list \
+            echo "deb [signed-by=$NGINX_GPGKEY_PATH] https://nginx.org/packages/debian/ forky nginx" >> /etc/apt/sources.list.d/nginx.list \
             && apt-get update \
             ;; \
         *) \
