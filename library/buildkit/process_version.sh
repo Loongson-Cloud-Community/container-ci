@@ -150,6 +150,7 @@ test_variant() {
 
         echo "✅ Test passed for $IMAGE:$tag"
         docker buildx rm -f loongson-test
+	break
     done
     return 0
 }
