@@ -1,0 +1,83 @@
+FROM rust:1.92.0-trixie-slim AS planner
+WORKDIR /qdrant
+COPY . .
+RUN cargo install --version 0.1.73 cargo-chef \
+    && cargo chef prepare --recipe-path recipe.json
+
+
+FROM rust:1.92.0-trixie-slim AS builder
+WORKDIR /qdrant
+
+RUN apt-get update \
+    && apt-get install -y \
+        clang lld cmake protobuf-compiler jq curl unzip \
+        pkg-config gcc g++ libc6-dev libunwind-dev \
+    && rustup component add rustfmt \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN cargo install --version 0.1.73 cargo-chef
+
+COPY --from=planner /qdrant/recipe.json ./
+
+ARG PROFILE=release
+ARG FEATURES
+ENV RUSTFLAGS="-C link-arg=-fuse-ld=lld"
+# Set jemalloc page size for LoongArch (64KB page -> lg=16)
+ENV JEMALLOC_SYS_WITH_LG_PAGE=16
+
+RUN cargo chef cook --profile $PROFILE ${FEATURES:+--features "$FEATURES"} --recipe-path recipe.json
+
+COPY . .
+
+RUN mkdir -p /static && STATIC_DIR=/static ./tools/sync-web-ui.sh
+
+RUN cargo build --profile $PROFILE ${FEATURES:+--features "$FEATURES"} --bin qdrant
+
+RUN cargo install --version 0.10.0 cargo-sbom \
+    && cargo sbom > qdrant.spdx.json
+
+
+FROM rust:1.92.0-trixie-slim
+WORKDIR /qdrant
+
+ARG APP=/qdrant
+ARG USER_ID=0
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates tzdata libunwind8 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN if [ "$USER_ID" != 0 ]; then \
+        groupadd --gid "$USER_ID" qdrant; \
+        useradd --uid "$USER_ID" --gid "$USER_ID" -m qdrant; \
+        mkdir -p "$APP"/storage "$APP"/snapshots; \
+        chown -R "$USER_ID:$USER_ID" "$APP"; \
+    fi
+
+COPY --from=builder --chown=$USER_ID:$USER_ID /qdrant/target/release/qdrant "$APP"/qdrant
+COPY --from=builder --chown=$USER_ID:$USER_ID /qdrant/qdrant.spdx.json "$APP"/
+COPY --from=builder --chown=$USER_ID:$USER_ID /qdrant/config "$APP"/config
+COPY --from=builder --chown=$USER_ID:$USER_ID /qdrant/tools/entrypoint.sh "$APP"/entrypoint.sh
+COPY --from=builder --chown=$USER_ID:$USER_ID /static "$APP"/static
+
+WORKDIR "$APP"
+
+USER "$USER_ID:$USER_ID"
+
+ENV TZ=Etc/UTC \
+    RUN_MODE=production
+
+EXPOSE 6333
+EXPOSE 6334
+
+LABEL org.opencontainers.image.title="Qdrant"
+LABEL org.opencontainers.image.description="Official Qdrant image"
+LABEL org.opencontainers.image.url="https://qdrant.com/"
+LABEL org.opencontainers.image.documentation="https://qdrant.com/docs"
+LABEL org.opencontainers.image.source="https://github.com/qdrant/qdrant"
+LABEL org.opencontainers.image.vendor="Qdrant"
+
+CMD ["./entrypoint.sh"]
+
