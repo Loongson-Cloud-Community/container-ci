@@ -6,10 +6,24 @@ source "$(dirname $0)/lib.sh"
 
 readonly ORG='library'
 readonly PROJ='node'
+
+git_commit() 
+{
+    versions=$(echo "$1" | tr '\n' ' ')
+	git add .
+
+    git config user.name "qiangxuhui"
+    git config user.email "qiangxuhui@loongson.cn"
+    git commit -m "$ORG $PROJ: Add versions: $versions"
+    git pull --rebase
+    git push origin main
+}
+
+
 main()
 {
     # 1.获取要构建的版本
-    readarray -t versions <<< $(./fetch_versions.sh)
+    IFS=$'\n' versions=($(./fetch_versions.sh))
 
     if [[ -z "$versions" ]]; then
         log INFO "No versions need updating"
@@ -22,18 +36,14 @@ main()
     for version in ${versions[@]}
     do
         log INFO "Process version $version"
-        ./process_version.sh $version
+        ./process_version.sh ${version}
+		update_versions_file "processed_versions.txt" "${version}"
     done
 
-    ## 3.成功后更新 version.txt
-    if [[ ! -z $versions ]]; then
-        update_versions_file "versions.txt" "${versions[*]}"
-    fi
+    git_commit "${versions[*]}"
 
-    # 4. 提交仓库
-    git_commit "$ORG" "$PROJ" "${versions[*]}"
-
-    log INFO "All Versions:\n$(cat versions.txt)"
+    log INFO "All Versions:\n$(cat processed_versions.txt)"
 }
 
-main "$@"
+main
+
