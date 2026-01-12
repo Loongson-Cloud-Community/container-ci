@@ -8,6 +8,7 @@ RUN addgroup -g 1000 node \
         libstdc++ \
         openssl \
         openssl-dev \
+        libatomic \
     && apk add --no-cache --virtual .build-deps \
         curl \
     && ARCH= OPENSSL_ARCH='linux*' && alpineArch="$(apk --print-arch)" \
