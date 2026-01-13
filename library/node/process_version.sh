@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exo pipefail
+set -eo pipefail
 
 source "$(dirname $0)/lib.sh"
 
