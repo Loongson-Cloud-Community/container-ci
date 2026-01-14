@@ -7,7 +7,7 @@ on:
 
 jobs:
     ci:
-      if: github.repository == 'Loongson-Cloud-Community/release-ci'
+      if: github.repository == 'Loongson-Cloud-Community/container-ci'
       runs-on: self-hosted
       steps:
           - name: Checkout Code
