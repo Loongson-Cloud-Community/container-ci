@@ -16,4 +16,4 @@ jobs:
           - name: Run ci.sh
             run: |
               date
-              pushd langgenius/dify-plugin-daemon && ./ci.sh && pop
+              pushd langgenius/dify-plugin-daemon && ./ci.sh && popd

@@ -16,4 +16,4 @@ jobs:
           - name: Run ci.sh
             run: |
               date
-              pushd {{ .org }}/{{ .repo }} && ./ci.sh && pop
+              pushd {{ .org }}/{{ .repo }} && ./ci.sh && popd

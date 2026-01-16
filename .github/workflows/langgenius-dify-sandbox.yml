@@ -16,4 +16,4 @@ jobs:
           - name: Run ci.sh
             run: |
               date
-              pushd langgenius/dify-sandbox && ./ci.sh && pop
+              pushd langgenius/dify-sandbox && ./ci.sh && popd
