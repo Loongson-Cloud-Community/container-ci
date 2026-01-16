@@ -16,4 +16,4 @@ jobs:
           - name: Run ci.sh
             run: |
               date
-              pushd qdrant/qdrant && ./ci.sh && pop
+              pushd qdrant/qdrant && ./ci.sh && popd
