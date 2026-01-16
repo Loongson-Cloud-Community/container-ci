@@ -7,7 +7,7 @@ source "$(dirname $0)/lib.sh"
 git_commit() 
 {
     versions=$(echo "$1" | tr '\n' ' ')
-    git add versions.txt
+    git add processed_versions.txt
     git add sources
 
     git config user.name "github-actions[bot]"
@@ -88,12 +88,12 @@ main()
 
     # 4.成功后更新 version.txt 并提交仓库
     if [[ ! -z $versions ]]; then
-        update_versions_file "versions.txt" "${versions[*]}"
+        update_versions_file "processed_versions.txt" "${versions[*]}"
     fi
     
     #git_commit "${versions[*]}"
 
-    log INFO "All Versions:\n$(cat versions.txt)"
+    log INFO "All Versions:\n$(cat processed_versions.txt)"
 }
 
 main "$@"

@@ -27,13 +27,13 @@ main()
 
     ## 3.成功后更新 version.txt
     if [[ ! -z $versions ]]; then
-        update_versions_file "versions.txt" "${versions[*]}"
+        update_versions_file "processed_versions.txt" "${versions[*]}"
     fi
 
     # 4. 提交仓库
     #git_commit "$ORG" "$PROJ" "${versions[*]}"
 
-    log INFO "All Versions:\n$(cat versions.txt)"
+    log INFO "All Versions:\n$(cat processed_versions.txt)"
 }
 
 main "$@"
