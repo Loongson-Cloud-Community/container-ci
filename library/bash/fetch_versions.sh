@@ -14,7 +14,7 @@ fetch_versions() {
 
     (echo "$versions" \
         | sort -V \
-        | grep -Fxv -f versions.txt \
+        | grep -Fxv -f processed_versions.txt \
         | grep -Fxv -f <(printf "%s\n" "${IGNORE_VERSIONS[@]}")) || true
 }
 

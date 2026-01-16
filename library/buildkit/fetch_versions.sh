@@ -29,7 +29,7 @@ fetch_versions() {
     (echo "$versions" \
 	| sed 's/^v//' \
         | grep -Fvx -f <(printf "%s\n" ${IGNORE_VERSIONS[@]}) \
-        | grep -Fvx -f versions.txt
+        | grep -Fvx -f processed_versions.txt
     ) || true
 
 }

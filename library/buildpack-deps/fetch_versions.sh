@@ -7,7 +7,7 @@ set -eo pipefail
 fetch_versions() {
     local versions=("debian")
 
-    echo $versions | grep -Fxv -f versions.txt || true
+    echo $versions | grep -Fxv -f processed_versions.txt || true
 }
 
 fetch_versions

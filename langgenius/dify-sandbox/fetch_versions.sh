@@ -41,7 +41,7 @@ fetch_versions() {
     # 过滤 忽略和已构建的版本
     echo "$versions" \
         | grep -Fvx -f <(printf "%s\n" "${IGNORE_VERSIONS[@]}") \
-        | grep -Fvx -f versions.txt \
+        | grep -Fvx -f processed_versions.txt \
         || true
 }
 

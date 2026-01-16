@@ -15,7 +15,7 @@ fetch_versions() {
             | cut -d '"' -f 2 | cut -d '/' -f 1
         )
 
-    echo "$version" | grep -Fxv -f versions.txt || true
+    echo "$version" | grep -Fxv -f processed_versions.txt || true
 }
 
 fetch_versions "$@"
