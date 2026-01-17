@@ -7,7 +7,7 @@ source "$(dirname $0)/lib.sh"
 git_commit() 
 {
     versions=$(echo "$1" | tr '\n' ' ')
-    # git add processed_processed_versions.txt
+    # git add processed_versions.txt
     # git add sources
 	git add .
 
@@ -36,12 +36,12 @@ main()
     do
         log INFO "Process version $version"
         ./process_version.sh ${version}
-		update_versions_file "processed_processed_versions.txt" "${version}"
+		update_versions_file "processed_versions.txt" "${version}"
     done
 
     git_commit "${versions[*]}"
 
-    log INFO "All Versions:\n$(cat processed_processed_versions.txt)"
+    log INFO "All Versions:\n$(cat processed_versions.txt)"
 }
 
 main
