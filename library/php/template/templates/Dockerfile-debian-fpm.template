@@ -6,11 +6,6 @@
 
 FROM lcr.loongnix.cn/library/debian:{{ debian_version }}-slim
 
-RUN if grep 'debian-ports' /etc/apt/sources.list.d/debian.sources; then \
-        rm -rf /etc/apt/sources.list.d/debian.sources; \
-        echo 'deb [trusted=yes] http://mirrors.aliyun.com/debian-ports sid main' > /etc/apt/sources.list.d/debian-ports.list; \
-    fi;
-
 
 # prevent Debian's PHP packages from being installed
 # https://github.com/docker-library/php/pull/542
