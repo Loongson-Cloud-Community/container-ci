@@ -5,7 +5,7 @@ set -u
 
 readonly ORG='langgenius'
 readonly PROJ='dify-plugin-daemon'
-readonly TAGS_COUNT='2'
+readonly TAGS_COUNT='1'
 readonly STRIP_VERSION_PREFIX='true'
 
 declare -a IGNORE_VERSIONS=()

@@ -40,7 +40,7 @@ docker_build() {
     cmd+=" $context"
 
     log INFO "$cmd"
-    DOCKER_BUILDKIT=0 $cmd
+    $cmd
 }
 
 validata_version()

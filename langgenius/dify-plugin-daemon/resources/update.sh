@@ -22,6 +22,9 @@ tar -xzf $version-src.tar.gz -C $target_dir --strip-components=1
 pushd $target_dir/docker
 cp "local.dockerfile" ..
 sed -i '/^FROM ubuntu/c\FROM debian:forky' "../local.dockerfile"
+sed -i 's/python3.12/python3/g' "../local.dockerfile"
+sed -i 's/python3\/EXTERNALLY-MANAGED/python3.13\/EXTERNALLY-MANAGED/g' "../local.dockerfile"
+sed -i 's/python3 1/python3.13 1/' "../local.dockerfile"
 sed -i '/python3 -m pip install uv/s/$/==0.9.9 -i https:\/\/lpypi.loongnix.cn\/loongson\/pypi\/+simple/' "../local.dockerfile"
 sed -i '/uv pip install --system dify_plugin/s/$/ -i https:\/\/lpypi.loongnix.cn\/loongson\/pypi\/+simple/' "../local.dockerfile"
 
