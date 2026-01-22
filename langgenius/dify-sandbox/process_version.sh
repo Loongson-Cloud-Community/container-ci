@@ -72,27 +72,14 @@ prepare()
         log ERROR "update.sh script failed for version: $version"
         exit 1
     }
-
-    # 准备构建环境：其它文件
-    cp "go-files-loong64/python-syscalls_loong64.go" "$src/internal/static/python_syscall/syscalls_loong64.go"
-    cp "go-files-loong64/nodejs-syscalls_loong64.go" "$src/internal/static/nodejs_syscall/syscalls_loong64.go"
-    cp "go-files-loong64/config_default_loong64.go" "$src/internal/static/"
-    cp "go-files-loong64/seccomp_syscall_loong64.go" "$src/internal/core/lib/"
-    pushd $src
-    cp "build/build_amd64.sh" "build/build_loong64.sh"
-    sed -i 's/amd64/loong64/g' "build/build_loong64.sh"
-    ./build/build_loong64.sh
-    
-    popd
-
-    mkdir "$context/conf" "$context/dependencies"
-    cp "$src/main" "$context"
-    cp "$src/env" "$context"
+    mkdir -p "$context/conf" "$context/dependencies"
     cp "$src/conf/config.yaml" "$context/conf"
     cp "$src/dependencies/python-requirements.txt" "$context/dependencies"
 
-    rm -rf "$src" 
-    rm -f "$version-src.tar.gz"
+    wget -O $context/env --quiet --show-progress https://github.com/loongarch64-releases/dify-sandbox/releases/download/$version/env
+    wget -O $context/main --quiet --show-progress https://github.com/loongarch64-releases/dify-sandbox/releases/download/$version/main
+
+    rm -rf "$src" "$version-src.tar.gz"
     popd
 }
 
