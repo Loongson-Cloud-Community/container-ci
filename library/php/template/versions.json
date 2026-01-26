@@ -1,4 +1,9 @@
 {
+  "8.5.2": {
+    "php_version": "8.5.2",
+    "php_url": "https://www.php.net/distributions/php-8.5.2.tar.xz",
+    "php_sha256": "cb75a9b00a2806f7390dd64858ef42a47b443b3475769c8af6af33a18b1381f1"
+  },
   "8.4.15": {
     "php_version": "8.4.15",
     "php_url": "https://www.php.net/distributions/php-8.4.15.tar.xz",
