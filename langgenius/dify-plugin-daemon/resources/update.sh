@@ -19,7 +19,14 @@ mkdir -p "$target_dir"
 # 准备构建环境
 wget -O $version-src.tar.gz --quiet --show-progress https://github.com/$ORG/$PROJ/archive/refs/tags/$version.tar.gz
 tar -xzf $version-src.tar.gz -C $target_dir --strip-components=1
-pushd $target_dir/docker
+pushd $target_dir
+cat > uv.toml <<'EOF'
+[[index]]
+url = "https://lpypi.loongnix.cn/loongson/pypi/+simple"
+default = true
+EOF
+
+pushd docker
 cp "local.dockerfile" ..
 sed -i '/^FROM ubuntu/c\FROM debian:forky' "../local.dockerfile"
 sed -i '/EXTERNALLY-MANAGED/d' "../local.dockerfile"
@@ -49,9 +56,12 @@ sed -i '/install -y/a\
     libreadline-dev libsqlite3-dev libncursesw5-dev \\\
     xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev \\\
     liblzma-dev libexpat1-dev \\' "../local.dockerfile"
+sed -i '/COPY --from=builder/a\
+COPY --from=builder \/app\/uv.toml \/etc\/uv\/uv.toml' "../local.dockerfile"
 
 cp "serverless.dockerfile" ..
 sed -i '/^FROM alpine/c\FROM alpine:3.23' "../serverless.dockerfile"
+popd
 popd
 
 rm -f "$version-src.tar.gz"
