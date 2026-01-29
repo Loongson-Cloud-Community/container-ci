@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-DEBIAN_MIRROR='https://snapshot.debian.org/archive/debian-ports'
+DEBIAN_MIRROR='https://snapshot.debian.org/archive/debian'
 
 # 仅获取一个版本
 fetch_versions() {

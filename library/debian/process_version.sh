@@ -9,7 +9,7 @@ source "$(dirname $0)/lib.sh"
 readonly REGISTRY='lcr.loongnix.cn'
 readonly ORG='library'
 readonly PROJ='debian'
-readonly SUITE='sid'
+readonly SUITE='unstable'
 readonly ARCH='loong64'
 readonly OUT_DIR='out'
 
@@ -31,8 +31,8 @@ time_version="${1%T*}"
 debian_tags=(
     "$debian_version"
     "$debian_version_name"
-    "sid"
-    "sid-$time_version"
+    "$SUITE"
+    "$SUITE-$time_version"
     "latest"
 )
 
@@ -40,8 +40,8 @@ debian_tags=(
 debian_slim_tags=(
     "$debian_version-slim"
     "$debian_version_name-slim"
-    "sid-slim"
-    "sid-$time_version-slim"
+    "$SUITE-slim"
+    "$SUITE-$time_version-slim"
 )
 
 # Prepare $version
@@ -75,12 +75,12 @@ build_rootfs()
         -e https_proxy="$https_proxy" \
         -e http_proxy="$http_proxy" \
         debuerreotype/debuerreotype:latest \
-        /opt/debuerreotype/examples/debian.sh --ports --arch "$ARCH" . "$SUITE" "@$timestamp"
+        /opt/debuerreotype/examples/debian.sh --arch "$ARCH" . "$SUITE" "@$timestamp"
 
     # 修改 rootfs url 为固定的 snapshot url
-    snapshotUrl=$(cat ./"$OUT_DIR"/"$time_version"/"$ARCH"/snapshot-url)
-    ./modify-rootfs-url.sh "$OUT_DIR/$time_version/$ARCH/$SUITE/rootfs.tar.xz" "$snapshotUrl"
-    ./modify-rootfs-url.sh "$OUT_DIR/$time_version/$ARCH/$SUITE/slim/rootfs.tar.xz" "$snapshotUrl"
+    #snapshotUrl=$(cat ./"$OUT_DIR"/"$time_version"/"$ARCH"/snapshot-url)
+    #./modify-rootfs-url.sh "$OUT_DIR/$time_version/$ARCH/$SUITE/rootfs.tar.xz" "$snapshotUrl"
+    #./modify-rootfs-url.sh "$OUT_DIR/$time_version/$ARCH/$SUITE/slim/rootfs.tar.xz" "$snapshotUrl"
 }
 
 build_images()
