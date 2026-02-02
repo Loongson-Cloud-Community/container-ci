@@ -66,7 +66,7 @@ git_commit()
     local org="$1"
     local proj="$2"
     local versions="$3"
-    git add versions.txt
+    git add processed_versions.txt
     git add resources
 
     git config user.name "github-actions[bot]"
