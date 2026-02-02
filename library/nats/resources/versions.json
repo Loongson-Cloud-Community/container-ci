@@ -449,6 +449,15 @@
     },
     "version": "2.12.3"
   },
+  "2.12.4": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "sha256": {
+      "loong64": "e58995ac0402050a0bd6a9513fc144e9f8f6bb01224fdeb5476691cad187a1c7"
+    },
+    "version": "2.12.4"
+  },
   "2.2.0": {
     "alpine": {
       "version": "3.22"
