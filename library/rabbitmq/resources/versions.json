@@ -178,5 +178,25 @@
       "version": "24.04"
     },
     "version": "4.2.2"
+  },
+  "4.2.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    },
+    "openssl": {
+      "sha256": "22db04f3c8f9a808c9795dcf7d2713ff40c12c410ea2d1f6435c6c9c8558958b",
+      "version": "3.3.6"
+    },
+    "otp": {
+      "sha256": "658529f94cc5b8833907aa680a5e979e67c32dd6ebba69ed3b90b95f526ccda2",
+      "version": "27.3.4.6"
+    },
+    "ubuntu": {
+      "version": "24.04"
+    },
+    "version": "4.2.3"
   }
 }
