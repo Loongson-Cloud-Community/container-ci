@@ -61,7 +61,7 @@ alpine_apply() {
 
 debian_apply() {
     local php_version=$1
-    for debian_version in trixie; do
+    for debian_version in unstable; do
         for target_type in cli fpm zts apache; do
             debian_apply_single "${php_version}" "${debian_version}" "${target_type}"
         done
