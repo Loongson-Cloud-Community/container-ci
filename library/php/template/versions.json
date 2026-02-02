@@ -1,4 +1,9 @@
 {
+  "8.3.28": {
+    "php_version": "8.3.28",
+    "php_url": "https://www.php.net/distributions/php-8.3.28.tar.xz",
+    "php_sha256": "25e3860f30198a386242891c0bf9e2955931f7b666b96c3e3103d36a2a322326"
+  },
   "8.5.2": {
     "php_version": "8.5.2",
     "php_url": "https://www.php.net/distributions/php-8.5.2.tar.xz",
@@ -83,11 +88,6 @@
     "php_version": "8.4.0",
     "php_url": "https://www.php.net/distributions/php-8.4.0.tar.xz",
     "php_sha256": "null"
-  },
-  "8.3.28": {
-    "php_version": "8.3.28",
-    "php_url": "https://www.php.net/distributions/php-8.3.28.tar.xz",
-    "php_sha256": "25e3860f30198a386242891c0bf9e2955931f7b666b96c3e3103d36a2a322326"
   },
   "8.3.27": {
     "php_version": "8.3.27",
