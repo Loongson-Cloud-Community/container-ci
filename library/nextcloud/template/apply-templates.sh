@@ -44,7 +44,7 @@ debian_apply() {
     local nextcloud_version=$1
 
     for target_type in apache fpm; do
-        local base_image_tag="8.3.28-${target_type}-trixie"
+        local base_image_tag="8.3.28-${target_type}-unstable"
         debian_apply_single "${nextcloud_version}" "${base_image_tag}" "${target_type}"
     done
     
