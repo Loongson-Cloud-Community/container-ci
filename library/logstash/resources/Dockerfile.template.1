@@ -1,0 +1,90 @@
+# Build env2yaml
+FROM golang:1.25 AS builder-env2yaml
+
+COPY env2yaml/* /tmp/go/src/env2yaml/
+
+WORKDIR /tmp/go/src/env2yaml
+
+RUN if [ -f go.mod ] && [ -f go.sum ]; then \
+        go build -trimpath -o env2yaml; \
+    else \
+        go mod init env2yaml; \
+        GOPROXY=https://goproxy.cn,direct GOSUMDB=sum.golang.google.cn go mod tidy; \
+        go build -trimpath -o env2yaml; \
+    fi
+
+
+FROM lcr.loongnix.cn/library/debian:14-slim
+
+ENV LS_VERSION {{ version }}
+
+ENV ELASTIC_CONTAINER=true
+ENV PATH=/usr/share/logstash/bin:$PATH
+ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+
+WORKDIR /usr/share
+
+RUN for iter in {1..10}; do \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        procps findutils tar gzip wget locales ca-certificates && \
+    apt-get clean all && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen 'en_US.UTF-8' && \
+    exit_code=0 && break || exit_code=$? && \
+    echo "packaging error: retry $iter in 10s" && \
+    apt-get clean all && \
+    rm -rf /var/lib/apt/lists/* && \
+    sleep 10; \
+done; \
+(exit $exit_code)
+
+# Create non-root user
+RUN groupadd --gid 1000 logstash && \
+    useradd --uid 1000 --gid 1000 \
+      --home-dir /usr/share/logstash --no-create-home \
+      logstash
+
+# Download and extract Logstash for loongarch64
+RUN wget -O logstash.tar.gz --quiet --show-progress https://github.com/loongarch64-releases/logstash/releases/download/${LS_VERSION}/logstash-${LS_VERSION}-linux-loongarch64.tar.gz && \
+    tar -zxf logstash.tar.gz -C /usr/share \
+        --no-same-owner \
+        --no-same-permissions && \
+    rm logstash.tar.gz && \
+    mv /usr/share/logstash-${LS_VERSION} /usr/share/logstash && \
+    chown -R logstash:root /usr/share/logstash && \
+    chmod -R g=u /usr/share/logstash && \
+    mkdir /licenses && \
+    mv /usr/share/logstash/NOTICE.TXT /licenses/NOTICE.TXT 2>/dev/null || true && \
+    mv /usr/share/logstash/LICENSE.txt /licenses/LICENSE.txt 2>/dev/null || true && \
+    find /usr/share/logstash -type d -exec chmod g+s {} \; && \
+    ln -s /usr/share/logstash /opt/logstash
+
+
+COPY --from=builder-env2yaml /tmp/go/src/env2yaml/env2yaml /usr/local/bin/env2yaml
+COPY --chown=logstash:root config/pipelines.yml config/log4j2.properties config/log4j2.file.properties /usr/share/logstash/config/
+COPY --chown=logstash:root config/logstash-full.yml /usr/share/logstash/config/logstash.yml
+COPY --chown=logstash:root pipeline/default.conf /usr/share/logstash/pipeline/logstash.conf
+COPY --chmod=0755 bin/docker-entrypoint /usr/local/bin/
+
+WORKDIR /usr/share/logstash
+
+USER 1000
+
+EXPOSE 9600 5044
+
+
+LABEL org.label-schema.schema-version="1.0" \
+      org.label-schema.name="logstash" \
+      org.label-schema.version="${LS_VERSION}" \
+      org.label-schema.vendor="Elastic" \
+      org.opencontainers.image.title="Logstash" \
+      org.opencontainers.image.version="${LS_VERSION}" \
+      org.opencontainers.image.vendor="Elastic" \
+      org.opencontainers.image.licenses="Elastic License"
+
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
