@@ -122,7 +122,7 @@ main()
 {
     prepare
     build
-    #upload
+    upload
 }
 
 main
