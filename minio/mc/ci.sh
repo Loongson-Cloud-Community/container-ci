@@ -31,7 +31,7 @@ main()
     fi
 
     # 4. 提交仓库
-    git_commit "$ORG" "$PROJ" "${versions[*]}"
+    #git_commit "$ORG" "$PROJ" "${versions[*]}"
 
     log INFO "All Versions:\n$(cat processed_versions.txt)"
 }
