@@ -1,0 +1,30 @@
+FROM debian:14-slim
+
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates curl libaio-dev libgomp1 libopenblas-dev tzdata tini && \
+        ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
+        echo "Etc/UTC" > /etc/timezone && \
+    apt-get remove --purge -y && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN ln -sf /usr/bin/tini /tini && \
+    ln -sf /usr/lib/loongarch64-linux-gnu/libaio.so.1t64 \
+           /usr/lib/loongarch64-linux-gnu/libaio.so.1
+
+RUN mkdir -p /milvus/bin
+COPY --chown=root:root --chmod=774 ./milvus /milvus/bin/milvus
+
+COPY --chown=root:root --chmod=774 ./configs/ /milvus/configs/
+
+COPY --chown=root:root --chmod=774 ./lib/ /milvus/lib/
+
+ENV PATH=/milvus/bin:$PATH
+ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
+ENV MALLOC_CONF=background_thread:true
+
+ENTRYPOINT ["/tini", "--"]
+
+WORKDIR /milvus/
