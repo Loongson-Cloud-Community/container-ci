@@ -223,5 +223,14 @@
       "version": "trixie"
     },
     "version": "1.37.2"
+  },
+  "1.37.3": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    },
+    "version": "1.37.3"
   }
 }
