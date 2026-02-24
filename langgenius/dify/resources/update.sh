@@ -18,6 +18,10 @@ mkdir -p "$target_dir"
 tar -xzf $version-src.tar.gz -C $target_dir --strip-components=1
 
 sed -i '/^FROM node/c\FROM node:22-alpine-3.22 AS base' "$target_dir/web/Dockerfile" # web
+sed -i "/RUN pnpm build:docker/i \
+RUN sed -i 's/next build/next build --webpack/' package.json \\
+ENV NEXT_FORCE_WEBPACK=1" "$target_dir/web/Dockerfile"
+
 cp api-dockerfile.template "$target_dir/api/Dockerfile" # api
 
 echo "[✓] dockerfiles of web and api generated at $target_dir/web and $target_dir/api respectively"
