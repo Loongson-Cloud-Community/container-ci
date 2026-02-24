@@ -17,7 +17,6 @@ RUN set -xe \
 	&& buildDeps='unixodbc-dev \
 			libsctp-dev ' \
 	&& apt-get update \
-        && apt-get upgrade -y \
 	&& apt-get install -y --no-install-recommends $runtimeDeps \
 	&& apt-get install -y --no-install-recommends $buildDeps \
 	&& curl -fSL -o otp-src.tar.gz "$OTP_DOWNLOAD_URL" \
