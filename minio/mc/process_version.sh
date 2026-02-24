@@ -39,8 +39,6 @@ docker_build() {
 
     local cmd="docker build"
     cmd+=" -f $dockerfile"
-    cmd+=" --build-arg https_proxy=$https_proxy"
-    cmd+=" --build-arg http_proxy=$http_proxy"
 
     local target_str=""
     for target in ${targets[@]}; do
