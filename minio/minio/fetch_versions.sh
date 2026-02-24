@@ -22,7 +22,7 @@ fetch_versions() {
     versions=$(get_github_tags "$ORG" "$PROJ" \
 	    | grep '^RELEASE\.' \
             | sort -rV \
-            | head -30
+            | head -2
     )
 
     ## 过滤 忽略和已构建的版本
