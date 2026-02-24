@@ -17,11 +17,14 @@ mkdir -p "$target_dir"
 echo "[*] Fetching mc version from minio image: $minio_version..."
 
 # 提取 mc 版本（例如 RELEASE.2025-06-13T11-33-47Z）
-mc_version=$(docker run --rm --entrypoint=/bin/bash --platform linux/amd64 "quay.io/minio/minio:$minio_version" -c "mc --version" 2>/dev/null \
-    | grep -o 'RELEASE\.[0-9T:-]*Z' \
-    | head -n1)
-
-docker rmi -f quay.io/minio/minio:$minio_version
+#mc_version=$(docker run --rm --entrypoint=/bin/bash --platform linux/amd64 "quay.io/minio/minio:$minio_version" -c "mc --version" 2>/dev/null \
+#    | grep -o 'RELEASE\.[0-9T:-]*Z' \
+#    | head -n1)
+#docker rmi -f quay.io/minio/minio:$minio_version
+mc_version=$(curl -s https://api.github.com/repos/minio/mc/tags | jq -r '.[].name' \
+    | grep '^RELEASE\.' \
+    | sort -rV \
+    | head -1)
 
 if [ -z "$mc_version" ]; then
     echo "[!] Failed to detect mc version from minio:$minio_version"
