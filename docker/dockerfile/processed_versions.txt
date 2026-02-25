@@ -76,3 +76,5 @@ dockerfile/1.21.0
 dockerfile/1.21.0-labs
 dockerfile/1.21.0-rc1
 dockerfile/1.21.0-rc1-labs
+dockerfile/1.22.0-rc1
+dockerfile/1.22.0-rc1-labs
