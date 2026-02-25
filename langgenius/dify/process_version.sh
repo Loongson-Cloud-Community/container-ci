@@ -98,7 +98,7 @@ build_variant()
     local variant="$1"
     local base_context="$2"
 
-    local components=("api" "web")
+    local components=("web" "api")
     for comp in "${components[@]}"; do
 	build_component "$comp" "$base_context" "$variant"
     done
