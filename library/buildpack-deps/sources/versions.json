@@ -1,4 +1,12 @@
 {
+  "debian/forky": {
+    "suite": "testing",
+    "variants": [
+      "curl",
+      "scm",
+      ""
+    ]
+  },
   "debian/trixie": {
     "suite": "testing",
     "variants": [
