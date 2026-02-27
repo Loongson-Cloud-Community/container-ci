@@ -9,25 +9,27 @@ readonly ORG='library'
 readonly PROJ='buildpack-deps'
 
 readonly SOURCES_DIR='sources'
+readonly BASEOS='debian'
 
+version="$1"
 
 ### 配置容器名称
 readonly image_name="${REGISTRY}/${ORG}/${PROJ}"
-readonly debian_variant='trixie'
+readonly debian_variant="$version"
 
 declare -a major_images=(
+    "$PROJ:$debian_variant"
     "$image_name:$debian_variant"
-    "$image_name:sid"
 )
 
 declare -a scm_images=(
+    "$PROJ:$debian_variant-scm"
     "$image_name:$debian_variant-scm"
-    "$image_name:sid-scm"
 )
 
 declare -a curl_images=(
+    "$PROJ:$debian_variant-curl"
     "$image_name:$debian_variant-curl"
-    "$image_name:sid-curl"
 )
 ### 配置容器名称 END
 
@@ -49,13 +51,13 @@ prepare()
         exit 1
     }
 
-    mkdir -p "$version"
+    #mkdir -p "$version"
 
     ./versions.sh "$version" || {
         log ERROR "version.sh script failed for version: $version"
     }
 
-    ./update.sh || {
+    ./update.sh "$version" || {
         log ERROR "update.sh script failed for version: $version"
         exit 1
     }
@@ -90,17 +92,17 @@ build()
     log INFO "Building Docker image: $image"
     
     # build curl
-    pushd "$SOURCES_DIR"/"$version"/"$debian_variant/curl"
+    pushd "$SOURCES_DIR"/"$BASEOS"/"$debian_variant/curl"
     docker_build 'Dockerfile' '.' "${curl_images[@]}"
     popd
 
     # build scm
-    pushd "$SOURCES_DIR"/"$version"/"$debian_variant/scm"
+    pushd "$SOURCES_DIR"/"$BASEOS"/"$debian_variant/scm"
     docker_build 'Dockerfile' '.' "${scm_images[@]}"
     popd
 
     # build trixie
-    pushd "$SOURCES_DIR"/"$version"/"$debian_variant"
+    pushd "$SOURCES_DIR"/"$BASEOS"/"$debian_variant"
     docker_build 'Dockerfile' '.' "${major_images[@]}"
     popd
 
