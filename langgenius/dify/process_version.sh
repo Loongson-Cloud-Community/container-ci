@@ -129,7 +129,7 @@ main()
 {
     prepare "$version"
     build
-    #upload
+    upload
     clean
 }
 

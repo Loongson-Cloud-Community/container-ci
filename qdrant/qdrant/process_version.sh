@@ -118,7 +118,7 @@ main()
 {
     prepare "$version"
     build "$version"
-    #upload "$version"
+    upload "$version"
     post_process
 }
 
