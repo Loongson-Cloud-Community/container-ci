@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-CRON='0 20 * * *'
+CRON='0 18 * * *'
 
 for f in *.yml; do
     echo "Update cron $f"
