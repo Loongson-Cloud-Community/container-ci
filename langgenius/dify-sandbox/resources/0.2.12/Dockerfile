@@ -1,0 +1,39 @@
+FROM python:3.10-sid
+
+# if you located in China, you can use aliyun mirror to speed up
+# && echo "deb http://mirrors.aliyun.com/debian testing main" > /etc/apt/sources.list
+RUN true \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       pkg-config \
+       libseccomp-dev \
+       wget \
+       curl \
+       xz-utils \
+       zlib1g \
+       expat \
+       perl \
+       libsqlite3-0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# copy main binary to /main
+COPY main /main
+# copy initial env
+COPY env /env
+
+# copy config file
+COPY conf/config.yaml /conf/config.yaml
+# copy python dependencies
+COPY dependencies/python-requirements.txt /dependencies/python-requirements.txt
+
+RUN chmod +x /main /env \
+    && pip3 install --no-cache-dir httpx==0.27.2 requests==2.32.3 jinja2==3.0.3 PySocks httpx[socks] \
+    && wget -O /opt/node-v20.11.1-linux-loong64.tar.xz https://github.com/loong64/node/releases/download/v20.11.1/node-v20.11.1-linux-loong64.tar.xz \
+    && tar --no-same-owner --no-same-permissions -xvf /opt/node-v20.11.1-linux-loong64.tar.xz -C /opt || true \
+    && ln -s /opt/node-v20.11.1-linux-loong64/bin/node /usr/local/bin/node \
+    && rm -f /opt/node-v20.11.1-linux-loong64.tar.xz \
+    && /env \
+    && rm -f /env
+
+ENTRYPOINT ["/main"]
