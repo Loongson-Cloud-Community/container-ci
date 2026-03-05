@@ -1,0 +1,17 @@
+release/
+logs/
+.vscode/
+.idea/
+.env
+cmd/**/__debug_bin*
+*.zip
+.DS_Store
+storage/
+__pycache__
+media-cache
+subprocesses
+working
+cwd/
+bin/
+.venv/
+integration_test_cwd/
