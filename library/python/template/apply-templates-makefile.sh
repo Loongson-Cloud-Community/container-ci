@@ -22,7 +22,7 @@ gen_tags() {
 	local -r os=${parts[-1]}
 
 	# 拼接出标签
-	if [[ $os = 'trixie' ]]; then
+	if [[ $os = 'forky' ]]; then
 		echo "${version}-${os},${version}"
 		return
 	fi

@@ -195,7 +195,7 @@ for version in "${versions[@]}"; do
 			version: env.fullVersion,
 			variants: [
 				(
-					"trixie",
+					"forky",
 					empty
 				| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 				(
