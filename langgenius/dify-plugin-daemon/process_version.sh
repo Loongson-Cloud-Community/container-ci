@@ -101,7 +101,7 @@ upload()
     for variant in ${!VARIANTS[@]}; do
         local tags="${VARIANTS[$variant]}"
         for tag in ${tags[@]}; do
-            docker push $IMAGE:$tag
+            docker push $IMAGE:$tag-local
         done
     done
 }
