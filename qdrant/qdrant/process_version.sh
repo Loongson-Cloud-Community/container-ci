@@ -108,18 +108,19 @@ upload()
     done
 }
 
-post_process()
+clean()
 {
-    rm -f $RESOURCES/$version-src.tar.gz
-    rm -rf $RESOURCES/$context 
+    local context=$version
+    rm -f "$CONTEXT_PREFIX/$version-src.tar.gz"
+    rm -rf "$CONTEXT_PREFIX/$context"
 }
 
 main()
 {
     prepare "$version"
-    build "$version"
-    upload "$version"
-    post_process
+    build
+    upload
+    clean
 }
 
 main

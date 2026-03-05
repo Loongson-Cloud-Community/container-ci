@@ -106,11 +106,19 @@ upload()
     done
 }
 
+clean()
+{
+    local context=$version
+    rm -f "$CONTEXT_PREFIX/$version-src.tar.gz"
+    rm -rf "$CONTEXT_PREFIX/$context"
+}
+
 main()
 {
     prepare "$version"
-    build "$version"
-    upload "$version"
+    build
+    upload
+    clean
 }
 
 main

@@ -112,6 +112,12 @@ upload()
     done
 }
 
+clean()
+{
+    local context=$version
+    rm -rf "$CONTEXT_PREFIX/$context"
+}
+
 main()
 {
     prepare "$version"

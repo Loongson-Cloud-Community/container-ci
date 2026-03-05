@@ -64,6 +64,4 @@ sed -i '/^FROM alpine/c\FROM alpine:3.23' "../serverless.dockerfile"
 popd
 popd
 
-rm -f "$version-src.tar.gz"
-
 echo "[✓] local.dockerfile & serverless.dockerfile generated at: $target_dir"
