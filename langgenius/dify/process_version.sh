@@ -111,10 +111,13 @@ build()
 
 upload()
 {
-    for variant in ${!VARIANTS[@]}; do
-        local tags="${VARIANTS[$variant]}"
-        for tag in ${tags[@]}; do
-            docker push $IMAGE:$tag
+    local components=("api" "web")
+    for comp in "${components[@]}"; do
+        for variant in ${!VARIANTS[@]}; do
+            local tags="${VARIANTS[$variant]}"
+            for tag in ${tags[@]}; do
+                docker push $IMAGE-$comp:$tag
+            done
         done
     done
 }
