@@ -64,6 +64,7 @@ prepare()
 
     pushd "$RESOURCES"
 
+    rm -rf $context $src $version-src.tar.gz
     # 准备构建环境：Dockerfile
     wget -O $version-src.tar.gz --quiet --show-progress https://github.com/$ORG/$PROJ/archive/refs/tags/$version.tar.gz
     mkdir $src

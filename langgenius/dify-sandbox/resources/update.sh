@@ -18,7 +18,7 @@ mkdir -p "$target_dir"
 # 复制源码中amd64的dockerfile,改为可用版本
 dockerfile="$target_dir/Dockerfile"
 cp $template_file $target_dir/Dockerfile
-sed -i 's/-slim-bookworm/-sid/g' $dockerfile
+sed -i 's/-slim-bookworm/-forky/g' $dockerfile
 sed -i 's/echo "deb http:\/\/deb\.debian\.org\/debian testing main" > \/etc\/apt\/sources\.list/true/g' $dockerfile
 sed -i 's/-x64/-loong64/g' $dockerfile
 sed -i 's/npmmirror\.com\/mirrors\/node/github.com\/loong64\/node\/releases\/download/' $dockerfile
