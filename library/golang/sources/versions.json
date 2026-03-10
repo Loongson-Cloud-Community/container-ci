@@ -780,8 +780,8 @@
       }
     },
     "variants": [
-      "trixie",
-      "alpine3.21"
+      "forky",
+      "alpine3.22"
     ]
   },
   "1.24": {
@@ -1177,8 +1177,8 @@
       }
     },
     "variants": [
-      "trixie",
-      "alpine3.21"
+      "forky",
+      "alpine3.22"
     ]
   },
   "1.23": {
@@ -1583,8 +1583,8 @@
       }
     },
     "variants": [
-      "trixie",
-      "alpine3.21"
+      "forky",
+      "alpine3.22"
     ]
   }
 }
