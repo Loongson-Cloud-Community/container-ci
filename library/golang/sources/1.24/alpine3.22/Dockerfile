@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM buildpack-deps:trixie-scm AS build
+FROM alpine:3.22 AS build
 
 ENV PATH /usr/local/go/bin:$PATH
 
@@ -12,10 +12,16 @@ ENV GOLANG_VERSION 1.24.13
 
 RUN set -eux; \
 	now="$(date '+%s')"; \
-	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
+	apk add --no-cache --virtual .fetch-deps \
+		ca-certificates \
+		gnupg \
+# busybox's "tar" doesn't handle directory mtime correctly, so our SOURCE_DATE_EPOCH lookup doesn't work (the mtime of "/usr/local/go" always ends up being the extraction timestamp)
+		tar \
+	; \
+	arch="$(apk --print-arch)"; \
 	url=; \
 	case "$arch" in \
-		'amd64') \
+		'x86_64') \
 			url='https://dl.google.com/go/go1.24.13.linux-amd64.tar.gz'; \
 			sha256='1fc94b57134d51669c72173ad5d49fd62afb0f1db9bf3f798fd98ee423f8d730'; \
 			;; \
@@ -23,23 +29,23 @@ RUN set -eux; \
 			url='https://dl.google.com/go/go1.24.13.linux-armv6l.tar.gz'; \
 			sha256='a26b1e54c0fe7b0babc79716a89b830f1cde54f6c6f914a9995d3f0d0bdd0242'; \
 			;; \
-		'arm64') \
+		'armv7') \
+			url='https://dl.google.com/go/go1.24.13.linux-armv6l.tar.gz'; \
+			sha256='a26b1e54c0fe7b0babc79716a89b830f1cde54f6c6f914a9995d3f0d0bdd0242'; \
+			;; \
+		'aarch64') \
 			url='https://dl.google.com/go/go1.24.13.linux-arm64.tar.gz'; \
 			sha256='74d97be1cc3a474129590c67ebf748a96e72d9f3a2b6fef3ed3275de591d49b3'; \
 			;; \
-		'i386') \
+		'x86') \
 			url='https://dl.google.com/go/go1.24.13.linux-386.tar.gz'; \
 			sha256='a55cb4587b1face90dc9334d8ad44ccd41fade77dcff645a74927eb0adc52272'; \
 			;; \
-		'loong64') \
+		'loongarch64') \
 			url='https://dl.google.com/go/go1.24.13.linux-loong64.tar.gz'; \
 			sha256='8fd090f77b88b9e6f3807a24fce5187163f0036a30d47abab97a1861321f62ca'; \
 			;; \
-		'mips64el') \
-			url='https://dl.google.com/go/go1.24.13.linux-mips64le.tar.gz'; \
-			sha256='d1c233a227fd4c5be04d4e8929b4b75e7237556916b8295c0436a1301af8ea12'; \
-			;; \
-		'ppc64el') \
+		'ppc64le') \
 			url='https://dl.google.com/go/go1.24.13.linux-ppc64le.tar.gz'; \
 			sha256='5f0dfab58ce15a84d824363c041246c76847a69d14f9ffac16bd5342299ecc14'; \
 			;; \
@@ -55,7 +61,7 @@ RUN set -eux; \
 	esac; \
 	\
 	wget -O go.tgz.asc "$url.asc"; \
-	wget -O go.tgz "$url" --progress=dot:giga; \
+	wget -O go.tgz "$url"; \
 	echo "$sha256 *go.tgz" | sha256sum -c -; \
 	\
 # https://github.com/golang/go/issues/14739#issuecomment-324767697
@@ -80,7 +86,7 @@ RUN set -eux; \
 # sanity check (detected value should be older than our wall clock)
 	[ "$SOURCE_DATE_EPOCH" -lt "$now" ]; \
 	\
-	if [ "$arch" = 'armhf' ]; then \
+	if [ "$arch" = 'armv7' ]; then \
 		[ -s /usr/local/go/go.env ]; \
 		before="$(go env GOARM)"; [ "$before" != '7' ]; \
 		{ \
@@ -99,6 +105,8 @@ RUN set -eux; \
 	ln -svfT /target/usr/local/go /usr/local/go; \
 	touch -t "$touchy" /target/usr/local /target/usr /target; \
 	\
+	apk del --no-network .fetch-deps; \
+	\
 # smoke test
 	go version; \
 # make sure our reproducibile timestamp is probably still correct (best-effort inline reproducibility test)
@@ -106,19 +114,9 @@ RUN set -eux; \
 	[ "$SOURCE_DATE_EPOCH" = "$epoch" ]; \
 	find /target -newer /target/usr/local/go -exec sh -c 'ls -ld "$@" && exit "$#"' -- '{}' +
 
-FROM buildpack-deps:trixie-scm
+FROM alpine:3.22
 
-# install cgo-related dependencies
-RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		g++ \
-		gcc \
-		libc6-dev \
-		make \
-		pkg-config \
-	; \
-	rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache ca-certificates
 
 ENV GOLANG_VERSION 1.24.13
 

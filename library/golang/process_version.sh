@@ -10,8 +10,8 @@ readonly PROJ='golang'
 
 readonly SOURCES_DIR='sources'
 
-readonly DEBIAN_VARIANT='trixie'
-readonly ALPINE_VARIANT='alpine3.21'
+readonly DEBIAN_VARIANT='forky'
+readonly ALPINE_VARIANT='alpine3.22'
 
 # convert X.Y.X to X.Y
 orig_version="$1"
