@@ -56,31 +56,28 @@ validata_version()
 # Prepare $version
 prepare()
 {
-    local version="$1"
     local context="$version"
-    local src=$PROJ-$version
     log INFO "Preparing version $version"
     validata_version "$version"
 
     pushd "$RESOURCES"
 
-    rm -rf $context $src $version-src.tar.gz
-    # 准备构建环境：Dockerfile
-    wget -O $version-src.tar.gz --quiet --show-progress https://github.com/$ORG/$PROJ/archive/refs/tags/$version.tar.gz
-    mkdir $src
-    tar -xzf $version-src.tar.gz -C $src --strip-components=1
-    ./update.sh "$version" || {
-        log ERROR "update.sh script failed for version: $version"
-        exit 1
-    }
-    mkdir -p "$context/conf" "$context/dependencies"
-    cp "$src/conf/config.yaml" "$context/conf"
-    cp "$src/dependencies/python-requirements.txt" "$context/dependencies"
+    # 准备构建环境
+    ./update.sh "$version"
+
+    mkdir -p "$context/conf" "$context/dependencies" "$context/docker"
+    files=(
+        "conf/config.yaml"
+        "dependencies/python-requirements.txt"
+        "docker/entrypoint.sh"
+    )
+    for f in "${files[@]}"; do
+        curl -sSL -o "$context/$f" "https://raw.githubusercontent.com/$ORG/$PROJ/$version/$f"
+    done
 
     wget -O $context/env --quiet --show-progress https://github.com/loongarch64-releases/dify-sandbox/releases/download/$version/env
     wget -O $context/main --quiet --show-progress https://github.com/loongarch64-releases/dify-sandbox/releases/download/$version/main
 
-    rm -rf "$src" "$version-src.tar.gz"
     popd
 }
 
@@ -121,9 +118,10 @@ clean()
 
 main()
 {
-    prepare "$version"
-    build "$version"
-    upload "$version"
+    prepare
+    build
+    upload
+    clean
 }
 
 main
