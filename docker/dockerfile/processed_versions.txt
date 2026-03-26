@@ -82,3 +82,5 @@ dockerfile/1.22.0-rc1
 dockerfile/1.22.0-rc1-labs
 dockerfile/1.22.0-rc2
 dockerfile/1.22.0-rc2-labs
+dockerfile/1.23.0-rc1
+dockerfile/1.23.0-rc1-labs
