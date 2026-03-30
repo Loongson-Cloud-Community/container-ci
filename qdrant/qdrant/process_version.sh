@@ -74,7 +74,9 @@ prepare()
    
     ../patch.sh $context
 
+    rust_ver=$(sed -n 's/.*rust-\([0-9.]*\)-bookworm.*/\1/p' $context/Dockerfile | head -n 1)
     cp $template_file $context/Dockerfile
+    sed -i "s/RUST_VER/$rust_ver/" $context/Dockerfile
 
     popd
 }
