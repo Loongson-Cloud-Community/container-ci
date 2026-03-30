@@ -25,6 +25,11 @@ ENV RUSTFLAGS="-C link-arg=-fuse-ld=lld"
 # Set jemalloc page size for LoongArch (64KB page -> lg=16)
 ENV JEMALLOC_SYS_WITH_LG_PAGE=16
 
+RUN cargo chef cook --profile $PROFILE ${FEATURES:+--features "$FEATURES"} --recipe-path recipe.json || true
+RUN PPROF_MOD=$(find /usr/local/cargo/registry/src -name mod.rs | grep pprof-pyroscope-fork); \
+    if [ -f "$PPROF_MOD" ]; then \
+        sed -i '/loongarch64/d' "$PPROF_MOD"; \
+    fi
 RUN cargo chef cook --profile $PROFILE ${FEATURES:+--features "$FEATURES"} --recipe-path recipe.json
 
 COPY . .
