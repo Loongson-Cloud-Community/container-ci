@@ -7,7 +7,7 @@ FROM debian:forky-slim
 
 LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
 
-ENV NGINX_VERSION   1.29.7
+ENV NGINX_VERSION   1.29.8
 ENV NJS_VERSION     0.9.6
 ENV NJS_RELEASE     1~forky
 ENV PKG_RELEASE     1~forky
