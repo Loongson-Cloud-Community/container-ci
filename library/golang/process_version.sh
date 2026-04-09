@@ -11,7 +11,7 @@ readonly PROJ='golang'
 readonly SOURCES_DIR='sources'
 
 readonly DEBIAN_VARIANT='forky'
-readonly ALPINE_VARIANT='alpine3.22'
+readonly ALPINE_VARIANTS=('alpine3.22' 'alpine3.23')  # 修改1：改为数组
 
 # convert X.Y.X to X.Y
 orig_version="$1"
@@ -25,13 +25,7 @@ debian_images=(
     "$image_name:$orig_version-$DEBIAN_VARIANT"
 )
 
-alpine_images=(
-    "$image_name:alpine"
-    "$image_name:$version-alpine"
-    "$image_name:$orig_version-alpine"
-    "$image_name:$version-$ALPINE_VARIANT"
-    "$image_name:$orig_version-$ALPINE_VARIANT"
-)
+# 修改2：删除原来的 alpine_images 数组定义，改为动态生成
 
 # Prepare $version
 prepare()
@@ -91,14 +85,26 @@ build()
 
     log INFO "Building Docker image: $image"
 
+    # 构建 Debian 版本
     pushd "$SOURCES_DIR"/"$version"/"${DEBIAN_VARIANT}"
     docker_build 'Dockerfile' '.' "${debian_images[@]}"
     popd
 
-
-    pushd "$SOURCES_DIR"/"$version"/"$ALPINE_VARIANT"
-    docker_build 'Dockerfile' '.' "${alpine_images[@]}"
-    popd
+    # 修改3：遍历所有 Alpine 版本
+    for alpine_variant in "${ALPINE_VARIANTS[@]}"; do
+        # 动态生成 Alpine 镜像标签
+        local alpine_images=(
+            "$image_name:alpine"
+            "$image_name:$version-alpine"
+            "$image_name:$orig_version-alpine"
+            "$image_name:$version-$alpine_variant"
+            "$image_name:$orig_version-$alpine_variant"
+        )
+        
+        pushd "$SOURCES_DIR"/"$version"/"$alpine_variant"
+        docker_build 'Dockerfile' '.' "${alpine_images[@]}"
+        popd
+    done
 
     log INFO "Successfully built image: $image"
 }
@@ -106,10 +112,25 @@ build()
 # Upload $version
 upload()
 {
-    #log WARN "Upload function not implemented (would push: $image)"
     log INFO "Push image: $image_name"
-    for image in ${debian_images[@]} ${alpine_images[@]}; do
+    
+    # 推送 Debian 镜像
+    for image in ${debian_images[@]}; do
         docker push $image
+    done
+    
+    # 修改4：推送所有 Alpine 版本镜像
+    for alpine_variant in "${ALPINE_VARIANTS[@]}"; do
+        local alpine_images=(
+            "$image_name:alpine"
+            "$image_name:$version-alpine"
+            "$image_name:$orig_version-alpine"
+            "$image_name:$version-$alpine_variant"
+            "$image_name:$orig_version-$alpine_variant"
+        )
+        for image in ${alpine_images[@]}; do
+            docker push $image
+        done
     done
 }
 
