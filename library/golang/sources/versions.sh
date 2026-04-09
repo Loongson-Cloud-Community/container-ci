@@ -238,6 +238,7 @@ for version in "${versions[@]}"; do
 		variants: [
                         "forky",
 			(
+				"3.23",
 				"3.22",
                                 empty
 			| "alpine" + .)
