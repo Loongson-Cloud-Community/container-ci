@@ -6,11 +6,12 @@ if [ $# -ne 1 ]; then
 fi
 
 context="$1"
-api_pyproject=$context/api/pyproject.toml
 
 echo "patching ..."
 
 ##### api #####
+api_pyproject=$context/api/pyproject.toml
+
 sed -i 's/pandas\[excel,output-formatting,performance\]/pandas\[excel,output-formatting\]/' $api_pyproject
 sed -i 's/"intersystems-irispython/#"intersystems-irispython/' $api_pyproject
 #sed -i 's/.*pypdfium2.*/    "pypdfium2==4.30.1",/' $api_pyproject
@@ -49,12 +50,42 @@ uv/uv python install 3.11
 uv/uv lock --refresh --python 3.11
 popd
 
+
 ##### web #####
-# 使用webpack作为打包器
-sed -i 's/next build/next build --webpack/' "$context/web/package.json"
-# 补全文件后缀，防止swc-wasm找不到
-sed -i "s@'./env'@'./env.ts'@" "$context/web/next.config.ts"
-sed -i "s@'./utils/client'@'./utils/client.ts'@" "$context/web/env.ts"
-sed -i "s@'./utils/object'@'./utils/object.ts'@" "$context/web/env.ts"
+next_ver=$(sed -n 's/.*"next": "\(.*\)".*/\1/p' "$context/web/package.json" | tr -d ', ')
+
+# native binding
+wget -O "$context/web/libnext_napi_bindings.so" --quiet --show-progress "https://github.com/loongarch64-releases/next.js/releases/download/v$next_ver/libnext_napi_bindings.so"
+chmod +x "$context/web/libnext_napi_bindings.so"
+
+# loongarch swc 的package.json
+cat << 'EOF' >> "$context/web/swc-package.json"
+{
+  "name": "@next/swc-linux-loong64-musl",
+  "version": "NEXT_VER",
+  "os": ["linux"],
+  "cpu": ["loong64"],
+  "main": "next-swc.linux-loong64-musl.node"
+}
+EOF
+sed -i "s/NEXT_VER/$next_ver/" "$context/web/swc-package.json"
+
+# 准备 swc 环境
+cat << 'EOF' >> "$context/web/swc-patch.sh"
+#!/bin/sh
+mkdir -p node_modules/@next/swc-linux-loong64-musl
+mv ./libnext_napi_bindings.so ./node_modules/@next/swc-linux-loong64-musl/next-swc.linux-loong64-musl.node
+mv ./swc-package.json ./node_modules/@next/swc-linux-loong64-musl/package.json
+sed -i "/linux.arm64,/a \\
+            loong64: \[ \\
+                { \\
+                    platform: 'linux', \\
+                    arch: 'loong64', \\
+                    abi: 'musl', \\
+                    platformArchABI: 'linux-loong64-musl', \\
+                    raw: 'loongarch64-unknown-linux-musl' \\
+                } \\
+            \]," ./node_modules/next/dist/build/swc/index.js
+EOF
 
 echo "done"

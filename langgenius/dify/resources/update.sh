@@ -24,9 +24,11 @@ tar -xzf $version-src.tar.gz -C $target_dir --strip-components=1
 
 # web
 if [ "$ver_num" -ge 1012000 ]; then
-    sed -i "/RUN pnpm build:docker/i \
-ENV NEXT_FORCE_WEBPACK=1" "$target_dir/web/Dockerfile"
+    sed -i "/RUN pnpm build/i \\
+RUN pnpm build || true \\
+RUN chmod +x ./swc-patch.sh && ./swc-patch.sh" "$target_dir/web/Dockerfile"
 fi
+
 
 # api
 cp api-dockerfile.template "$target_dir/api/Dockerfile"
