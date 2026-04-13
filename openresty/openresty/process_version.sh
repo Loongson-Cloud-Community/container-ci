@@ -31,6 +31,7 @@ docker_build() {
     local targets="$2"
     local context="$3"
     local cmd="docker build"
+	cmd+=" --build-arg RESTY_J=$(nproc)"
     cmd+=" -f $dockerfile"
 
     for target in ${targets[@]}; do
