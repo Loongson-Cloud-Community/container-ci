@@ -1,4 +1,4 @@
-ARG GO_IMG=lcr.loongnix.cn/library/golang:1.24
+ARG GO_IMG=lcr.loongnix.cn/library/golang:1.26
 ARG RUN_IMAGE=lcr.loongnix.cn/library/alpine:3.22
 
 FROM ${GO_IMG} AS flannel-builder
