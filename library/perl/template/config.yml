@@ -1,0 +1,30 @@
+---
+builds:
+  - main
+  - slim
+
+options:
+  common: "-Duseshrplib -Dvendorprefix=/usr/local"
+  threaded: "-Dusethreads"
+
+releases:
+  - version: 5.43.9
+    sha256:  aec72b03806f2003f97e86baf28a22a20cce912d618afadf3df1f005cda5b235
+    extra_flags: "-Dusedevel -Dversiononly=undef"
+    debian_release:
+      - forky
+
+  - version: 5.38.5
+    sha256:  b7667d3ff309068852af7853910aaccec26c839d717402121b664ac705e07bfe
+    debian_release:
+      - forky
+
+  - version: 5.40.4
+    sha256:  3258564b644dc912f7367c4f49d6df77a855cdef9305c50801e03d09d39381af
+    debian_release:
+      - forky
+
+  - version: 5.42.2
+    sha256: 9384e8deb75b7b1695e5637971b752281aaecd025a3d5d4734d33c1d0adfee47
+    debian_release:
+      - forky
