@@ -12,8 +12,8 @@ git_commit()
     versions=$(echo "$1" | tr '\n' ' ')
     git add .
 
-    git config user.name "qiangxuhui"
-    git config user.email "qiangxuhui@loongson.cn"
+    git config user.name "huangyang"
+    git config user.email "huangyang@loongson.cn"
     git commit -m "$ORG $PROJ: Add versions: $versions"
     git pull --rebase
     git push origin main

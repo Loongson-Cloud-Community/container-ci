@@ -1,0 +1,102 @@
+{
+  "18": {
+    "alpine": "3.23",
+    "debian": "forky",
+    "forky": {
+      "version": "18.3-1.pgdg14+2",
+      "arches": [
+        "amd64",
+        "arm64",
+        "ppc64el"
+      ]
+    },
+    "variants": [
+      "forky",
+      "alpine3.23",
+      "alpine3.22"
+    ],
+    "version": "18.3",
+    "sha256": "d95663fbbf3a80f81a9d98d895266bdcb74ba274bcc04ef6d76630a72dee016f",
+    "major": 18
+  },
+  "17": {
+    "alpine": "3.23",
+    "debian": "forky",
+    "forky": {
+      "version": "17.9-1.pgdg14+2",
+      "arches": [
+        "amd64",
+        "arm64",
+        "ppc64el"
+      ]
+    },
+    "variants": [
+      "forky",
+      "alpine3.23",
+      "alpine3.22"
+    ],
+    "version": "17.9",
+    "sha256": "3b9a62538a8da151e807a3ddb1198e8605f2032544d78f403ae883d27ecf1ee4",
+    "major": 17
+  },
+  "16": {
+    "alpine": "3.23",
+    "debian": "forky",
+    "forky": {
+      "version": "16.13-1.pgdg14+2",
+      "arches": [
+        "amd64",
+        "arm64",
+        "ppc64el"
+      ]
+    },
+    "variants": [
+      "forky",
+      "alpine3.23",
+      "alpine3.22"
+    ],
+    "version": "16.13",
+    "sha256": "dc2ddbbd245c0265a689408e3d2f2f3f9ba2da96bd19318214b313cdd9797287",
+    "major": 16
+  },
+  "15": {
+    "alpine": "3.23",
+    "debian": "forky",
+    "forky": {
+      "version": "15.17-1.pgdg14+2",
+      "arches": [
+        "amd64",
+        "arm64",
+        "ppc64el"
+      ]
+    },
+    "variants": [
+      "forky",
+      "alpine3.23",
+      "alpine3.22"
+    ],
+    "version": "15.17",
+    "sha256": "ae14f24c14727e0b2ded1c5553031666099bd1054db3ef44bfa6e2bd6d554a56",
+    "major": 15
+  },
+  "14": {
+    "alpine": "3.23",
+    "debian": "forky",
+    "forky": {
+      "version": "14.22-1.pgdg14+2",
+      "arches": [
+        "amd64",
+        "arm64",
+        "ppc64el"
+      ]
+    },
+    "variants": [
+      "forky",
+      "alpine3.23",
+      "alpine3.22"
+    ],
+    "version": "14.22",
+    "sha256": "f57938ad30067077720277f6d7db05aafc07d1545efd2ed82f199ba828a7ad34",
+    "major": 14
+  }
+}

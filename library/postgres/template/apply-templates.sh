@@ -1,31 +1,75 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly ALPINE_VERSION_VARIANTS=(
-	'3.21'
-	'3.22'
-    '3.23'
-)
+[ -f versions.json ] # run "versions.sh" first
 
-generate_alpine(){
-	local postgres_version=$1
-	# 1. 从 alpine-versions.json 中读取信息
-    local info=$(jq -cr ".\"$postgres_version\"" alpine-versions.json)
-	for alpine_version in ${ALPINE_VERSION_VARIANTS[@]}; do
-		local build_dir="${postgres_version}/alpine${alpine_version}"
-		mkdir -p $build_dir
-		echo $info | jinja2 -D alpine_version=$alpine_version Dockerfile-alpine.template - > "${build_dir}/Dockerfile"
-		local tags="$postgres_version-alpine$alpine_version"
-		jinja2 -D tags=$tags Makefile.template > "${build_dir}/Makefile"
-        cp docker-ensure-initdb.sh $build_dir/
-        cp docker-entrypoint.sh $build_dir/
+cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
+
+jqt='.jq-template.awk'
+if [ -n "${BASHBREW_SCRIPTS:-}" ]; then
+	jqt="$BASHBREW_SCRIPTS/jq-template.awk"
+elif [ "$BASH_SOURCE" -nt "$jqt" ]; then
+	wget -qO "$jqt" 'https://github.com/docker-library/bashbrew/raw/9f6a35772ac863a0241f147c820354e4008edf38/scripts/jq-template.awk'
+fi
+
+if [ "$#" -eq 0 ]; then
+	versions="$(jq -r 'keys | map(@sh) | join(" ")' versions.json)"
+	eval "set -- $versions"
+fi
+
+generated_warning() {
+	cat <<-EOH
+		#
+		# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+		#
+		# PLEASE DO NOT EDIT IT DIRECTLY.
+		#
+
+	EOH
+}
+
+for version; do
+	export version
+
+	major="$(jq -r '.[env.version].major' versions.json)"
+
+	variants="$(jq -r '.[env.version].variants | map(@sh) | join(" ")' versions.json)"
+	eval "variants=( $variants )"
+
+	rm -rf "$version"
+
+	for variant in "${variants[@]}"; do
+		export variant
+
+		dir="$version/$variant"
+		mkdir -p "$dir"
+
+		echo "processing $dir ..."
+
+		case "$variant" in
+			alpine*) template='Dockerfile-alpine.template' ;;
+			*)       template='Dockerfile-debian.template' ;;
+		esac
+
+		{
+			generated_warning
+			gawk -f "$jqt" "$template"
+		} > "$dir/Dockerfile"
+		
+		# 从 versions.json 中提取完整版本号（如 15.17）
+		fullVersion="$(jq -r '.[env.version].version' versions.json)"
+		# 生成 Makefile，同时打上完整版号标签和主版本号标签
+		{
+			printf '.PHONY: image\n'
+			printf 'image:\n'
+			printf '\tdocker build -t lcr.loongnix.cn/library/postgres:%s-%s -t lcr.loongnix.cn/library/postgres:%s-%s .\n' \
+				"$fullVersion" "$variant" "$version" "$variant"
+			printf '\n'
+			printf '.PHONY: push\n'
+			printf 'push:\n'
+			printf '\tdocker push lcr.loongnix.cn/library/postgres:%s-%s\n' "$fullVersion" "$variant"
+			printf '\tdocker push lcr.loongnix.cn/library/postgres:%s-%s\n' "$version" "$variant"
+		} > "$dir/Makefile"
+		cp -a docker-entrypoint.sh docker-ensure-initdb.sh "$dir/"
 	done
-}
-
-main() {
-    local postgres_version=$1
-    generate_alpine "$postgres_version"
-}
-
-main "$1"
-
+done
