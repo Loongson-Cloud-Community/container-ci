@@ -15,7 +15,7 @@ declare -r alpineVersion='3.22'
 #)
 
 declare -r ubuntuVersion='24.04'
-declare -r debianVersion='trixie'
+declare -r debianVersion='forky'
 
 #declare -A ubuntuVersions=(
 #	[3.13]='24.04'

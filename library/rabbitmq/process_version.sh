@@ -16,7 +16,7 @@ readonly RESOURCES="resources"
 readonly CONTEXT_PREFIX="$RESOURCES"
 
 readonly ALPINE_VERSION="3.21"
-readonly DEBIAN_VERSION='trixie'
+readonly DEBIAN_VERSION='forky'
 
 version="$1"
 
