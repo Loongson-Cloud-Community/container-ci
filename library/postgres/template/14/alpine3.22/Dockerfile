@@ -1,8 +1,10 @@
-{{
-	def alpine_version:
-		env.variant | ltrimstr("alpine")
--}}
-FROM alpine:{{ alpine_version }}
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM alpine:3.22
 
 # 70 is the standard uid/gid for "postgres" in Alpine
 # https://git.alpinelinux.org/aports/tree/main/postgresql-common/postgresql-common.pre-install?h=3.22-stable
@@ -24,7 +26,16 @@ RUN set -eux; \
 		gnupg \
 	; \
 	\
-	wget -O /usr/local/bin/gosu "https://github.com/Loongson-Cloud-Community/gosu/releases/download/1.19/gosu-loong64"; \
+	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
+	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+	\
+# verify the signature
+	export GNUPGHOME="$(mktemp -d)"; \
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
+	gpgconf --kill all; \
+	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
 	\
 # clean up fetch dependencies
 	apk del --no-network .gosu-deps; \
@@ -33,9 +44,7 @@ RUN set -eux; \
 # verify that the binary works
 	gosu --version; \
 	gosu nobody true
-{{ if env.version | IN("14", "15", "16") then ( -}}
 RUN set -eux; ln -svf gosu /usr/local/bin/su-exec; su-exec nobody true # backwards compatibility (removed in PostgreSQL 17+)
-{{ ) else "" end -}}
 
 # make the "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
 # alpine doesn't require explicit locale-file generation
@@ -43,17 +52,13 @@ ENV LANG en_US.utf8
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-ENV PG_MAJOR {{ env.version }}
-ENV PG_VERSION {{ .version }}
-ENV PG_SHA256 {{ .sha256 }}
+ENV PG_MAJOR 14
+ENV PG_VERSION 14.22
+ENV PG_SHA256 f57938ad30067077720277f6d7db05aafc07d1545efd2ed82f199ba828a7ad34
 
-{{
-	def llvmver:
-		"19"
--}}
 ENV DOCKER_PG_LLVM_DEPS \
-		llvm{{ llvmver }}-dev \
-		clang{{ llvmver }}
+		llvm19-dev \
+		clang19
 
 RUN set -eux; \
 	\
@@ -96,18 +101,6 @@ RUN set -eux; \
 		icu-dev \
 # https://www.postgresql.org/docs/14/release-14.html#id-1.11.6.5.5.3.7
 		lz4-dev \
-{{ if .major >= 15 then ( -}}
-# https://www.postgresql.org/docs/15/release-15.html "--with-zstd to enable Zstandard builds"
-		zstd-dev \
-{{ ) else "" end -}}
-{{ if .major >= 18 then ( -}}
-# https://salsa.debian.org/postgresql/postgresql-common/-/commit/a31ce5b893c11e0f17a016e38c1882fbe1820081
-# https://www.postgresql.org/docs/18/install-make.html#CONFIGURE-OPTION-WITH-LIBCURL
-		curl-dev \
-# https://salsa.debian.org/postgresql/postgresql-common/-/commit/89c384273f4c4092483598c292b1b1b188816cce
-# https://www.postgresql.org/docs/18/install-make.html#CONFIGURE-OPTION-WITH-LIBURING
-		liburing-dev \
-{{ ) else "" end -}}
 	; \
 	\
 	cd /usr/src/postgresql; \
@@ -119,9 +112,9 @@ RUN set -eux; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	\
 # https://git.alpinelinux.org/aports/tree/community/postgresql15/APKBUILD?h=3.22-stable#n176 ("export LLVM_CONFIG")
-	export LLVM_CONFIG="/usr/lib/llvm{{ llvmver }}/bin/llvm-config"; \
+	export LLVM_CONFIG="/usr/lib/llvm19/bin/llvm-config"; \
 # https://git.alpinelinux.org/aports/tree/community/postgresql15/APKBUILD?h=3.22-stable#n180 ("older clang versions don't have a 'clang' exe anymore.")
-	export CLANG=clang-{{ llvmver }}; \
+	export CLANG=clang-19; \
 	\
 # configure options mostly copying Debian:
 # https://salsa.debian.org/postgresql/postgresql-common/-/blob/6e26b5107295170cc8731a3acbf13228ea15941e/server/postgresql.mk#L32
@@ -131,20 +124,13 @@ RUN set -eux; \
 # "/usr/src/postgresql/src/backend/access/common/tupconvert.c:105: undefined reference to `libintl_gettext'"
 #		--enable-nls \
 		--enable-integer-datetimes \
-{{ if .major <= 16 then ( -}}
-{{ # in 17: this option is reversed. you need to disable it -}}
 		--enable-thread-safety \
-{{ ) else "" end -}}
 		--enable-tap-tests \
 # skip debugging info -- we want tiny size instead
 #		--enable-debug \
 		--disable-rpath \
 		--with-uuid=e2fs \
-{{ # in 16: "configure: error: unrecognized options: --with-gnu-ld" -}}
-{{ # https://github.com/postgres/postgres/commit/9db49fc5bfdc0126be03f4b8986013e59d93b91d -}}
-{{ if .major <= 15 then ( -}}
 		--with-gnu-ld \
-{{ ) else "" end -}}
 		--with-pgport=5432 \
 		--with-system-tzdata=/usr/share/zoneinfo \
 		--prefix=/usr/local \
@@ -153,10 +139,6 @@ RUN set -eux; \
 		--with-gssapi \
 		--with-icu \
 		--with-ldap \
-{{ if .major >= 18 then ( -}}
-		--with-libcurl \
-		--with-liburing \
-{{ ) else "" end -}}
 		--with-libxml \
 		--with-libxslt \
 		--with-llvm \
@@ -166,9 +148,6 @@ RUN set -eux; \
 		--with-perl \
 		--with-python \
 		--with-tcl \
-{{ if .major >= 15 then ( -}}
-		--with-zstd \
-{{ ) else "" end -}}
 	; \
 	make -j "$(nproc)" world-bin; \
 	make install-world-bin; \
@@ -211,19 +190,10 @@ RUN set -eux; \
 
 RUN install --verbose --directory --owner postgres --group postgres --mode 3777 /var/run/postgresql
 
-{{ if .major >= 18 then ( -}}
-#
-# NOTE: in 18+, PGDATA has changed to match the pg_ctlcluster standard directory structure, and the VOLUME has moved from /var/lib/postgresql/data to /var/lib/postgresql
-#
-ENV PGDATA /var/lib/postgresql/{{ .major | tostring }}/docker
-VOLUME /var/lib/postgresql
-# ("/var/lib/postgresql" is already pre-created with suitably usable permissions above)
-{{ ) else ( -}}
 ENV PGDATA /var/lib/postgresql/data
 # this 1777 will be replaced by 0700 at runtime (allows semi-arbitrary "--user" values)
 RUN install --verbose --directory --owner postgres --group postgres --mode 1777 "$PGDATA"
 VOLUME /var/lib/postgresql/data
-{{ ) end -}}
 
 COPY docker-entrypoint.sh docker-ensure-initdb.sh /usr/local/bin/
 RUN ln -sT docker-ensure-initdb.sh /usr/local/bin/docker-enforce-initdb.sh
