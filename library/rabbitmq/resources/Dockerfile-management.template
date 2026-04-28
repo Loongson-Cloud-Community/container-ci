@@ -1,3 +1,5 @@
+# vim:noet:
+
 FROM {{
 	"rabbitmq:" + env.version
 	+ if env.variant == "alpine" then "-alpine" else "" end
@@ -6,19 +8,21 @@ FROM {{
 RUN set -eux; \
 	rabbitmq-plugins enable --offline rabbitmq_management; \
 # make sure the metrics collector is re-enabled (disabled in the base image for Prometheus-style metrics by default)
-	rm -f /etc/rabbitmq/conf.d/20-management_agent.disable_metrics_collector.conf; \
-# grab "rabbitmqadmin" from inside the "rabbitmq_management-X.Y.Z" plugin folder
-# see https://github.com/docker-library/rabbitmq/issues/207
-	cp /plugins/rabbitmq_management-*/priv/www/cli/rabbitmqadmin /usr/local/bin/rabbitmqadmin; \
-	[ -s /usr/local/bin/rabbitmqadmin ]; \
-	chmod +x /usr/local/bin/rabbitmqadmin; \
+	rm -f /etc/rabbitmq/conf.d/20-management_agent.disable_metrics_collector.conf
+
+ENV RABBITMQADMIN_VERSION {{ .rabbitmqadmin.version }}
+RUN set -eux; \
 {{ if env.variant == "alpine" then ( -}}
-	apk add --no-cache python3; \
+        url="https://github.com/loongarch64-releases/rabbitmqadmin-ng/releases/download/v$RABBITMQADMIN_VERSION/rabbitmqadmin-$RABBITMQADMIN_VERSION-loongarch64-unknown-linux-musl"; \
+	apk update; \
+	apk add wget; \
 {{ ) else ( -}}
-	apt-get update; \
-	apt-get install -y --no-install-recommends python3; \
-	rm -rf /var/lib/apt/lists/*; \
+        url="https://github.com/loongarch64-releases/rabbitmqadmin-ng/releases/download/v$RABBITMQADMIN_VERSION/rabbitmqadmin-$RABBITMQADMIN_VERSION-loongarch64-unknown-linux-gnu"; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends ca-certificates wget; \
 {{ ) end -}}
-	rabbitmqadmin --version
+	wget -O /usr/local/bin/rabbitmqadmin "$url"; \
+	chmod +x /usr/local/bin/rabbitmqadmin; \
+	rabbitmqadmin --help
 
 EXPOSE 15671 15672
