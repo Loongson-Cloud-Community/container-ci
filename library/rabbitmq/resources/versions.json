@@ -238,5 +238,51 @@
       "version": "24.04"
     },
     "version": "4.2.5"
+  },
+  "4.2.6": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "forky"
+    },
+    "openssl": {
+      "sha256": "4900be54e81c4dfe00bb1a10dad33fd8414833573c40d0e9e3274d4ed32e53a2",
+      "version": "3.3.7"
+    },
+    "otp": {
+      "sha256": "9d63382d3e7707c058dabe338114e09ff8228d54d29df794d907d3c8dddde5f9",
+      "version": "27.3.4.11"
+    },
+    "rabbitmqadmin": {
+      "version": "2.29.0"
+    },
+    "ubuntu": {
+      "version": "24.04"
+    },
+    "version": "4.2.6"
+  },
+  "4.3.0": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "forky"
+    },
+    "openssl": {
+      "sha256": "4900be54e81c4dfe00bb1a10dad33fd8414833573c40d0e9e3274d4ed32e53a2",
+      "version": "3.3.7"
+    },
+    "otp": {
+      "sha256": "9d63382d3e7707c058dabe338114e09ff8228d54d29df794d907d3c8dddde5f9",
+      "version": "27.3.4.11"
+    },
+    "rabbitmqadmin": {
+      "version": "2.29.0"
+    },
+    "ubuntu": {
+      "version": "24.04"
+    },
+    "version": "4.3.0"
   }
 }
