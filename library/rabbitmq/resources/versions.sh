@@ -158,6 +158,14 @@ for version in "${versions[@]}"; do
 	fi
 	export opensslVersion opensslSourceSha256
 
+        # rabbitmq-ng version
+        rabbitmqadminVersion=$(
+            curl -s https://api.github.com/repos/rabbitmq/rabbitmqadmin-ng/releases/latest \
+                | jq -r ".tag_name" \
+                | sed 's/v//'
+        )
+        export rabbitmqadminVersion
+
 	# OpenSSL 3.0.5's sha256 file starts with a single space 😬
 	opensslSourceSha256="${opensslSourceSha256# }"
 	# OpenSSL 3.1.8+ and 3.3.3+ now include the filename
@@ -171,7 +179,7 @@ for version in "${versions[@]}"; do
 
         export debianVersion
 
-	echo "$version: $fullVersion (otp $otpVersion, openssl $opensslVersion, alpine, $alpineVersion, ubuntu $ubuntuVersion, debian $debianVersion)"
+	echo "$version: $fullVersion (otp $otpVersion, openssl $opensslVersion, alpine, $alpineVersion, ubuntu $ubuntuVersion, debian $debianVersion, rabbitmqadmin $rabbitmqadminVersion)"
 
 	json="$(
 		jq <<<"$json" -c '
@@ -193,6 +201,9 @@ for version in "${versions[@]}"; do
 				},
                                 debian: {
                                         version: env.debianVersion
+                                },
+                                rabbitmqadmin: {
+                                        version: env.rabbitmqadminVersion
                                 }
 			}
 		'
