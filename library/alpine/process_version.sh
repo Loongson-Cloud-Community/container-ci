@@ -8,11 +8,13 @@ readonly REGISTRY='lcr.loongnix.cn'
 readonly ORG='library'
 readonly PROJ='alpine'
 
+version="$1"
+MINOR_VERSION="${version%.*}"
+
 # Prepare $version
 prepare()
 {
 
-    local version="$1"
     log INFO "Preparing version $version"
 
 
@@ -35,13 +37,12 @@ prepare()
 
 
 docker_build(){
-	local version="$1"
-	local image="${REGISTRY}/${ORG}/${PROJ}:${version}"
+	local image="${REGISTRY}/${ORG}/${PROJ}:${MINOR_VERSION}"
 
 
 	log INFO "Building Docker image: $image"
 
-	local build_dir="template/${version}"
+	local build_dir="template/${MINOR_VERSION}"
 
 	make image -C $build_dir
 
@@ -50,15 +51,13 @@ docker_build(){
 }
 
 docker_push(){
-	local version="$1"
-	local build_dir="template/${version}"
+	local build_dir="template/${MINOR_VERSION}"
 	make push -C $build_dir
 }
 
 
 process()
 {
-    version=$1
     prepare $version
     docker_build $version
     docker_push $version
