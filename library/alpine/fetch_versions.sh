@@ -13,8 +13,8 @@ fetch_versions(){
 
     echo "$versions" \
         | sort -V \
-        | grep -Fxv -f processed_versions.txt \
-        | { grep -Fxv -f ignore_versions.txt || [ $? -eq 1 ]; }
+        | grep -Fxv -f processed_versions.txt || true \
+        | grep -Fxv -f ignore_versions.txt || true
 }
 
 
