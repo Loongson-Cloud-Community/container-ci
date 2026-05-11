@@ -55,7 +55,7 @@ alpine_apply() {
     local nextcloud_version=$1
 
     for target_type in fpm; do
-        local base_image_tag="8.3.28-${target_type}-alpine3.22"
+        local base_image_tag="8.3.28-${target_type}-alpine3.23"
         alpine_apply_single "${nextcloud_version}" "${base_image_tag}" "${target_type}"
     done
 
