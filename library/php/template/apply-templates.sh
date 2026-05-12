@@ -1,77 +1,85 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
-set -e
+[ -f versions.json ] # run "versions.sh" first
 
-alpine_apply_single(){
+jqt='.jq-template.awk'
+if [ -n "${BASHBREW_SCRIPTS:-}" ]; then
+	jqt="$BASHBREW_SCRIPTS/jq-template.awk"
+elif [ "$BASH_SOURCE" -nt "$jqt" ]; then
+	# https://github.com/docker-library/bashbrew/blob/master/scripts/jq-template.awk
+	wget -qO "$jqt" 'https://github.com/docker-library/bashbrew/raw/9f6a35772ac863a0241f147c820354e4008edf38/scripts/jq-template.awk'
+fi
 
-    local php_version=$1
-    local alpine_version=$2
-    local target_type=$3
-    local php_info=$(jq -cr --arg php_vesion $php_version '.[$php_vesion]' versions.json)
+if [ "$#" -eq 0 ]; then
+	versions="$(jq -r 'keys | map(@sh) | join(" ")' versions.json)"
+	eval "set -- $versions"
+fi
 
-    # 生成 Dockerfile
-    local build_dir="${php_version}/alpine${alpine_version}/${target_type}"
-    mkdir -p "${build_dir}"
-    echo "${php_info}" | jinja2 -D alpine_version=${alpine_version} "templates/Dockerfile-alpine-${target_type}.template" - > "${build_dir}/Dockerfile"
+generated_warning() {
+	cat <<-EOH
+		#
+		# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+		#
+		# PLEASE DO NOT EDIT IT DIRECTLY.
+		#
 
-    # 拷贝脚本
-    cp docker-scripts/docker-php-* "${build_dir}/"
-
-    # 生成 makefile
-    local tags="${php_version}-${target_type}-alpine${alpine_version}"
-    jinja2 Makefile.template -D tags=$tags >"${build_dir}/Makefile"
-
+	EOH
 }
 
-debian_apply_single(){
+for version; do
+	export version
 
-    local php_version=$1
-    local debian_version=$2
-    local target_type=$3
-    local php_info=$(jq -cr --arg php_vesion $php_version '.[$php_vesion]' versions.json)
+	rm -rf "$version"
 
-    # 生成Dockerfile
-    local build_dir="${php_version}/${debian_version}/${target_type}"
-    mkdir -p "${build_dir}"
-    echo "${php_info}" | jinja2 -D debian_version=${debian_version} "templates/Dockerfile-debian-${target_type}.template" - > "${build_dir}/Dockerfile"
+	if jq -e '.[env.version] | not' versions.json > /dev/null; then
+		echo "deleting $version ..."
+		continue
+	fi
 
+	variants="$(jq -r '.[env.version].variants | map(@sh) | join(" ")' versions.json)"
+	eval "variants=( $variants )"
 
-    # 拷贝脚本
-    if test 'apache' = "$target_type"; then
-        cp docker-scripts/* "${build_dir}/"
-    else
-        cp docker-scripts/docker-php-* "${build_dir}/"
-    fi
+	for dir in "${variants[@]}"; do
+		suite="$(dirname "$dir")" # "buster", etc
+		variant="$(basename "$dir")" # "cli", etc
+		export suite variant
 
-    # 生成 makefile
-    local tags="${php_version}-${target_type}-${debian_version}"
-    jinja2 Makefile.template -D tags=$tags >"${build_dir}/Makefile"
+		alpineVer="${suite#alpine}" # "3.12", etc
+		if [ "$suite" != "$alpineVer" ]; then
+			from="lcr.loongnix.cn/library/alpine:$alpineVer"
+		else
+			from="lcr.loongnix.cn/library/debian:$suite-slim"
+		fi
+		export from alpineVer
 
-}
+		case "$variant" in
+			apache) cmd='["apache2-foreground"]' ;;
+			fpm) cmd='["php-fpm"]' ;;
+			*) cmd='["php", "-a"]' ;;
+		esac
+		export cmd
 
-alpine_apply() {
-    local php_version=$1
-    for alpine_version in 3.21 3.22 3.23; do
-        for target_type in cli fpm zts; do
-            alpine_apply_single "${php_version}" "${alpine_version}" "${target_type}"
-        done
-    done
+		echo "processing $version/$dir ..."
+		mkdir -p "$version/$dir"
 
-}
+		{
+			generated_warning
+			gawk -f "$jqt" 'Dockerfile-linux.template'
+		} > "$version/$dir/Dockerfile"
 
-debian_apply() {
-    local php_version=$1
-    for debian_version in unstable; do
-        for target_type in cli fpm zts apache; do
-            debian_apply_single "${php_version}" "${debian_version}" "${target_type}"
-        done
-    done
-}
+		cp -a \
+			docker-php-entrypoint \
+			docker-php-ext-* \
+			docker-php-source \
+			"$version/$dir/"
+		if [ "$variant" = 'apache' ]; then
+			cp -a apache2-foreground "$version/$dir/"
+		fi
 
-main() {
-    local php_version="$1"
-    alpine_apply "$php_version"
-    debian_apply "$php_version"
-}
-
-main "$1"
+		cmd="$(jq <<<"$cmd" -r '.[0]')"
+		if [ "$cmd" != 'php' ]; then
+			sed -i -e 's! php ! '"$cmd"' !g' "$version/$dir/docker-php-entrypoint"
+		fi
+	done
+done
