@@ -17,5 +17,5 @@ jobs:
       - name: Run ci.sh
         run: |
           date
-          pushd prometheus/node_exporter && ./ci.sh && popd
+          pushd prometheus-operator/prometheus-operator && ./ci.sh && popd
 
