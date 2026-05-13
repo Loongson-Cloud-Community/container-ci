@@ -20,8 +20,8 @@ apply_single() {
             cd prometheus-operator-${VERSION}
             rm -rf Dockerfile
             cp ../../prometheus-operator-builder.Dockerfile Dockerfile
-            docker build -t lcr.longnix.cn/prometheus-operator/prometheus-operator:${VERSION} .
-            docker push lcr.longnix.cn/prometheus-operator/prometheus-operator:${VERSION}
+            docker build -t lcr.loongnix.cn/prometheus-operator/prometheus-operator:${VERSION} .
+            docker push lcr.loongnix.cn/prometheus-operator/prometheus-operator:${VERSION}
         )
         rm -rf prometheus-operator-${VERSION}
 
