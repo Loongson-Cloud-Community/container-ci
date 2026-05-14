@@ -3,9 +3,9 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM nginx:1.30.0-alpine-slim
+FROM nginx:1.30.1-alpine-slim
 
-ENV NJS_VERSION   0.9.6
+ENV NJS_VERSION   0.9.8
 ENV NJS_RELEASE   1
 
 RUN set -x \
