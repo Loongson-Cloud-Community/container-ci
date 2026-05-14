@@ -1,0 +1,82 @@
+{
+  "8": {
+    "version": "8u482-b08",
+    "internal": "8.1.26",
+    "url": "https://ftp.loongnix.cn/Java/openjdk8/loongson8.1.26-fx-jdk8u482b08-linux-loongarch64-glibc2.34.tar.gz",
+    "md5": "1c142e7ed695940a2d020f8a93e82ec7",
+    "arches": {
+      "loongarch64": {
+        "url": "https://ftp.loongnix.cn/Java/openjdk8/loongson8.1.26-fx-jdk8u482b08-linux-loongarch64-glibc2.34.tar.gz"
+      }
+    },
+    "variants": [
+      "debian:forky",
+      "debian:forky-slim",
+      "openanolis:23.4"
+    ]
+  },
+  "11": {
+    "version": "11.0.30.7",
+    "internal": "11.17.26",
+    "url": "https://ftp.loongnix.cn/Java/openjdk11/loongson11.17.26-fx-jdk11.0.30_7-linux-loongarch64-glibc2.34.tar.gz",
+    "md5": "0e9140b353e0c4f1425b1a7e70987620",
+    "arches": {
+      "loongarch64": {
+        "url": "https://ftp.loongnix.cn/Java/openjdk11/loongson11.17.26-fx-jdk11.0.30_7-linux-loongarch64-glibc2.34.tar.gz"
+      }
+    },
+    "variants": [
+      "debian:forky",
+      "debian:forky-slim",
+      "openanolis:23.4"
+    ]
+  },
+  "17": {
+    "version": "17.0.18.8",
+    "internal": "17.17.26",
+    "url": "https://ftp.loongnix.cn/Java/openjdk17/loongson17.17.26-fx-jdk17.0.18_8-linux-loongarch64-glibc2.34.tar.gz",
+    "md5": "3d296d6722bc81f556263ea2a78d45a0",
+    "arches": {
+      "loongarch64": {
+        "url": "https://ftp.loongnix.cn/Java/openjdk17/loongson17.17.26-fx-jdk17.0.18_8-linux-loongarch64-glibc2.34.tar.gz"
+      }
+    },
+    "variants": [
+      "debian:forky",
+      "debian:forky-slim",
+      "openanolis:23.4"
+    ]
+  },
+  "21": {
+    "version": "21.0.10.7",
+    "internal": "21.10.25",
+    "url": "https://ftp.loongnix.cn/Java/openjdk21/loongson21.10.25-fx-jdk21.0.10_7-linux-loongarch64-glibc2.34.tar.gz",
+    "md5": "2d80c433cc1bb1f797deae334cd2ac7c",
+    "arches": {
+      "loongarch64": {
+        "url": "https://ftp.loongnix.cn/Java/openjdk21/loongson21.10.25-fx-jdk21.0.10_7-linux-loongarch64-glibc2.34.tar.gz"
+      }
+    },
+    "variants": [
+      "debian:forky",
+      "debian:forky-slim",
+      "openanolis:23.4"
+    ]
+  },
+  "25": {
+    "version": "25.0.2.10",
+    "internal": "25.3.20",
+    "url": "https://ftp.loongnix.cn/Java/openjdk25/loongson25.3.20-fx-jdk25.0.2_10-linux-loongarch64-glibc2.34.tar.gz",
+    "md5": "f1bcfc84c7ae87c75462bcfe0c9d4132",
+    "arches": {
+      "loongarch64": {
+        "url": "https://ftp.loongnix.cn/Java/openjdk25/loongson25.3.20-fx-jdk25.0.2_10-linux-loongarch64-glibc2.34.tar.gz"
+      }
+    },
+    "variants": [
+      "debian:forky",
+      "debian:forky-slim",
+      "openanolis:23.4"
+    ]
+  }
+}

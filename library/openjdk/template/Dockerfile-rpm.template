@@ -1,0 +1,36 @@
+FROM %%BASE_IMAGE%%
+
+RUN set -eux; \
+    dnf install -y \
+	tzdata \
+        ca-certificates \
+        wget \
+        tar \
+        gzip \
+        binutils \
+        fontconfig \
+        freetype \
+        p11-kit \
+    && dnf clean all
+
+ENV JAVA_HOME /usr/local/openjdk-%%JAVA_VERSION%%
+ENV PATH $JAVA_HOME/bin:$PATH
+ENV LANG C.UTF-8
+
+RUN set -eux; \
+    wget -O openjdk.tar.gz "%%DOWNLOAD_URL%%"; \
+    mkdir -p "$JAVA_HOME"; \
+    tar -xzf openjdk.tar.gz -C "$JAVA_HOME" --strip-components=1; \
+    rm openjdk.tar.gz; \
+    mkdir -p "$JAVA_HOME/lib/security"; \
+    # For RPM-based distros, ensure CA certificates are extracted
+    if command -v update-ca-trust >/dev/null; then \
+        update-ca-trust extract; \
+    fi; \
+    find "$JAVA_HOME/lib" -name '*.so' -exec dirname {} \; | sort -u > /etc/ld.so.conf.d/docker-openjdk.conf; \
+    ldconfig; \
+    java -Xshare:dump || true; \
+    javac -version; \
+    java -version
+
+CMD ["jshell"]
