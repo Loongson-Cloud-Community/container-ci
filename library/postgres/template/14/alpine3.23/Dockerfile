@@ -26,16 +26,7 @@ RUN set -eux; \
 		gnupg \
 	; \
 	\
-	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-	\
-# verify the signature
-	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	gpgconf --kill all; \
-	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+	wget -O /usr/local/bin/gosu "https://github.com/Loongson-Cloud-Community/gosu/releases/download/1.19/gosu-loong64"; \
 	\
 # clean up fetch dependencies
 	apk del --no-network .gosu-deps; \
@@ -53,8 +44,8 @@ ENV LANG en_US.utf8
 RUN mkdir /docker-entrypoint-initdb.d
 
 ENV PG_MAJOR 14
-ENV PG_VERSION 14.22
-ENV PG_SHA256 f57938ad30067077720277f6d7db05aafc07d1545efd2ed82f199ba828a7ad34
+ENV PG_VERSION 14.23
+ENV PG_SHA256 cc7216822b546330e29c2f91e123c8734a4c41795082145bb962aa712e8c94a5
 
 ENV DOCKER_PG_LLVM_DEPS \
 		llvm19-dev \
