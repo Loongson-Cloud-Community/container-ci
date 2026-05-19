@@ -1,5 +1,5 @@
-org:="prometheus"
-proj:="prometheus"
+org:=prometheus
+proj:=prometheus
 
 image:
 	docker build \
