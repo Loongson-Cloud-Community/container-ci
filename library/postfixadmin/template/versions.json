@@ -1,0 +1,7 @@
+{
+  "4.0.1": {
+    "version": "4.0.1",
+    "sha512": "88be6834257580c7a52dce33ce552e1868a1b28ba639a3378a66278939640073af4f8893fbfac690e2df5e67db0143c5726aab575bf0e4014b39a03d46916831",
+    "variants": ["apache", "fpm", "fpm-alpine"]
+  }
+}
