@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/alpine:3.21
+FROM lcr.loongnix.cn/library/alpine:3.23
 
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
@@ -57,8 +57,8 @@ RUN set -eux; \
 	rustArch=; \
 	apkArch="$(apk --print-arch)"; \
 	case "$apkArch" in \
-		'x86_64') rustArch='x86_64-unknown-linux-musl'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.27.1/x86_64-unknown-linux-musl/rustup-init'; rustupSha256='1455d1df3825c5f24ba06d9dd1c7052908272a2cae9aa749ea49d67acbe22b47' ;; \
-		'aarch64') rustArch='aarch64-unknown-linux-musl'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.27.1/aarch64-unknown-linux-musl/rustup-init'; rustupSha256='7087ada906cd27a00c8e0323401a46804a03a742bd07811da6dead016617cc64' ;; \
+		'x86_64') rustArch='x86_64-unknown-linux-musl'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.28.2/x86_64-unknown-linux-musl/rustup-init'; rustupSha256='e6599a1c7be58a2d8eaca66a80e0dc006d87bbcf780a58b7343d6e14c1605cb2' ;; \
+		'aarch64') rustArch='aarch64-unknown-linux-musl'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.28.2/aarch64-unknown-linux-musl/rustup-init'; rustupSha256='a97c8f56d7462908695348dd8c71ea6740c138ce303715793a690503a94fc9a9' ;; \
 	esac; \
 	\
 	if [ -n "$rustArch" ]; then \
@@ -70,7 +70,7 @@ RUN set -eux; \
 		\
 		export RUSTUP_HOME='/tmp/rust/rustup' CARGO_HOME='/tmp/rust/cargo'; \
 		export PATH="$CARGO_HOME/bin:$PATH"; \
-		/tmp/rust/rustup-init -y --no-modify-path --profile minimal --default-toolchain '1.84.0' --default-host "$rustArch"; \
+		/tmp/rust/rustup-init -y --no-modify-path --profile minimal --default-toolchain '1.91.1' --default-host "$rustArch"; \
 		\
 		rustc --version; \
 		cargo --version; \
@@ -85,10 +85,6 @@ RUN set -eux; \
 	\
 	cd /usr/src/ruby; \
 	\
-	{ [ '3.4.0' = $RUBY_VERSION ] || [ '3.4.1' = $RUBY_VERSION ]; } &&  { wget -qO fix-loongarch64-build.patch https://github.com/ruby/ruby/commit/9bbcbc3f368cbfdbfa914b276cd523cb0fc527ec.patch; \
-    patch -p1 -i fix-loongarch64-build.patch; \
-    rm fix-loongarch64-build.patch; \
-	}; \
 # https://github.com/docker-library/ruby/issues/196
 # https://bugs.ruby-lang.org/issues/14387#note-13 (patch source)
 # https://bugs.ruby-lang.org/issues/14387#note-16 ("Therefore ncopa's patch looks good for me in general." -- only breaks glibc which doesn't matter here)
@@ -104,6 +100,7 @@ RUN set -eux; \
 		--disable-install-doc \
 		--enable-shared \
 		${rustArch:+--enable-yjit} \
+		${rustArch:+--enable-zjit} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
