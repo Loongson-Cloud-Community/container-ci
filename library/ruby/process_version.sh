@@ -1,89 +1,105 @@
 #!/bin/bash
-
 set -eo pipefail
 
-source "$(dirname $0)/lib.sh"
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
+}
 
-readonly REGISTRY='lcr.loongnix.cn'
-readonly ORG='library'
-readonly PROJ='ruby'
+REGISTRY="lcr.loongnix.cn"
+ORG="library"
+PROJ="ruby"
 
-# Prepare $version
-prepare()
-{
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <major_version> (e.g. 3.3)"
+    exit 1
+fi
 
-    local version="$1"
-    log INFO "Preparing version $version"
+version="$1"
+versions_json="template/versions.json"
 
+full_version=$(jq -r ".[\"$version\"].version" "$versions_json")
+if [ -z "$full_version" ] || [ "$full_version" = "null" ]; then
+    log "ERROR: Cannot find full version for $version in $versions_json"
+    exit 1
+fi
+log "Building Ruby $version ($full_version)"
 
-    pushd template > /dev/null || {
-        log ERROR "Failed to enter template directory: $SOURCES_DIR"
+# 获取该版本的所有变体（例如 forky, slim-forky, alpine3.23, alpine3.22）
+variants=$(jq -r ".[\"$version\"].variants[]" "$versions_json")
+
+for variant in $variants; do
+    build_dir="template/$version/$variant"
+    if [ ! -d "$build_dir" ]; then
+        log "WARNING: Directory $build_dir not found, skipping"
+        continue
+    fi
+
+    image_name="${REGISTRY}/${ORG}/${PROJ}"
+    specific_tag="${full_version}-${variant}"
+
+    log "Building $image_name:$specific_tag"
+    docker build --network host -t "${image_name}:${specific_tag}" "$build_dir" || {
+        log "ERROR: Build failed for variant $variant"
         exit 1
     }
 
-    ./versions.sh "$version" || {
-        log ERROR "${template_dir}/versions.sh script failed for version: $version"
-    }
-
-    ./apply-templates.sh "$version" || {
-        log ERROR "${template_dir}/apply-templates.sh script failed for version: $version"
+    log "Pushing $image_name:$specific_tag"
+    docker push "${image_name}:${specific_tag}" || {
+        log "ERROR: Push failed for variant $variant"
         exit 1
     }
 
-	./apply-templates-makefile.sh "$version" || {
-        log ERROR "${template_dir}/apply-templates-makefile.sh script failed for version: $version"
-        exit 1
-    }
+    # 生成别名列表（根据官方 Ruby 标签规则）
+    aliases=()
 
-    popd
-}
+    # 判断变体类型
+    if [[ "$variant" == "alpine"* ]]; then
+        # Alpine 变体，例如 alpine3.23, alpine3.22
+        alpine_ver=$(echo "$variant" | sed 's/alpine//')   # 3.23 或 3.22
+        aliases+=("${full_version}-${variant}")
+        aliases+=("${version}-${variant}")
+        aliases+=("${version%%.*}-${variant}")
+        # 如果是最新 Alpine 版本（3.23），添加无具体版本号的 alpine 别名
+        if [ "$alpine_ver" = "3.23" ]; then
+            aliases+=("${full_version}-alpine")
+            aliases+=("${version}-alpine")
+            aliases+=("${version%%.*}-alpine")
+            aliases+=("alpine")
+        fi
+    else
+        # Debian 变体：forky 或 slim-forky
+        if [[ "$variant" == "slim-forky" ]]; then
+            # slim 变体
+            aliases+=("${full_version}-${variant}")
+            aliases+=("${version}-${variant}")
+            aliases+=("${version%%.*}-${variant}")
+            # 通用 slim 别名
+            aliases+=("${full_version}-slim")
+            aliases+=("${version}-slim")
+            aliases+=("${version%%.*}-slim")
+            aliases+=("slim")
+        elif [[ "$variant" == "forky" ]]; then
+            # 标准 Debian 变体（默认）
+            aliases+=("${full_version}-${variant}")
+            aliases+=("${version}-${variant}")
+            aliases+=("${version%%.*}-${variant}")
+            # 顶级版本别名（无后缀）
+            aliases+=("${full_version}")
+            aliases+=("${version}")
+            aliases+=("${version%%.*}")
+            # 注意：latest 标签根据官方规则，由最新的大版本（如 4.0）推送，此处略，可在 ci.sh 中额外处理
+        else
+            # 其他未知变体，只保留自身标签
+            aliases+=("${full_version}-${variant}")
+        fi
+    fi
 
-make_image_with_retry(){
-	local build_dir="$1"
-	for ((i=1;i<=10;i++)); do
-		log INFO "第$i次构建 $build_dir"
-      	if make image -C $build_dir; then
-         	return
-      	fi
-	done
-}
+    # 去重并推送
+    for alias in $(echo "${aliases[@]}" | tr ' ' '\n' | sort -u); do
+        docker tag "${image_name}:${specific_tag}" "${image_name}:${alias}"
+        docker push "${image_name}:${alias}"
+        log "Pushed alias: ${alias}"
+    done
+done
 
-docker_build(){
-    local version="$1"
-    local image="${REGISTRY}/${ORG}/${PROJ}:${version}"
-    log INFO "Building Docker image: $image"
-
-	# 获取到所有的 dockerfile
-	local dockerfiles=$(find ./template/$version -name 'Dockerfile')
-
-	for dockerfile in $dockerfiles; do
-		local build_dir=$(dirname $dockerfile)
-		make_image_with_retry "$build_dir"
-	done
-
-	log INFO "Successfully built image: $image"
-
-}
-
-docker_push(){
-    local version="$1"
-
-	# 获取到所有的 dockerfile
-	local dockerfiles=$(find ./template/$version -name 'Dockerfile')
-
-	for dockerfile in $dockerfiles; do
-		local build_dir=$(dirname $dockerfile)
-		make push -C $build_dir
-	done
-}
-
-process()
-{
-    version=$1
-    prepare $version
-    docker_build $version
-    docker_push $version
-}
-
-process $1
-
+log "All variants for version $version done."
