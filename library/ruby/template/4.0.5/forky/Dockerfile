@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/buildpack-deps:trixie
+FROM lcr.loongnix.cn/library/buildpack-deps:forky
 
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \

@@ -4,7 +4,14 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/buildpack-deps:trixie
+FROM lcr.loongnix.cn/library/debian:forky-slim
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		ca-certificates \
+	; \
+	apt-get dist-clean
 
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
@@ -28,6 +35,24 @@ RUN set -eux; \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
+		autoconf \
+		bzip2 \
+		g++ \
+		gcc \
+		libbz2-dev \
+		libffi-dev \
+		libgdbm-compat-dev \
+		libglib2.0-dev \
+		libgmp-dev \
+		libncurses-dev \
+		libssl-dev \
+		libxml2-dev \
+		libxslt-dev \
+		libyaml-dev \
+		make \
+		wget \
+		xz-utils \
+		zlib1g-dev \
 	; \
 	\
 	rustArch=; \
