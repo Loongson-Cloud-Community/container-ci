@@ -35,7 +35,7 @@ prepare()
 
 make_image_with_retry(){
 	local build_dir="$1"
-	for ((i=1;i<=10;i++)); do
+	for ((i=1;i<=1;i++)); do
 		log INFO "第$i次构建 $build_dir"
       	if make image -C $build_dir; then
          	return
