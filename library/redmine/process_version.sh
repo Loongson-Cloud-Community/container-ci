@@ -7,6 +7,9 @@ REGISTRY="lcr.loongnix.cn"
 ORG="library"
 PROJ="redmine"
 
+# 当前最新大版本，决定无后缀标签和 latest 的归属
+LATEST_MAJOR="6.1"
+
 if [ $# -ne 1 ]; then
     echo "Usage: $0 <major_version>"
     exit 1
@@ -27,13 +30,13 @@ variants=$(jq -r ".[\"$version\"].variants[]" "$versions_json")
 for variant in $variants; do
     case "$variant" in
         forky)
-            # 使用 forky 作为默认变体，标签后缀为 forky
             actual_suffix="forky"
             build_variant="$variant"
             ;;
-        alpine3.23)
-            actual_suffix="$variant"
-            build_variant="$variant"
+        alpine*)
+            # Alpine loong64 仓库缺失 lcms2 子库，暂时跳过
+            log "Skipping $variant (Alpine loong64 dependencies incomplete)"
+            continue
             ;;
         *)
             log "Skipping unknown variant $variant"
@@ -47,15 +50,10 @@ for variant in $variants; do
         continue
     fi
 
-    # 修改 Dockerfile 中的基础镜像
+    # 修改基础镜像为 forky 版
     dockerfile="$build_dir/Dockerfile"
     ruby_version=$(jq -r ".[\"$version\"].ruby.version" "$versions_json")
-    if [[ "$actual_suffix" == "alpine"* ]]; then
-        new_base="lcr.loongnix.cn/library/ruby:${ruby_version}-${actual_suffix}"
-    else
-        # 非 alpine 变体（即 forky）使用 -forky 基础镜像
-        new_base="lcr.loongnix.cn/library/ruby:${ruby_version}-forky"
-    fi
+    new_base="lcr.loongnix.cn/library/ruby:${ruby_version}-forky"
     sed -i "s|^FROM .*$|FROM $new_base|g" "$dockerfile"
 
     image_name="${REGISTRY}/${ORG}/${PROJ}"
@@ -73,37 +71,23 @@ for variant in $variants; do
         exit 1
     }
 
-    # 生成别名
+    # 生成别名标签
     major_minor=$(echo "$full_version" | cut -d. -f1,2)
     major=$(echo "$full_version" | cut -d. -f1)
     aliases=()
 
-    if [[ "$actual_suffix" == "alpine"* ]]; then
-        # alpine 变体的别名
-        aliases+=("${full_version}-${actual_suffix}")
-        aliases+=("${major_minor}-${actual_suffix}")
-        aliases+=("${major}-${actual_suffix}")
-        aliases+=("${actual_suffix}")
-        if [ "$actual_suffix" = "alpine3.23" ]; then
-            aliases+=("${full_version}-alpine")
-            aliases+=("${major_minor}-alpine")
-            aliases+=("${major}-alpine")
-            aliases+=("alpine")
-        fi
-    else
-        # forky 变体：作为默认变体，拥有无后缀标签和 latest
-        aliases+=("${full_version}-forky")
-        aliases+=("${major_minor}-forky")
-        aliases+=("${major}-forky")
-        aliases+=("forky")
-        # 顶级版本标签（无后缀）
+    # forky 变体始终携带 -forky 后缀
+    aliases+=("${full_version}-forky")
+    aliases+=("${major_minor}-forky")
+    aliases+=("${major}-forky")
+    aliases+=("forky")
+
+    # 只有最新大版本才推送无后缀的顶级标签和 latest
+    if [ "$version" = "$LATEST_MAJOR" ]; then
         aliases+=("$full_version")
         aliases+=("$major_minor")
         aliases+=("$major")
-        # 如果是最新大版本（例如 6.1），添加 latest
-        if [ "$version" = "6.1" ]; then
-            aliases+=("latest")
-        fi
+        aliases+=("latest")
     fi
 
     for alias in $(echo "${aliases[@]}" | tr ' ' '\n' | sort -u); do
