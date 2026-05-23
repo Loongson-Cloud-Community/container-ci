@@ -80,8 +80,13 @@ build_component()
     local base_context="$2"
     local variant="$3"
 
-    local context="$base_context/$component"
-    local dockerfile="$context/Dockerfile"
+    if [ "$component" == "api" ]; then # 适应1.14.0中web构建环境变化
+        local context="$base_context/$component"
+    elif [ "$component" == "web" ]; then
+        local context="$base_context"
+    fi
+
+    local dockerfile="$base_context/$component/Dockerfile"
 
     local -a targets=()
     local tags=(${VARIANTS["$variant"]})
