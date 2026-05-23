@@ -1,0 +1,34 @@
+{
+  "6.0": {
+    "alpine": "3.23",
+    "debian": "forky",
+    "downloadUrl": "https://www.redmine.org/releases/redmine-6.0.9.tar.gz",
+    "ruby": {
+      "version": "3.3"
+    },
+    "sha256": "9bc760b5147cc27e27334cecbaf600be6efc009cd8fe57680309af513d852006",
+    "variants": [
+      "forky",
+      "trixie",
+      "alpine3.23",
+      "alpine3.22"
+    ],
+    "version": "6.0.9"
+  },
+  "6.1": {
+    "alpine": "3.23",
+    "debian": "forky",
+    "downloadUrl": "https://www.redmine.org/releases/redmine-6.1.2.tar.gz",
+    "ruby": {
+      "version": "3.4"
+    },
+    "sha256": "938e975e808ccfb4b0dcbad8b42f02aacf0ca9ef15491c38c5af4756740ccf08",
+    "variants": [
+      "forky",
+      "trixie",
+      "alpine3.23",
+      "alpine3.22"
+    ],
+    "version": "6.1.2"
+  }
+}
