@@ -1,0 +1,32 @@
+{
+  "10.1": {
+    "sha512": "f36af12391a277e5c3a802a8e1a2a1e4354cd461b547d2e1a33ac0ab88d707d3fb2591e034a17b7d3a6b965a4c977a97dbf29bb81a3867e85aeec3d8d189e22e",
+    "variants": [
+      "jdk11/debian-forky",
+      "jdk17/debian-forky",
+      "jdk21/debian-forky",
+      "jdk25/debian-forky"
+    ],
+    "version": "10.1.55"
+  },
+  "11.0": {
+    "sha512": "4ee77f604009daeab50d015835f221707f64a03756c6e5ac8736a6947cd60f6796315ceb255428765017038d79d466988582eb8b986dc48d3649bbc35bdd8bd7",
+    "variants": [
+      "jdk17/debian-forky",
+      "jdk21/debian-forky",
+      "jdk25/debian-forky"
+    ],
+    "version": "11.0.22"
+  },
+  "9.0": {
+    "sha512": "737367433486757ccd687329d99b1188506cdec57a53a29b415173909c38cdf9da4fc9fd73b8cd17cd0a8def8610ad43bab8e84393dc904a0bd1121da8cab2fc",
+    "variants": [
+      "jdk8/debian-forky",
+      "jdk11/debian-forky",
+      "jdk17/debian-forky",
+      "jdk21/debian-forky",
+      "jdk25/debian-forky"
+    ],
+    "version": "9.0.118"
+  }
+}
