@@ -1,0 +1,15 @@
+FROM lcr.loongnix.cn/library/debian:forky-slim
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN groupadd -r nonroot -g 65532 && \
+    useradd -u 65532 -r -g nonroot -s /usr/sbin/nologin nonroot
+
+ARG PKG_FILES
+WORKDIR /
+
+COPY --chown=65532:65532 /$PKG_FILES /
+
+USER 65532:65532
