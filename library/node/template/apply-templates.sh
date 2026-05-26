@@ -69,7 +69,7 @@ debian_slim_apply_single() {
 alpine_apply() {
     local node_version=$1
 
-    for alpine_version in 3.21 3.22 3.23; do
+    for alpine_version in 3.23; do
         alpine_apply_single ${node_version} ${alpine_version}
     done
 }
