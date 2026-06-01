@@ -7,7 +7,7 @@ MAJOR_VERSION="${MINOR_VERSION%.*}"
 
 
 versions_json() {
-    tags="${MAJOR_VERSION},${MINOR_VERSION},${VERSION}"
+    tags="${MAJOR_VERSION},${MINOR_VERSION},${VERSION},latest"
     url="https://cz.alpinelinux.org/alpine/v${MINOR_VERSION}/releases/loongarch64/alpine-minirootfs-${VERSION}-loongarch64.tar.gz"
     jq -n \
     	--arg version ${MINOR_VERSION} \
