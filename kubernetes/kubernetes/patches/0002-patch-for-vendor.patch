@@ -1,0 +1,38 @@
+From a76a2fdb8a73326b2320e89eb61baa648e889174 Mon Sep 17 00:00:00 2001
+From: shanjiantao <znley@loongson.cn>
+Date: Wed, 5 Mar 2025 10:07:22 +0800
+Subject: [PATCH 1/2] patch for vendor
+
+---
+ vendor/github.com/cilium/ebpf/internal/endian_le.go           | 4 ++--
+ .../runc/libcontainer/system/syscall_linux_64.go              | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/vendor/github.com/cilium/ebpf/internal/endian_le.go b/vendor/github.com/cilium/ebpf/internal/endian_le.go
+index 41a68224..bea113fb 100644
+--- a/vendor/github.com/cilium/ebpf/internal/endian_le.go
++++ b/vendor/github.com/cilium/ebpf/internal/endian_le.go
+@@ -1,5 +1,5 @@
+-//go:build 386 || amd64 || amd64p32 || arm || arm64 || mipsle || mips64le || mips64p32le || ppc64le || riscv64
+-// +build 386 amd64 amd64p32 arm arm64 mipsle mips64le mips64p32le ppc64le riscv64
++//go:build 386 || amd64 || amd64p32 || arm || arm64 || loong64 || mipsle || mips64le || mips64p32le || ppc64le || riscv64
++// +build 386 amd64 amd64p32 arm arm64 mipsle mips64le mips64p32le ppc64le riscv64 loong64
+ 
+ package internal
+ 
+diff --git a/vendor/github.com/opencontainers/runc/libcontainer/system/syscall_linux_64.go b/vendor/github.com/opencontainers/runc/libcontainer/system/syscall_linux_64.go
+index 1ed0dba1..262450ad 100644
+--- a/vendor/github.com/opencontainers/runc/libcontainer/system/syscall_linux_64.go
++++ b/vendor/github.com/opencontainers/runc/libcontainer/system/syscall_linux_64.go
+@@ -1,6 +1,6 @@
+-//go:build linux && (arm64 || amd64 || mips || mipsle || mips64 || mips64le || ppc || ppc64 || ppc64le || riscv64 || s390x)
++//go:build linux && (arm64 || amd64 || loong64 || mips || mipsle || mips64 || mips64le || ppc || ppc64 || ppc64le || riscv64 || s390x)
+ // +build linux
+-// +build arm64 amd64 mips mipsle mips64 mips64le ppc ppc64 ppc64le riscv64 s390x
++// +build arm64 amd64 loong64 mips mipsle mips64 mips64le ppc ppc64 ppc64le riscv64 s390x
+ 
+ package system
+ 
+-- 
+2.41.0
+
