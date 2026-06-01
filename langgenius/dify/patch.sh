@@ -13,18 +13,13 @@ patch_api()
     local api_pyproject=$context/api/pyproject.toml
 
     sed -i 's/pandas\[excel,output-formatting,performance\]/pandas\[excel,output-formatting\]/' $api_pyproject
-    sed -i 's/"intersystems-irispython/#"intersystems-irispython/' $api_pyproject
-    #sed -i 's/.*pypdfium2.*/    "pypdfium2==4.30.1",/' $api_pyproject
-    sed -i 's/.*couchbase.*/    "couchbase==4.3.5",/' $api_pyproject
+    sed -i 's/"intersystems-irispython/#"intersystems-irispython/' $api_pyproject # 闭源项目
+    # sed -i 's/.*couchbase.*/    "couchbase==4.3.5",/' $api_pyproject
     sed -i '/couchbase/d' $api_pyproject
-    sed -i '/dependencies = \[/a\
-    "python-calamine==0.5.3",' $api_pyproject
-    #sed -i '/vdb = \[/a\
-#    "milvus-lite==2.4.11",' $api_pyproject
-    sed -i '/dependencies = \[/a\
+    sed -i '/^dependencies = \[/a\
+    "python-calamine==0.5.3",' $api_pyproject # 0.5.4 没有源码包
+    sed -i '/^dependencies = \[/a\
     "onnxruntime==1.23.2",' $api_pyproject
-    #sed -i '/vdb = \[/a\
-#    "pyarrow==22.0.0",' $api_pyproject
     sed -i '/\[dependency-groups]/i\
 [[tool.uv.index]]\
 name = "loongson"\
@@ -39,28 +34,27 @@ environments = [\
     "sys_platform == '\''linux'\''"\
 ]' $api_pyproject
 
-    if [ "$ver_num" -ge 1013001 ]; then
-	if [ "$ver_num" -lt 1014000 ]; then
-            sed -i 's/epub,//' $api_pyproject # 将 pypandoc-binary 替换为 pypandoc
-            sed -i '/dev = \[/a\
+    if [ "$ver_num" -ge 1013001 ] && [ "$ver_num" -lt 1014000 ]; then
+        sed -i 's/epub,//' $api_pyproject # pypandoc 改为源码编译
+        sed -i '/dev = \[/a\
     "pypandoc~=1.17",' $api_pyproject
-	fi
-        sed -i '/dependencies = \[/a\
-    "psycopg-binary==3.2.13",' $api_pyproject
     fi
 
     if [ "$ver_num" -lt 1014000 ]; then
-       sed -i '/\[dependency-groups\]/i\
+        sed -i '/\[dependency-groups\]/i\
 [tool.uv.sources]\
 onnxruntime = { url = "https://github.com/loong64/onnxruntime/releases/download/v1.23.2/onnxruntime-1.23.2-cp312-cp312-manylinux_2_38_loongarch64.whl" }\
 ' $api_pyproject
     else
-	sed -i '/\[tool.uv.sources\]/a\
+        sed -i '/\[tool.uv.sources\]/a\
 onnxruntime = { url = "https://github.com/loong64/onnxruntime/releases/download/v1.23.2/onnxruntime-1.23.2-cp312-cp312-manylinux_2_38_loongarch64.whl" }\
 litellm = { index = "standby" }' $api_pyproject # 构建1.14.1时阿里源的litellm最新版本没有与上游同步
         sed -i '/dify-vdb-iris/s/^/#/' $api_pyproject
 	sed -i '/dependencies = \[/a\
-"unstructured[docx,md,ppt,pptx]~=0.21.5",' $api_pyproject
+    "unstructured[docx,md,ppt,pptx]~=0.21.5",' $api_pyproject # 去掉epub,其包含 pypandoc-binary
+        sed -i 's/psycopg2-binary/psycopg2/' $api_pyproject # psycopg2 改为源码编译
+        sed -i 's/.*dify-vdb-hologres.*/#&/' $api_pyproject # 去掉 hologres 数据库
+        sed -i 's|exclude = \[|&"providers/vdb/vdb-hologres", |' $api_pyproject
     fi
 
 }
