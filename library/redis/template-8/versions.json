@@ -1,7 +1,7 @@
 {
-    "8.8.0": {
-        "version": "8.8.0",
-        "url": "http://download.redis.io/releases/redis-8.8.0.tar.gz",
+    "8.6.4": {
+        "version": "8.6.4",
+        "url": "http://download.redis.io/releases/redis-8.6.4.tar.gz",
         "debian": {
             "version": "13"
         },
@@ -57,6 +57,6 @@
                 }
             }
         },
-        "sha256": "88422181efb0c9c0abba332e3e391d409e1e13714b838931669235e5796f704b"
+        "sha256": "559c2e50c496b2d4afcfb491af27763a1b170037317789ecf309025d0caece24"
     }
 }
