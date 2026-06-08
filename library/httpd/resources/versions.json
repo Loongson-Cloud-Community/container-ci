@@ -64,5 +64,16 @@
     "patches": "",
     "sha256": "66cd206637b0d5c446fa7dabe75fe03525da8fb55855876c46288cd88b136aa4",
     "version": "2.4.67"
+  },
+  "2.4.68": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    },
+    "patches": "",
+    "sha256": "68c74d4df38c26bed4dfbdb8f3baf1eb532f3872357becc1bba5d136f6b63c06",
+    "version": "2.4.68"
   }
 }
