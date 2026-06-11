@@ -72,11 +72,11 @@ prepare()
     wget -O $version-src.tar.gz --quiet --show-progress https://github.com/$ORG/$PROJ/archive/refs/tags/v$version.tar.gz
     tar -xzf $version-src.tar.gz -C $context --strip-components=1
    
-    ../patch.sh $context
-
     rust_ver=$(sed -n 's/.*rust-\([0-9.]*\)-bookworm.*/\1/p' $context/Dockerfile | head -n 1)
     cp $template_file $context/Dockerfile
     sed -i "s/RUST_VER/$rust_ver/" $context/Dockerfile
+
+    ../patch.sh $context
 
     popd
 }
