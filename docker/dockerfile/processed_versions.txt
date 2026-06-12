@@ -92,3 +92,5 @@ dockerfile/1.24.0-rc1
 dockerfile/1.24.0-rc1-labs
 dockerfile/1.25.0-rc1
 dockerfile/1.25.0-rc1-labs
+dockerfile/1.25.0-rc2
+dockerfile/1.25.0-rc2-labs
