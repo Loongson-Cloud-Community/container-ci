@@ -1,4 +1,4 @@
-FROM lcr.loongnix.cn/library/php:8.3-apache-forky
+FROM lcr.loongnix.cn/library/php:8.3-fpm-forky
 LABEL maintainer="David Goodwin <david@codepoets.co.uk> (@DavidGoodwin)"
 
 # docker-entrypoint.sh dependencies
@@ -40,15 +40,12 @@ RUN set -ex; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	apt-get dist-clean
 
-ARG POSTFIXADMIN_VERSION=4.0.1
-ARG POSTFIXADMIN_SHA512=88be6834257580c7a52dce33ce552e1868a1b28ba639a3378a66278939640073af4f8893fbfac690e2df5e67db0143c5726aab575bf0e4014b39a03d46916831
+ARG POSTFIXADMIN_VERSION=4.0.3
+ARG POSTFIXADMIN_SHA512=b1f0261bf9cab0529ea43fb502bdef595c81350671c0e4b3fc6609335448552a3d7b649d8f4612473cc07bfe4bd1c6ba7800dc080a0fdf4247f5d81718ff2360
 
 ENV POSTFIXADMIN_VERSION $POSTFIXADMIN_VERSION
 ENV POSTFIXADMIN_SHA512 $POSTFIXADMIN_SHA512
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
-RUN set -eu; sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf; \
-	sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 RUN set -eu; \
 	curl -fsSL -o postfixadmin.tar.gz "https://github.com/postfixadmin/postfixadmin/archive/v${POSTFIXADMIN_VERSION}.tar.gz"; \
