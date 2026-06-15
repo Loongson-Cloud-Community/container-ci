@@ -307,5 +307,28 @@
       "version": "24.04"
     },
     "version": "4.3.1"
+  },
+  "4.3.2": {
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "forky"
+    },
+    "openssl": {
+      "sha256": "4900be54e81c4dfe00bb1a10dad33fd8414833573c40d0e9e3274d4ed32e53a2",
+      "version": "3.3.7"
+    },
+    "otp": {
+      "sha256": "38308102d1f7e44339911ddc5e3a94a6b4bbb0ef8a5fc392e2e4b280daf0fc9e",
+      "version": "27.3.4.13"
+    },
+    "rabbitmqadmin": {
+      "version": "2.32.0"
+    },
+    "ubuntu": {
+      "version": "24.04"
+    },
+    "version": "4.3.2"
   }
 }
