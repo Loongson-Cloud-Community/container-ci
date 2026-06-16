@@ -28,7 +28,7 @@ fi
 # 从原始 Dockerfile 中提取 ARG 变量及其值
 declare -A args_map
 while read -r line; do
-  if [[ $line =~ ^ARG[[:space:]]+([A-Za-z0-9_]+)=([^[:space:]]+) ]]; then
+  if [[ $line =~ ^ARG[[:space:]]+([A-Za-z0-9_]+)=(.+) ]]; then
     arg_name="${BASH_REMATCH[1]}"
     arg_value="${BASH_REMATCH[2]}"
     args_map["$arg_name"]="$arg_value"
@@ -44,9 +44,9 @@ for arg_name in "${!args_map[@]}"; do
   arg_value="${args_map[$arg_name]}"
   # 在 macOS 上需要使用 -i '' 而不是 -i
   if sed --version 2>&1 | grep -q GNU; then
-    sed -i "s/^ARG[[:space:]]*$arg_name\$/ARG $arg_name=$arg_value/" "$OUTPUT_DIR/Dockerfile"
+    sed -i "s/^ARG[[:space:]]*$arg_name\\(=.*\\)\\{0,1\\}$/ARG $arg_name=$arg_value/" "$OUTPUT_DIR/Dockerfile"
   else
-    sed -i "" "s/^ARG[[:space:]]*$arg_name\$/ARG $arg_name=$arg_value/" "$OUTPUT_DIR/Dockerfile"
+    sed -i "" "s/^ARG[[:space:]]*$arg_name\\(=.*\\)\\{0,1\\}$/ARG $arg_name=$arg_value/" "$OUTPUT_DIR/Dockerfile"
   fi
 done
 
