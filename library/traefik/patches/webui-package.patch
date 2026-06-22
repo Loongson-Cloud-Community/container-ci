@@ -1,0 +1,12 @@
+diff --git a/webui/package.json b/webui/package.json
+index b3e7c7982..49ed1cc1b 100644
+--- a/webui/package.json
++++ b/webui/package.json
+@@ -97,6 +97,7 @@
+   },
+   "packageManager": "yarn@4.13.0",
+   "resolutions": {
++    "rollup": "npm:@rollup/wasm-node@^4.0.0",
+     "form-data": "4.0.4",
+     "js-yaml": "4.1.1",
+     "@csstools/css-syntax-patches-for-csstree": "1.1.4",
