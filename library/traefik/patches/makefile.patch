@@ -1,0 +1,34 @@
+diff --git a/Makefile b/Makefile
+index f3473d89b..33155639f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -17,7 +17,7 @@ GOGC ?=
+ 
+ LINT_EXECUTABLES = misspell shellcheck
+ 
+-DOCKER_BUILD_PLATFORMS ?= linux/amd64,linux/arm64
++DOCKER_BUILD_PLATFORMS ?= linux/amd64,linux/arm64,linux/loong64
+ 
+ .PHONY: default
+ #? default: Run `make generate` and `make binary`
+@@ -69,6 +69,11 @@ binary-linux-arm64: export GOARCH := arm64
+ binary-linux-arm64:
+ 	@$(MAKE) binary
+ 
++binary-linux-loong64: export GOOS := linux
++binary-linux-loong64: export GOARCH := loong64
++binary-linux-loong64:
++	@$(MAKE) binary
++
+ binary-linux-amd64: export GOOS := linux
+ binary-linux-amd64: export GOARCH := amd64
+ binary-linux-amd64:
+@@ -146,7 +151,7 @@ validate: lint validate-files
+ 
+ # Target for building images for multiple architectures.
+ .PHONY: multi-arch-image-%
+-multi-arch-image-%: binary-linux-amd64 binary-linux-arm64
++multi-arch-image-%: binary-linux-amd64 binary-linux-arm64 binary-linux-loong64
+ 	docker buildx build $(DOCKER_BUILDX_ARGS) -t traefik/traefik:$* --platform=$(DOCKER_BUILD_PLATFORMS) -f Dockerfile .
+ 
+ 
