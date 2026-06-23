@@ -1,0 +1,17 @@
+org:=prometheus
+proj:=pushgateway
+
+image:
+	docker build \
+{%- set tag_list = tags.split(',') %}
+{%- for tag in tag_list %}
+		-t lcr.loongnix.cn/$(org)/$(proj):{{ tag }} \
+{%- endfor %}
+		.
+
+push:
+{%- set tag_list = tags.split(',') %}
+{%- for tag in tag_list %}
+	docker push lcr.loongnix.cn/$(org)/$(proj):{{ tag }}
+{%- endfor %}
+
