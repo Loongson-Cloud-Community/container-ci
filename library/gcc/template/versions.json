@@ -1,0 +1,38 @@
+{
+  "13": {
+    "compression": "xz",
+    "debian": {
+      "version": "forky"
+    },
+    "eol": "2026-12-05",
+    "lastModified": "2025-06-05",
+    "version": "13.4.0"
+  },
+  "14": {
+    "compression": "xz",
+    "debian": {
+      "version": "forky"
+    },
+    "eol": "2026-11-23",
+    "lastModified": "2025-05-23",
+    "version": "14.3.0"
+  },
+  "15": {
+    "compression": "xz",
+    "debian": {
+      "version": "forky"
+    },
+    "eol": "2027-12-12",
+    "lastModified": "2026-06-12",
+    "version": "15.3.0"
+  },
+  "16": {
+    "compression": "xz",
+    "debian": {
+      "version": "forky"
+    },
+    "eol": "2027-10-30",
+    "lastModified": "2026-04-30",
+    "version": "16.1.0"
+  }
+}
