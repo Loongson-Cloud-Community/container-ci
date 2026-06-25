@@ -8,6 +8,7 @@ readonly REGISTRY='lcr.loongnix.cn'
 readonly ORG='etcd-io'
 readonly IMGORG='etcd-development'
 readonly PROJ='etcd'
+readonly K8S="kubernetes"
 readonly ARCH='loong64'
 readonly IMAGE="$REGISTRY/$IMGORG/$PROJ"
 readonly RESOURCES="resources"
@@ -85,6 +86,9 @@ build_variant()
     # 同时构建 lcr.loongnix./x/y:tag 和 y:tag 以解决存在镜像依赖的情况
         targets+=("$IMAGE:$tag" "$PROJ:$tag")
     done
+    # 添加k8s标签
+    targets+=("$REGISTRY/$K8S/$PROJ:$tag")
+
     docker_build "$context/Dockerfile" "${targets[*]}" "$context"
 }
 
