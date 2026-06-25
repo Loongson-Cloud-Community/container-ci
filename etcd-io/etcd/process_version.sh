@@ -103,6 +103,7 @@ upload()
         local tags="${VARIANTS[$variant]}"
         for tag in ${tags[@]}; do
             docker push $IMAGE:$tag
+	    docker push $REGISTRY/$K8S/$PROJ:$tag
         done
     done
 }
