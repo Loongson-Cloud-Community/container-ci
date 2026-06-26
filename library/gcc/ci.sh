@@ -1,6 +1,10 @@
 #!/bin/bash
 set -eo pipefail
 
+REGISTRY="lcr.loongnix.cn"
+ORG="library"
+PROJ="gcc"
+
 log() { echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"; }
 
 PROCESSED_FILE="processed_versions.txt"
