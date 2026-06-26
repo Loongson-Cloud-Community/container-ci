@@ -77,7 +77,7 @@ alpine_apply() {
 debian_apply() {
     local node_version=$1
 
-    for debian_version in trixie; do
+    for debian_version in forky; do
         debian_apply_single ${node_version} ${debian_version}
     done
 }
@@ -85,7 +85,7 @@ debian_apply() {
 debian_slim_apply() {
     local node_version=$1
 
-    for debian_version in trixie; do
+    for debian_version in forky; do
         debian_slim_apply_single ${node_version} ${debian_version}
     done
 }
