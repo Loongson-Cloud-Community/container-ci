@@ -177,6 +177,10 @@ EOF
     sed -i "s/NODE_MODULES_BASE/$node_modules_base/" "$context/web/swc-patch.sh"
 
     chmod +x "$context/web/swc-patch.sh"
+
+    # 让 pnpm 使用镜像中的 node，避免其解析下载 node@runtime
+    jq '.devEngines.runtime.onFail = "ignore"' "$context/package.json" > "$context/package.json.new"
+    mv "$context/package.json.new" "$context/package.json"
 }
 
 patch()
