@@ -34,7 +34,7 @@ build_and_push() {
     local specific_tag="${version}-${variant}"
     
     log INFO "Building $image_name:$specific_tag from $build_dir"
-    docker build -t "${image_name}:${specific_tag}" "$build_dir" || {
+    docker build --timeout 30m -t "${image_name}:${specific_tag}" "$build_dir" || {
         log ERROR "Build failed for $image_name:$specific_tag"
         exit 1
     }
