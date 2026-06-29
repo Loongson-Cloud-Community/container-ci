@@ -22,7 +22,7 @@ RUN sed -i 's@deb.debian.org@mirrors.aliyun.com@g' /etc/apt/sources.list.d/debia
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
           # basic environment
-          g++ golang rustc cargo cmake \
+          g++ golang rustc cargo cmake git \
           # for building gmpy2
           libmpfr-dev libmpc-dev
 
