@@ -14,7 +14,6 @@
 
 FROM lcr.loongnix.cn/library/debian:forky
 
-ARG ARCH
 ARG binary=./nfsplugin
 COPY ${binary} /nfsplugin
 
