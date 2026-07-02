@@ -2,12 +2,11 @@
 set -Eeuo pipefail
 
 readonly ALPINE_VERSION_VARIANTS=(
-	'3.21'
-	'3.22'
+        '3.24'
 )
 
 readonly DEBIAN_VERSION_VARIANTS=(
-	'trixie'
+	'forky'
 )
 
 generate_alpine(){
