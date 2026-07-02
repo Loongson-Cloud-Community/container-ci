@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/alpine:3.22
+FROM lcr.loongnix.cn/library/alpine:3.24
 
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
@@ -13,10 +13,10 @@ RUN set -eux; \
 
 ENV LANG C.UTF-8
 
-# https://www.ruby-lang.org/en/news/2026/05/20/ruby-4-0-5-released/
-ENV RUBY_VERSION 4.0.5
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.5.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 5dc5521ea54c726e6cc10b1b5a0f4004b27b482e61c04c99aed79315e30895e5
+# https://www.ruby-lang.org/en/news/2026/06/30/ruby-3-4-10-released/
+ENV RUBY_VERSION 3.4.10
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 6f32ad662baafc228d12030dbcd284f83b034dd4337b300dc84ac74d11a1eb68
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -100,7 +100,6 @@ RUN set -eux; \
 		--disable-install-doc \
 		--enable-shared \
 		${rustArch:+--enable-yjit} \
-		${rustArch:+--enable-zjit} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \

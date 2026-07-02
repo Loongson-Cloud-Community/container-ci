@@ -83,13 +83,11 @@ for version in "${versions[@]}"; do
 	doc="$(jq <<<"$doc" -c '
 		.variants = [
 			(
-				"trixie",
 				"forky",
 				empty # trailing comma hack
 			| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 			(
-				"3.23",
-				"3.22",
+				"3.24",
 				empty # trailing comma hack
 			| "alpine" + .)
 		]
