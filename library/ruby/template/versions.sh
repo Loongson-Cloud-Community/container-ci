@@ -41,6 +41,14 @@ for version in "${versions[@]}"; do
 	fi
 	export version rcVersion
 
+	# 从版本号提取主版本号作为 versions.json 的 key
+	# 4.0.4 -> 4.0, 4.0.5-rc1 -> 4.0, 4.0 -> 4.0
+	if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.*)?$ ]]; then
+		key="${version%.*}"
+	else
+		key="$version"
+	fi
+
 	doc="$(jq <<<"$releases" -c '
 		map(
 			select(
@@ -62,20 +70,21 @@ for version in "${versions[@]}"; do
 
 	if [ -z "$doc" ]; then
 		echo >&2 "warning: skipping/removing '$version' (does not appear to exist upstream)"
-		json="$(jq <<<"$json" -c '.[env.version] = null')"
+		json="$(jq <<<"$json" -c --arg key "$key" '.[$key] = null')"
 		continue
 	fi
 
 	fullVersion="$(jq <<<"$doc" -r '.version')"
-	echo "$version: $fullVersion"
+	echo "$key: $fullVersion"
 
-	if [ "$rcVersion" != "$version" ] && gaFullVersion="$(jq <<<"$json" -er '.[env.rcVersion] | if . then .version else empty end')"; then
+	rc_key="${rcVersion%.*}"
+	if [ "$rcVersion" != "$version" ] && gaFullVersion="$(jq <<<"$json" -er --arg key "$rc_key" '.[$key] | if . then .version else empty end')"; then
 		# Ruby pre-releases have only been for .0 since ~2011, so if our pre-release now has a relevant GA, it should go away 👀
 		# just in case, we'll also do a version comparison to make sure we don't have a pre-release that's newer than the relevant GA
 		latestVersion="$({ echo "$fullVersion"; echo "$gaFullVersion"; } | sort -V | tail -1)"
 		if [[ "$fullVersion" == "$gaFullVersion"* ]] || [ "$latestVersion" = "$gaFullVersion" ]; then
 			# "x.y.z-rc1" == x.y.z*
-			json="$(jq <<<"$json" -c 'del(.[env.version])')"
+			json="$(jq <<<"$json" -c --arg key "$key" 'del(.[$key])')"
 			continue
 		fi
 	fi
@@ -105,11 +114,11 @@ for version in "${versions[@]}"; do
 		| add
 	' - rust.json)"
 
-	json="$(jq <<<"$json" -c --argjson doc "$doc" '.[env.version] = $doc')"
+	json="$(jq <<<"$json" -c --argjson doc "$doc" --arg key "$key" '.[$key] = $doc')"
 
 	# make sure pre-release versions have a placeholder for GA
 	if [ "$version" != "$rcVersion" ]; then
-		json="$(jq <<<"$json" -c '.[env.rcVersion] //= null')"
+		json="$(jq <<<"$json" -c --arg key "$rc_key" '.[$key] //= null')"
 	fi
 done
 
