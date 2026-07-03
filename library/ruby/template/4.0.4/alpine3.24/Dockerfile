@@ -13,10 +13,10 @@ RUN set -eux; \
 
 ENV LANG C.UTF-8
 
-# https://www.ruby-lang.org/en/news/2026/03/26/ruby-3-3-11-released/
-ENV RUBY_VERSION 3.3.11
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.11.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 9116bb2e313203bd78cd3e8dc09284d34b2645f725877623a7185bf3807c8ca3
+# https://www.ruby-lang.org/en/news/2026/05/11/ruby-4-0-4-released/
+ENV RUBY_VERSION 4.0.4
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.4.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 6ff9d2d6e75f5a6f997222ecc45f79209d663737eceb3689d1f42ab952673fb7
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -100,6 +100,7 @@ RUN set -eux; \
 		--disable-install-doc \
 		--enable-shared \
 		${rustArch:+--enable-yjit} \
+		${rustArch:+--enable-zjit} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
