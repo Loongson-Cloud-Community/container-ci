@@ -45,7 +45,7 @@ log INFO "Building Ruby $major_version ($full_version)"
 variants=$(jq -r ".[\"$major_version\"].variants[]" "$versions_json")
 
 for variant in $variants; do
-    build_dir="template/$major_version/$variant"
+    build_dir="template/$full_version/$variant"
     if [ ! -d "$build_dir" ]; then
         log WARN "Directory $build_dir not found, skipping"
         continue

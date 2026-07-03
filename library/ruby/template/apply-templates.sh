@@ -30,12 +30,15 @@ generated_warning() {
 for version; do
 	export version
 
-	rm -rf "$version/"
-
-	if jq -e '.[env.version] | not' versions.json > /dev/null; then
+	# 获取完整版本号作为目录名
+	full_version="$(jq -r ".[env.version].version // empty" versions.json)"
+	if [ -z "$full_version" ]; then
+		rm -rf "$version/"
 		echo "deleting $version ..."
 		continue
 	fi
+
+	rm -rf "$full_version/"
 
 	variants="$(jq -r '.[env.version].variants | map(@sh) | join(" ")' versions.json)"
 	eval "variants=( $variants )"
@@ -43,7 +46,7 @@ for version; do
 	for variant in "${variants[@]}"; do
 		export variant
 
-		dir="$version/$variant"
+		dir="$full_version/$variant"
 		mkdir -p "$dir"
 
 		echo "processing $dir ..."
