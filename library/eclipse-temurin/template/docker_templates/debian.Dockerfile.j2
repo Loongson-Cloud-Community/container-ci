@@ -1,0 +1,32 @@
+{% include 'partials/license.j2' %}
+
+FROM {{ base_image }}
+
+{% include 'partials/nix-env.j2' %}
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        wget \
+        locales \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i en_US -c -f UTF-8 en_US.UTF-8
+
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
+
+{% include 'partials/java-version.j2' %}
+
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+# 复制预构建的 tarball
+COPY {{ tarball_name }} /tmp/openjdk.tar.gz
+
+RUN mkdir -p "$JAVA_HOME" && \
+    tar -xzf /tmp/openjdk.tar.gz -C "$JAVA_HOME" --strip-components=1 && \
+    rm /tmp/openjdk.tar.gz
+
+{% include 'partials/version-check.j2' %}
+{% include 'partials/entrypoint.j2' %}
+{% include 'partials/jshell.j2' %}
