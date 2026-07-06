@@ -1,23 +1,17 @@
-FROM lcr.loongnix.cn/library/php:8.3-fpm-forky
+FROM lcr.loongnix.cn/library/php:8.3-fpm-alpine3.23
 LABEL maintainer="David Goodwin <david@codepoets.co.uk> (@DavidGoodwin)"
 
 # docker-entrypoint.sh dependencies
-RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		gosu \
-	; \
-	rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+		bash \
+		su-exec
 
 # Install required PHP extensions
 RUN set -ex; \
 	\
-	savedAptMark="$(apt-mark showmanual)"; \
-	\
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		libpq-dev \
-		libsqlite3-dev \
+	apk add --no-cache --virtual .build-deps \
+		postgresql-dev \
+		sqlite-dev \
 	; \
 	docker-php-ext-install -j "$(nproc)" \
 		pdo_mysql \
@@ -25,27 +19,20 @@ RUN set -ex; \
 		pdo_sqlite \
 		pgsql \
 	; \
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark; \
-	ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
-		| sort -u \
-		| xargs -rt dpkg-query --search \
-# https://manpages.debian.org/trixie/dpkg/dpkg-query.1.en.html#S (we ignore diversions and it'll be really unusual for more than one package to provide any given .so file)
-		| awk 'sub(":$", "", $1) { print $1 }' \
-		| sort -u \
-		| xargs -rt apt-mark manual; \
-		\
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	apt-get dist-clean
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --no-network --virtual .postfixadmin-phpexts-rundeps $runDeps; \
+	apk del --no-network .build-deps
 
-ARG POSTFIXADMIN_VERSION=4.0.4
-ARG POSTFIXADMIN_SHA512=cce293e92e03f06a20ddbe09a9faec251af3f166f38565429d791feaf832096344a62656bab2a60bbd360545c1a0bd3ed05e11f4a4e46f04858e84639c5391dd
+ARG POSTFIXADMIN_VERSION=4.0.5
+ARG POSTFIXADMIN_SHA512=b9549137e5bb6cf69fe76aef2711092a7e74ec223ee272d0303430b03da16ba8cfe704047f8e07ee5bd1ef6b632cac9ae2c0830271629b193c395197e1f4d93d
 
 ENV POSTFIXADMIN_VERSION $POSTFIXADMIN_VERSION
 ENV POSTFIXADMIN_SHA512 $POSTFIXADMIN_SHA512
-
 
 RUN set -eu; \
 	curl -fsSL -o postfixadmin.tar.gz "https://github.com/postfixadmin/postfixadmin/archive/v${POSTFIXADMIN_VERSION}.tar.gz"; \
@@ -68,20 +55,11 @@ COPY --from=lcr.loongnix.cn/library/composer:v2.9.5 /usr/bin/composer /usr/local
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
 RUN set -eux; \
-	composerDeps=" \
-		unzip \
-	"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends $composerDeps; \
-	\
 	export COMPOSER_HOME="$(mktemp -d)"; \
 	# mysqli is expected but we use pdo
 	composer install --ignore-platform-req=ext-mysqli --no-dev --no-interaction --working-dir /usr/src/postfixadmin; \
 	# delete composer cache
-	rm -rf "$COMPOSER_HOME"; \
-	\
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $composerDeps; \
-	apt-get dist-clean
+	rm -rf "$COMPOSER_HOME"
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["%%CMD%%"]
