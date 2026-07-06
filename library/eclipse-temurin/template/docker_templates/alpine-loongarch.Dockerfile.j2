@@ -1,0 +1,22 @@
+{% include 'partials/license.j2' %}
+
+FROM {{ base_image }}
+
+{% include 'partials/nix-env.j2' %}
+
+RUN apk add --no-cache \
+        ca-certificates \
+        tzdata \
+        musl-locales musl-locales-lang \
+        {% if image_type == "jdk" %}
+        openjdk{{ version }}-jdk
+        {% else %}
+        openjdk{{ version }}-jre
+        {% endif %}
+
+ENV JAVA_HOME=/usr/lib/jvm/java-{{ version }}-openjdk
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+{% include 'partials/version-check.j2' %}
+{% include 'partials/entrypoint.j2' %}
+{% include 'partials/jshell.j2' %}
