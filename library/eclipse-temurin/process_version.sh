@@ -24,7 +24,8 @@ fi
 
 # 读取版本信息
 FULL_VERSION=$(jq -r ".\"$MAJOR\".version" "$VERSIONS_JSON")
-TAG_VERSION="${FULL_VERSION//+/_}"   # 用于镜像标签，替换 + 为 _
+TAG_VERSION=$(echo "$FULL_VERSION" | tr '+' '_')
+
 JDK_TAR=$(jq -r ".\"$MAJOR\".tarball.jdk" "$VERSIONS_JSON")
 JRE_TAR=$(jq -r ".\"$MAJOR\".tarball.jre" "$VERSIONS_JSON")
 
@@ -33,13 +34,12 @@ if [ -z "$FULL_VERSION" ] || [ "$FULL_VERSION" = "null" ]; then
     exit 1
 fi
 
-log "Processing $MAJOR ($FULL_VERSION) (tag: $TAG_VERSION)"
+log "Processing $MAJOR ($FULL_VERSION) -> tag version: $TAG_VERSION"
 
 # 1. 如果 tarball 尚未生成，则生成
 if [ -z "$JDK_TAR" ] || [ "$JDK_TAR" = "null" ] || [ -z "$JRE_TAR" ] || [ "$JRE_TAR" = "null" ]; then
     log "Generating tarballs for $MAJOR..."
     ./build-temurin-packages.sh "$MAJOR"
-    # 重新读取 tarball 文件名
     JDK_TAR=$(jq -r ".\"$MAJOR\".tarball.jdk" "$VERSIONS_JSON")
     JRE_TAR=$(jq -r ".\"$MAJOR\".tarball.jre" "$VERSIONS_JSON")
 fi
@@ -50,71 +50,130 @@ cd template
 python3 generate_dockerfiles.py --version "$MAJOR" --arch loongarch64 --force
 cd ..
 
-# 3. 复制 tarball 到 Debian 变体目录（保持原名）
-prepare_variant() {
-    local variant_type="$1"  # jdk 或 jre
-    local base_image="$2"    # debian/forky 或 alpine/3.24
-    local tar_name="$3"
-    
-    local variant_dir="$SCRIPT_DIR/template/$MAJOR/$variant_type/$base_image"
+# 3. 复制 tarball 到各个包含 Dockerfile 的目录（只复制 Debian 变体）
+copy_tarball_to_variant() {
+    local variant_dir="$1"
+    local tar_name="$2"
     local dockerfile="$variant_dir/Dockerfile"
-    
     if [ ! -f "$dockerfile" ]; then
-        log "WARNING: $dockerfile not found, skipping"
-        return 1
+        return 0
     fi
-    
-    # 只有 Debian 变体需要复制 tarball（Alpine 使用 apk）
-    if [[ "$base_image" == debian/* ]] && [ -n "$tar_name" ] && [ -f "/tmp/$tar_name" ]; then
-        cp "/tmp/$tar_name" "$variant_dir/"
+    if [[ "$variant_dir" == *"/debian/"* ]] && [ -n "$tar_name" ] && [ -f "/tmp/$tar_name" ]; then
+        cp "/tmp/$tar_name" "$variant_dir/" || true
         log "Copied /tmp/$tar_name to $variant_dir/"
-    elif [[ "$base_image" == alpine/* ]]; then
+    elif [[ "$variant_dir" == *"/alpine/"* ]]; then
         log "Alpine variant, skipping tarball copy"
     else
-        log "WARNING: /tmp/$tar_name not found or unsupported base image"
-        return 1
+        log "WARNING: Unknown base for $variant_dir, skipping tarball copy"
     fi
+    return 0
 }
 
-# 为四个变体复制（Alpine 只调用但不复制）
-prepare_variant "jdk" "debian/forky" "$JDK_TAR"
-prepare_variant "jre" "debian/forky" "$JRE_TAR"
-prepare_variant "jdk" "alpine/3.24" ""   # 不传 tar_name，函数内部会跳过复制
-prepare_variant "jre" "alpine/3.24" ""
+# 查找所有 Dockerfile，分别处理 jdk 和 jre
+for dockerfile in $(find "template/$MAJOR" -path "*/jdk/*/Dockerfile" -o -path "*/jre/*/Dockerfile" 2>/dev/null || true); do
+    variant_dir=$(dirname "$dockerfile")
+    if [[ "$variant_dir" == *"/jdk/"* ]]; then
+        copy_tarball_to_variant "$variant_dir" "$JDK_TAR"
+    else
+        copy_tarball_to_variant "$variant_dir" "$JRE_TAR"
+    fi
+done
 
 # 4. 构建并推送函数
-build_push() {
+build_and_push() {
     local variant_dir="$1"
-    local image_tag="$2"
+    local base_tag="$2"
+    shift 2
+    local extra_tags=("$@")
     local dockerfile="$variant_dir/Dockerfile"
     if [ ! -f "$dockerfile" ]; then
         log "WARNING: $dockerfile not found, skipping"
-        return
+        return 0
     fi
-    log "Building $image_tag from $dockerfile"
-    docker build --network host -t "$image_tag" -f "$dockerfile" "$variant_dir"
-    docker push "$image_tag"
+    log "Building $base_tag from $dockerfile"
+    docker build --network host -t "$base_tag" -f "$dockerfile" "$variant_dir"
+    for extra in "${extra_tags[@]}"; do
+        docker tag "$base_tag" "$extra"
+        log "Tagged $base_tag as $extra"
+    done
+    docker push "$base_tag"
+    for extra in "${extra_tags[@]}"; do
+        docker push "$extra"
+    done
 }
 
-# 构建四个镜像（使用主版本号标签和完整版本标签）
-build_push "$SCRIPT_DIR/template/$MAJOR/jdk/debian/forky" "${REGISTRY}/${ORG}/${PROJ}:${MAJOR}"
-docker tag "${REGISTRY}/${ORG}/${PROJ}:${MAJOR}" "${REGISTRY}/${ORG}/${PROJ}:${TAG_VERSION}"
-docker push "${REGISTRY}/${ORG}/${PROJ}:${TAG_VERSION}"
+# 5. 为每个变体生成标签并构建
+generate_tags() {
+    local variant_type="$1"
+    local base_image="$2"
+    local major="$3"
+    local tag_version="$4"
+    local registry_org_proj="$5"
 
-build_push "$SCRIPT_DIR/template/$MAJOR/jre/debian/forky" "${REGISTRY}/${ORG}/${PROJ}:${MAJOR}-jre"
-docker tag "${REGISTRY}/${ORG}/${PROJ}:${MAJOR}-jre" "${REGISTRY}/${ORG}/${PROJ}:${TAG_VERSION}-jre"
-docker push "${REGISTRY}/${ORG}/${PROJ}:${TAG_VERSION}-jre"
+    local base_tag=""
+    local extra_tags=()
 
-build_push "$SCRIPT_DIR/template/$MAJOR/jdk/alpine/3.24" "${REGISTRY}/${ORG}/${PROJ}:${MAJOR}-alpine"
-docker tag "${REGISTRY}/${ORG}/${PROJ}:${MAJOR}-alpine" "${REGISTRY}/${ORG}/${PROJ}:${TAG_VERSION}-alpine"
-docker push "${REGISTRY}/${ORG}/${PROJ}:${TAG_VERSION}-alpine"
+    if [[ "$base_image" == debian/* ]]; then
+        if [ "$variant_type" = "jdk" ]; then
+            base_tag="${registry_org_proj}:${major}"
+            extra_tags+=(
+                "${registry_org_proj}:${major}-jdk"
+                "${registry_org_proj}:${tag_version}"
+                "${registry_org_proj}:${tag_version}-jdk"
+            )
+        else # jre
+            base_tag="${registry_org_proj}:${major}-jre"
+            extra_tags+=(
+                "${registry_org_proj}:${tag_version}-jre"
+            )
+        fi
+    elif [[ "$base_image" == alpine/* ]]; then
+        if [ "$variant_type" = "jdk" ]; then
+            base_tag="${registry_org_proj}:${major}-alpine"
+            extra_tags+=(
+                "${registry_org_proj}:${tag_version}-alpine"
+            )
+        else # jre
+            base_tag="${registry_org_proj}:${major}-alpine-jre"
+            extra_tags+=(
+                "${registry_org_proj}:${tag_version}-alpine-jre"
+            )
+        fi
+    else
+        log "WARNING: Unknown base image type for $base_image, skipping"
+        return 0
+    fi
 
-build_push "$SCRIPT_DIR/template/$MAJOR/jre/alpine/3.24" "${REGISTRY}/${ORG}/${PROJ}:${MAJOR}-alpine-jre"
-docker tag "${REGISTRY}/${ORG}/${PROJ}:${MAJOR}-alpine-jre" "${REGISTRY}/${ORG}/${PROJ}:${TAG_VERSION}-alpine-jre"
-docker push "${REGISTRY}/${ORG}/${PROJ}:${TAG_VERSION}-alpine-jre"
+    echo "$base_tag"
+    for tag in "${extra_tags[@]}"; do
+        echo "$tag"
+    done
+    return 0
+}
 
-# 清理 tarball（构建完成后删除）
-rm -f "/tmp/$JDK_TAR" "/tmp/$JRE_TAR"
+# 遍历所有 Dockerfile，构建
+for dockerfile in $(find "template/$MAJOR" -path "*/jdk/*/Dockerfile" -o -path "*/jre/*/Dockerfile" 2>/dev/null || true); do
+    variant_dir=$(dirname "$dockerfile")
+    # 判断类型
+    if [[ "$variant_dir" == *"/jdk/"* ]]; then
+        variant_type="jdk"
+    else
+        variant_type="jre"
+    fi
+    # 提取相对路径（如 debian/forky 或 alpine/3.24）
+    base_path=${variant_dir#template/$MAJOR/$variant_type/}
+    tag_list=$(generate_tags "$variant_type" "$base_path" "$MAJOR" "$TAG_VERSION" "${REGISTRY}/${ORG}/${PROJ}" || true)
+    if [ -z "$tag_list" ]; then
+        continue
+    fi
+    mapfile -t tags_array <<< "$tag_list"
+    base_tag="${tags_array[0]}"
+    extra_tags=("${tags_array[@]:1}")
+    build_and_push "$variant_dir" "$base_tag" "${extra_tags[@]}" || true
+done
+
+# 清理 tarball
+rm -f "/tmp/$JDK_TAR" "/tmp/$JRE_TAR" || true
 log "Cleaned up tarballs for $MAJOR"
 
 log "Completed $MAJOR ($FULL_VERSION)"
