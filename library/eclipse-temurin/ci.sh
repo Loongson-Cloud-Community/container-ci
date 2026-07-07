@@ -37,7 +37,7 @@ main() {
 
     # 4. Git 提交（如果有更新）
     if git rev-parse --git-dir >/dev/null 2>&1; then
-        git add "$PROCESSED_FILE" template/versions.json 2>/dev/null || true
+        git add template/ "$PROCESSED_FILE" 2>/dev/null || true
         if ! git diff --cached --quiet; then
             git config user.name "CI Bot" || true
             git config user.email "ci@loongson.cn" || true

@@ -46,8 +46,10 @@ fi
 
 # 2. 生成 Dockerfile（仅 loongarch64，当前版本）
 log "Generating Dockerfiles for loongarch64, version $MAJOR..."
+rm -rf "template/$MAJOR"
+
 cd template
-python3 generate_dockerfiles.py --version "$MAJOR" --arch loongarch64 --force
+python3 generate_dockerfiles.py --version "$MAJOR" --arch loongarch64 
 cd ..
 
 # 3. 复制 tarball 到各个包含 Dockerfile 的目录（只复制 Debian 变体）
@@ -100,6 +102,10 @@ build_and_push() {
     for extra in "${extra_tags[@]}"; do
         docker push "$extra"
     done
+
+    # 构建完成后，删除该目录下的所有 .tar.gz 文件
+    rm -f "$variant_dir"/*.tar.gz
+    log "Cleaned up tarballs in $variant_dir"
 }
 
 # 5. 为每个变体生成标签并构建
