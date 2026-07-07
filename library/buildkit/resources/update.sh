@@ -51,7 +51,7 @@ for arg_name in "${!args_map[@]}"; do
 done
 
 git clone --depth 1 -b v$VERSION https://github.com/moby/buildkit &&  \
-find buildkit/ -mindepth 1 -maxdepth 1 -not -name "Dockerfile" -exec cp -r {} "$OUTPUT_DIR/" \;
+find buildkit/ -mindepth 1 -maxdepth 1 -not -name "Dockerfile" -not -name ".git" -exec cp -r {} "$OUTPUT_DIR/" \;
 
 echo "Successfully generated Dockerfile in $OUTPUT_DIR/"
 rm -rf buildkit
