@@ -30,7 +30,6 @@ COPY --from=builder prometheus/promtool          /bin/promtool
 COPY --from=builder prometheus/prometheus.yml  /etc/prometheus/prometheus.yml
 COPY --from=builder prometheus/LICENSE                                /LICENSE
 COPY --from=builder prometheus/NOTICE                                 /NOTICE
-COPY --from=builder prometheus/npm_licenses.tar.bz2                   /npm_licenses.tar.bz2
 
 WORKDIR /prometheus
 RUN chown -R nobody:nobody /etc/prometheus /prometheus && chmod g+w /prometheus
