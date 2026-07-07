@@ -130,5 +130,16 @@
     "debian": {
       "version": "trixie"
     }
+  },
+  "1.6.44": {
+    "version": "1.6.44",
+    "url": "https://memcached.org/files/memcached-1.6.44.tar.gz",
+    "sha1": "35ce68d69d143fa6fc9f26b039a677772d62d1c3",
+    "alpine": {
+      "version": "3.22"
+    },
+    "debian": {
+      "version": "trixie"
+    }
   }
 }
