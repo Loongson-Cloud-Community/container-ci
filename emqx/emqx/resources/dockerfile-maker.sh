@@ -18,7 +18,7 @@ VERSION_ID=13
 EMQX_VERSION="$CLEAN_VER"
 CONTEXT="$VERSION"
 
-SHA256=$(curl -sSL https://github.com/loongarch64-releases/emqx/releases/download/${VERSION}/${EMQX_NAME}-${EMQX_VERSION}-${ID}${VERSION_ID}-loongarch64.tar.gz.sha256 | awk '{print $1}')
+SHA256=$(curl -sSL https://github.com/loongarch64-releases/emqx/releases/download/${VERSION}/${EMQX_NAME}-${EMQX_VERSION}-${ID}-loongarch64.tar.gz.sha256 | awk '{print $1}')
 
 cp Dockerfile.template "$CONTEXT/Dockerfile"
 

@@ -1,11 +1,11 @@
 FROM lcr.loongnix.cn/library/debian:14-slim
 
-ARG RAW_VERSION=
-ARG EMQX_NAME=
-ARG ID=
-ARG VERSION_ID=
-ENV EMQX_VERSION=
-ENV LOONG64_SHA256=
+ARG RAW_VERSION=6.6.2
+ARG EMQX_NAME=emqx-enterprise
+ARG ID=debian
+ARG VERSION_ID=13
+ENV EMQX_VERSION=6.6.2
+ENV LOONG64_SHA256=Not
 ENV LC_ALL=C.UTF-8 LANG=C.UTF-8
 
 RUN set -eu; \
@@ -14,7 +14,7 @@ RUN set -eu; \
     arch=$(dpkg --print-architecture); \
     if [ ${arch} = "loong64" ]; then sha256="$LOONG64_SHA256"; fi; \
     . /etc/os-release; \
-    pkg="${EMQX_NAME}-${EMQX_VERSION}-${ID}-loongarch64.tar.gz"; \
+    pkg="${EMQX_NAME}-${EMQX_VERSION}-${ID}${VERSION_ID}-loongarch64.tar.gz"; \
     curl -f -O -L https://github.com/loongarch64-releases/emqx/releases/download/${RAW_VERSION}/${pkg}; \
     echo "$sha256 *$pkg" | sha256sum -c; \
     mkdir /opt/emqx; \
