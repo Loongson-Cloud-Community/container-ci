@@ -1,0 +1,39 @@
+FROM lcr.loongnix.cn/library/alpine:3.23.4 as builder
+
+WORKDIR /
+
+RUN apk update && apk add wget tar
+
+
+RUN wget https://github.com/loongarch64-releases/prometheus/releases/download/3.13.0/prometheus-3.13.0.linux-loong64.tar.gz && \
+    mkdir prometheus && \
+    tar xf prometheus-3.13.0.linux-loong64.tar.gz -C prometheus --strip-components=1
+
+ARG DISTROLESS_ARCH="loong64"
+
+# Use DISTROLESS_ARCH for base image selection (handles armv7->arm mapping).
+FROM lcr.loongnix.cn/distroless/static-debian12:latest
+# Base image sets USER to 65532:65532 (nonroot user).
+
+ARG ARCH="loong64"
+ARG OS="linux"
+
+LABEL org.opencontainers.image.authors="The Prometheus Authors"
+LABEL org.opencontainers.image.vendor="Prometheus"
+LABEL org.opencontainers.image.title="Prometheus"
+LABEL org.opencontainers.image.description="The Prometheus monitoring system and time series database"
+LABEL org.opencontainers.image.source="https://github.com/prometheus/prometheus"
+LABEL org.opencontainers.image.url="https://github.com/prometheus/prometheus"
+LABEL org.opencontainers.image.documentation="https://prometheus.io/docs"
+LABEL org.opencontainers.image.licenses="Apache License 2.0"
+LABEL io.prometheus.image.variant="distroless"
+
+COPY --from=builder prometheus/prometheus        /bin/prometheus
+COPY --from=builder prometheus/promtool          /bin/promtool
+COPY --from=builder prometheus/prometheus.yml  /etc/prometheus/prometheus.yml
+
+WORKDIR /prometheus
+EXPOSE     9090
+ENTRYPOINT [ "/bin/prometheus" ]
+CMD        [ "--config.file=/etc/prometheus/prometheus.yml", \
+             "--storage.tsdb.path=/prometheus" ]
