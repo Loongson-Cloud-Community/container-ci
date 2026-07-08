@@ -138,13 +138,13 @@ generate_tags() {
             base_tag="${registry_org_proj}:${major}-alpine"
             extra_tags+=(
                 "${registry_org_proj}:${tag_version}-alpine"
-		"${registry_org_proj}:${major}-alpine-jdk"
-		"${registry_org_proj}:${tag_version}-alpine-jdk"
+		"${registry_org_proj}:${major}-jdk-alpine"
+		"${registry_org_proj}:${tag_version}-jdk-alpine"
             )
         else # jre
-            base_tag="${registry_org_proj}:${major}-alpine-jre"
+            base_tag="${registry_org_proj}:${major}-jre-alpine"
             extra_tags+=(
-                "${registry_org_proj}:${tag_version}-alpine-jre"
+                "${registry_org_proj}:${tag_version}-jre-alpine"
             )
         fi
     else
