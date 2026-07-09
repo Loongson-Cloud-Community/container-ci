@@ -1,27 +1,24 @@
-# this file expects "env.variant" (but has no other dependency)
+# This file expects "env.variant" (e.g., "jdk8/debian-forky")
+# and defines "from" function used in Dockerfile.template
 
 def java_dir:
-	env.variant | split("/")[0] # "jdk16", etc
+	env.variant | split("/")[0] # "jdk8", "jdk11", etc.
 ;
 def java_version:
-	java_dir | ltrimstr("jre") | ltrimstr("jdk") # "16", etc
+	java_dir | ltrimstr("jre") | ltrimstr("jdk") # "8", "11", etc.
 ;
 def java_variant:
 	java_dir | rtrimstr(java_version) # "jdk", "jre"
 ;
 def vendor_variant:
-	env.variant | split("/")[1] # "openjdk-slim-buster", etc
+	env.variant | split("/")[1] # "debian-forky", "temurin", etc.
 ;
 def from:
 	vendor_variant
-	| if test("^corretto-") then
-		"amazoncorretto:" + java_version + ltrimstr("corretto") + "-" + java_variant
-	elif test("^openjdk-") then
-		"openjdk:" + java_version + "-" + java_variant + ltrimstr("openjdk")
-	elif test("^temurin-") then
-		"eclipse-temurin:" + java_version + "-" + java_variant + ltrimstr("temurin")
-	elif test("^debian-forky") then
-                "lcr.loongnix.cn/library/openjdk:" + java_version + "-debian-forky"
+	| if test("^debian-forky") then
+		"lcr.loongnix.cn/library/openjdk:" + java_version + "-debian-forky"
+	elif test("^temurin") then
+		"lcr.loongnix.cn/library/eclipse-temurin:" + java_version + "-" + java_variant
 	else
 		error("unknown vendor variant: " + .)
 	end

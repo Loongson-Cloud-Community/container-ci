@@ -1,100 +1,100 @@
 #!/bin/bash
-set -eo pipefail
+set -Eeuo pipefail
 
-log() { echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"; }
+# ============================================================
+# 主控脚本：协调整个 CI 流程
+# 功能：
+#   1. 更新版本信息并生成 Dockerfile
+#   2. 遍历所有大版本，调用 process_version.sh 构建
+#   3. 提交 Git 变更
+# ============================================================
 
-PROCESSED_FILE="processed_versions.txt"
-IGNORE_FILE="ignore_versions.txt"
-TEMPLATE_DIR="template"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROCESSED_FILE="${SCRIPT_DIR}/processed_versions.txt"
+VERSIONS_JSON="${SCRIPT_DIR}/template/versions.json"   # 统一放在 template 下
 
-main() {
-    # 检查 template 目录是否存在
-    if [ ! -d "$TEMPLATE_DIR" ]; then
-        log "ERROR: template directory not found"
-        exit 1
-    fi
-
-    # 进入 template 目录执行生成
-    log "Generating versions.json and Dockerfiles..."
-    cd "$TEMPLATE_DIR"
-    if [ ! -x "./versions.sh" ]; then
-        log "ERROR: template/versions.sh not found or not executable"
-        cd ..
-        exit 1
-    fi
-    ./versions.sh
-    ./apply-templates.sh
-    cd ..
-
-    versions_json="$TEMPLATE_DIR/versions.json"
-    versions=$(jq -r 'keys[]' "$versions_json")
-    if [ -z "$versions" ]; then
-        log "No versions found"
-        exit 1
-    fi
-
-    # 记录各版本当前完整版本号
-    declare -A current_versions
-    for ver in $versions; do
-        current_versions["$ver"]=$(jq -r ".[\"$ver\"].version" "$versions_json")
-    done
-
-    # 读取已处理记录
-    declare -A processed_versions
-    if [ -f "$PROCESSED_FILE" ]; then
-        while IFS=: read -r major full; do
-            processed_versions["$major"]="$full"
-        done < "$PROCESSED_FILE"
-    fi
-
-    # 读取忽略列表
-    declare -A ignore_versions
-    if [ -f "$IGNORE_FILE" ]; then
-        while read -r line; do ignore_versions["$line"]=1; done < "$IGNORE_FILE"
-    fi
-
-    to_build=()
-    for ver in "${!current_versions[@]}"; do
-        if [ -n "${ignore_versions[$ver]}" ]; then
-            log "Ignoring $ver"
-            continue
-        fi
-        new="${current_versions[$ver]}"
-        old="${processed_versions[$ver]}"
-        if [ -z "$old" ]; then
-            log "New version $ver ($new)"
-            to_build+=("$ver")
-        elif [ "$old" != "$new" ]; then
-            log "Version $ver updated from $old to $new"
-            to_build+=("$ver")
-        else
-            log "Version $ver already at $new"
-        fi
-    done
-
-    if [ ${#to_build[@]} -eq 0 ]; then
-        log "Nothing to build"
-        exit 0
-    fi
-
-    for ver in "${to_build[@]}"; do
-        log "Processing $ver"
-        ./process_version.sh "$ver"
-        sed -i "/^$ver:/d" "$PROCESSED_FILE" 2>/dev/null || true
-        echo "$ver:${current_versions[$ver]}" >> "$PROCESSED_FILE"
-    done
-
-    # 提交变更（可选）
-    commit_msg="Update Tomcat: $(for v in "${to_build[@]}"; do echo -n "${current_versions[$v]} "; done)"
-    git add "$PROCESSED_FILE" "$versions_json" "$TEMPLATE_DIR/" 2>/dev/null || true
-    if ! git diff --cached --quiet; then
-        git config user.name "CI Bot" || true
-        git config user.email "ci@loongson.cn" || true
-        git commit -m "$commit_msg" || true
-        git pull --rebase || true
-        git push origin main || true
-    fi
-    log "Done"
+# ---------- 日志函数 ----------
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
 }
 
-main
+# ---------- 生成版本及 Dockerfile ----------
+generate_all_versions() {
+    log "Generating versions.json and Dockerfiles..."
+    cd "${SCRIPT_DIR}/template"
+    ./versions.sh   # 这个脚本会生成 versions.json 到当前目录（即 template/）
+    ./apply-templates.sh
+    cd "${SCRIPT_DIR}"
+}
+
+# ---------- 获取所有大版本 ----------
+get_all_majors() {
+    jq -r 'keys[]' "$VERSIONS_JSON" 2>/dev/null || true
+}
+
+# ---------- 检查版本是否已构建 ----------
+is_version_built() {
+    local full_version="$1"
+    grep -Fxq "$full_version" "$PROCESSED_FILE" 2>/dev/null
+}
+
+# ---------- Git 提交 ----------
+git_commit_changes() {
+    if ! git rev-parse --git-dir >/dev/null 2>&1; then
+        return 0
+    fi
+    git reset --quiet
+    git add "$PROCESSED_FILE" "$VERSIONS_JSON" 2>/dev/null || true
+    find template -type f -name "Dockerfile" 2>/dev/null | xargs git add 2>/dev/null || true
+    if git diff --cached --quiet; then
+        return 0
+    fi
+    git config user.name "Huang Yang" || true
+    git config user.email "huangyang@loongson.cn" || true
+    local commit_msg="Update Tomcat: $(jq -r 'to_entries[] | "\(.key)=\(.value.version)"' "$VERSIONS_JSON" | tr '\n' ' ')"
+    git commit -m "$commit_msg" || true
+    git pull --rebase || true
+    git push origin main || true
+}
+
+# ---------- 主函数 ----------
+main() {
+    # 1. 生成版本和 Dockerfile
+    generate_all_versions
+
+    # 2. 检查 versions.json 是否存在
+    if [ ! -f "$VERSIONS_JSON" ]; then
+        log "ERROR: $VERSIONS_JSON not found"
+        exit 1
+    fi
+
+    # 3. 读取所有大版本
+    mapfile -t VERSIONS < <(get_all_majors)
+    if [ ${#VERSIONS[@]} -eq 0 ]; then
+        log "ERROR: No versions found in $VERSIONS_JSON"
+        exit 1
+    fi
+
+    # 4. 依次构建每个版本
+    for ver in "${VERSIONS[@]}"; do
+        full_version="$(jq -r ".\"$ver\".version" "$VERSIONS_JSON")"
+        if [ -z "$full_version" ] || [ "$full_version" = "null" ]; then
+            log "WARNING: Skipping $ver due to missing version"
+            continue
+        fi
+        if is_version_built "$full_version"; then
+            log "Version $ver ($full_version) already built, skipping"
+            continue
+        fi
+        log "Building new version $ver ($full_version)"
+        "${SCRIPT_DIR}/process_version.sh" "$ver"
+        echo "$full_version" >> "$PROCESSED_FILE"
+    done
+
+    # 5. Git 提交
+    git_commit_changes
+
+    log "CI finished successfully"
+}
+
+main "$@"
