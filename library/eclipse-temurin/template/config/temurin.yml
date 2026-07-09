@@ -65,12 +65,6 @@ configurations:
     image: lcr.loongnix.cn/library/alpine:3.24
     os: alpine-linux
 
-  - directory: alpine/3.23
-    architectures: [loongarch64]
-    image: lcr.loongnix.cn/library/alpine:3.23
-    deprecated: 27
-    os: alpine-linux
-
   - directory: alpine/3.22
     architectures: [aarch64, x64]
     image: alpine:3.22

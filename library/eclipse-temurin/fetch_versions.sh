@@ -1,85 +1,133 @@
 #!/bin/bash
 set -eo pipefail
 
-mkdir -p template
+# ============================================================
+# 获取最新 Temurin 版本，生成 versions.json
+# ============================================================
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FTP_BASE="https://ftp.loongnix.cn/Java/"
-VERSIONS_JSON="template/versions.json"
+VERSIONS_JSON="${SCRIPT_DIR}/template/versions.json"
 
-MAJORS=(8 11 17 21 25 26)
+# ---------- 日志 ----------
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" >&2
+}
 
-echo '{}' > "$VERSIONS_JSON"
+# ---------- 错误处理 ----------
+die() {
+    log "ERROR: $*" >&2
+    exit 1
+}
 
-for major in "${MAJORS[@]}"; do
-    echo "Processing JDK $major ..." >&2
-    
-    API_URL="https://api.adoptium.net/v3/assets/feature_releases/${major}/ga?page=0&page_size=1&vendor=eclipse"
-    release=$(curl -fsSL "$API_URL" | jq -r '.[0]')
-    
+# ---------- 检查依赖 ----------
+check_dependencies() {
+    command -v curl >/dev/null 2>&1 || die "curl is required"
+    command -v jq >/dev/null 2>&1 || die "jq is required"
+}
+
+# ---------- 从 API 获取 Temurin 版本号 ----------
+fetch_temurin_version() {
+    local major="$1"
+    local api_url="https://api.adoptium.net/v3/assets/feature_releases/${major}/ga?page=0&page_size=1&vendor=eclipse"
+    local release
+    release="$(curl -fsSL "$api_url" | jq -r '.[0]')"
     if [ -z "$release" ] || [ "$release" = "null" ]; then
-        echo "  No release found for JDK $major" >&2
-        continue
+        echo ""
+        return 1
     fi
-    
-    # 从 release_name 获取版本号
-    release_name=$(echo "$release" | jq -r '.release_name')
-    echo "  release_name: $release_name" >&2
-    
-    # 提取 Temurin 版本号
+    local release_name
+    release_name="$(echo "$release" | jq -r '.release_name')"
+    local temurin_version
     if [[ "$release_name" == jdk8u* ]]; then
-        # jdk8u492-b09 -> 8u492-b09
         temurin_version="${release_name#jdk}"
     elif [[ "$release_name" == jdk-* ]]; then
-        # jdk-11.0.31+11 -> 11.0.31+11
         temurin_version="${release_name#jdk-}"
     else
-        temurin_version=$(echo "$release" | jq -r '.version_data.openjdk_version')
+        temurin_version="$(echo "$release" | jq -r '.version_data.openjdk_version')"
     fi
-    echo "  Temurin version: $temurin_version" >&2
-    
-    # 转换为龙芯文件名中的版本格式
-    # JDK 8: 去掉连字符 (8u492-b09 -> 8u492b09)
-    # JDK 11+: 将 + 替换为 _ (11.0.31+11 -> 11.0.31_11)
-    if [[ "$major" -eq 8 ]]; then
-        loongarch_version=$(echo "$temurin_version" | tr -d '-')
-    else
-        loongarch_version=$(echo "$temurin_version" | tr '+' '_')
-    fi
-    echo "  LoongArch version: $loongarch_version" >&2
-    
-    # 在龙芯 FTP 中查找匹配的文件
-    FTP_DIR="${FTP_BASE}openjdk${major}/"
-    # 使用更宽松的匹配：查找包含 jdk${loongarch_version} 的 glibc2.34 文件
-    file=$(curl -sL "$FTP_DIR" | grep -o "loongson[^\"]*glibc2\.34\.tar\.gz" | grep "jdk${loongarch_version}" | head -1 || true)
-    
-    if [ -z "$file" ]; then
-        echo "  No matching file found in $FTP_DIR for version $loongarch_version" >&2
-        continue
-    fi
-    
-    download_url="${FTP_DIR}${file}"
-    echo "  Found: $download_url" >&2
-    
-    # 提取龙芯内部版本号（如 8.1.27, 11.18.27）
-    internal_version=$(echo "$file" | grep -oP 'loongson\K[0-9.]+')
-    
-    # 写入 JSON
-    jq --arg major "$major" \
-       --arg version "$temurin_version" \
-       --arg internal "$internal_version" \
-       --arg url "$download_url" \
-       --arg file "$file" \
-       '. + {($major): {
-            version: $version,
-            internal: $internal,
-            url: $url,
-            file: $file,
-            tarball: {
-                jdk: null,
-                jre: null
-            }
-        }}' "$VERSIONS_JSON" > "$VERSIONS_JSON.tmp"
-    mv "$VERSIONS_JSON.tmp" "$VERSIONS_JSON"
-done
+    echo "$temurin_version"
+}
 
-echo "Generated $VERSIONS_JSON"
+# ---------- 转换为龙芯文件名中的版本格式 ----------
+to_loongarch_version() {
+    local major="$1"
+    local temurin_version="$2"
+    if [[ "$major" -eq 8 ]]; then
+        echo "$temurin_version" | tr -d '-'
+    else
+        echo "$temurin_version" | tr '+' '_'
+    fi
+}
+
+# ---------- 在龙芯 FTP 查找匹配的 tarball ----------
+find_loongarch_tarball() {
+    local major="$1"
+    local loongarch_version="$2"
+    local ftp_dir="${FTP_BASE}openjdk${major}/"
+    local file
+    file="$(curl -sL "$ftp_dir" | grep -o "loongson[^\"]*glibc2\.34\.tar\.gz" | grep "jdk${loongarch_version}" | head -1 || true)"
+    if [ -z "$file" ]; then
+        echo ""
+        return 1
+    fi
+    echo "${ftp_dir}${file}"
+}
+
+# ---------- 主函数 ----------
+main() {
+    check_dependencies
+
+    mkdir -p template
+    echo '{}' > "$VERSIONS_JSON"
+
+    local majors=(8 11 17 21 25)
+    for major in "${majors[@]}"; do
+        log "Processing JDK $major ..."
+        local temurin_version
+        temurin_version="$(fetch_temurin_version "$major")"
+        if [ -z "$temurin_version" ]; then
+            log "  No release found for JDK $major"
+            continue
+        fi
+        log "  Temurin version: $temurin_version"
+
+        local loongarch_version
+        loongarch_version="$(to_loongarch_version "$major" "$temurin_version")"
+        log "  LoongArch version: $loongarch_version"
+
+        local download_url
+        download_url="$(find_loongarch_tarball "$major" "$loongarch_version")"
+        if [ -z "$download_url" ]; then
+            log "  No matching file found in FTP for version $loongarch_version"
+            continue
+        fi
+        log "  Found: $download_url"
+
+        local file_name="${download_url##*/}"
+        local internal_version
+        internal_version="$(echo "$file_name" | grep -oP 'loongson\K[0-9.]+')"
+
+        # 写入 JSON
+        jq --arg major "$major" \
+           --arg version "$temurin_version" \
+           --arg internal "$internal_version" \
+           --arg url "$download_url" \
+           --arg file "$file_name" \
+           '. + {($major): {
+                version: $version,
+                internal: $internal,
+                url: $url,
+                file: $file,
+                tarball: {
+                    jdk: null,
+                    jre: null
+                }
+            }}' "$VERSIONS_JSON" > "${VERSIONS_JSON}.tmp" || die "jq failed"
+        mv "${VERSIONS_JSON}.tmp" "$VERSIONS_JSON"
+    done
+
+    log "Generated $VERSIONS_JSON"
+}
+
+main "$@"

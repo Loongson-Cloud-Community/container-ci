@@ -25,6 +25,10 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 # Default to UTF-8 file.encoding
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
+# 尝试更新源，若失败则切换到国内源重试
+RUN apk update || \
+    (sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && apk update)
+
 RUN apk add --no-cache \
         ca-certificates \
         tzdata \
