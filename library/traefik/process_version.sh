@@ -48,7 +48,7 @@ fi
 
 # 修改 Dockerfile 基础镜像
 log "Modifying Dockerfile base image..."
-sed -i 's|^FROM alpine:.*$|FROM lcr.loongnix.cn/library/alpine:3.23|' Dockerfile
+sed -i 's|^FROM alpine:.*$|FROM lcr.loongnix.cn/library/alpine:3.24|' Dockerfile
 
 # 移除 syntax 指令（不兼容 loong64）
 sed -i '/^# syntax=docker\/dockerfile/d' Dockerfile

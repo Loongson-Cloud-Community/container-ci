@@ -1,4 +1,4 @@
-FROM lcr.loongnix.cn/library/alpine:3.23
+FROM lcr.loongnix.cn/library/alpine:3.24
 
 RUN apk add --no-cache --no-progress ca-certificates tzdata
 
