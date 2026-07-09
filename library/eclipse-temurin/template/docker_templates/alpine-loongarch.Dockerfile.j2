@@ -4,6 +4,10 @@ FROM {{ base_image }}
 
 {% include 'partials/nix-env.j2' %}
 
+# 尝试更新源，若失败则切换到国内源重试
+RUN apk update || \
+    (sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && apk update)
+
 RUN apk add --no-cache \
         ca-certificates \
         tzdata \
