@@ -5,7 +5,11 @@
       "jdk11/debian-forky",
       "jdk17/debian-forky",
       "jdk21/debian-forky",
-      "jdk25/debian-forky"
+      "jdk25/debian-forky",
+      "jdk11/temurin",
+      "jdk17/temurin",
+      "jdk21/temurin",
+      "jdk25/temurin"
     ],
     "version": "10.1.57"
   },
@@ -14,7 +18,10 @@
     "variants": [
       "jdk17/debian-forky",
       "jdk21/debian-forky",
-      "jdk25/debian-forky"
+      "jdk25/debian-forky",
+      "jdk17/temurin",
+      "jdk21/temurin",
+      "jdk25/temurin"
     ],
     "version": "11.0.24"
   },
@@ -25,7 +32,12 @@
       "jdk11/debian-forky",
       "jdk17/debian-forky",
       "jdk21/debian-forky",
-      "jdk25/debian-forky"
+      "jdk25/debian-forky",
+      "jdk8/temurin",
+      "jdk11/temurin",
+      "jdk17/temurin",
+      "jdk21/temurin",
+      "jdk25/temurin"
     ],
     "version": "9.0.120"
   }
