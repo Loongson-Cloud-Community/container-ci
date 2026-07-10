@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+export LC_ALL=C
+
 # the libc created by gcc might be too old for a newer Debian:
 # https://packages.debian.org/stable/gcc
 # bookworm: 12.2
@@ -23,7 +25,7 @@ if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )
 	json='{}'
 else
-	json="$(< versions.json)"
+	json="$(< versions.json 2>/dev/null || echo '{}')"
 fi
 versions=( "${versions[@]%/}" )
 
@@ -32,16 +34,15 @@ debianStable="$(awk <<<"$debianStable" '$1 == "Codename:" { print $2; exit }')"
 [ -n "$debianStable" ]
 defaultDebianSuite="$debianStable"
 
-packagesUrl='https://sourceware.org/pub/gcc/releases/?C=M;O=D' # the actual HTML of the page changes based on which mirror we end up hitting, *and* sometimes specific mirrors are missing versions, so let's hit the original canonical host for version scraping
+packagesUrl='https://sourceware.org/pub/gcc/releases/?C=M;O=D'
 packages="$(wget -qO- "$packagesUrl")"
 
-# our own "supported" window is 18 months from the most recent release because upstream doesn't have a good guideline, but appears to only release maintenance updates for 2-3 years after the initial release
-# in addition, maintenance releases are _usually_ less than a year apart; from 4.7+ there's a handful of outliers, like 4.7.3->4.7.4 at ~14 months, 6.4->6.5 at ~15 months, etc
-export TZ=UTC
+# 计算 EOL 时间阈值（18 个月前）
 eolPeriod='18 months'
 today="$(date +'%s')"
-eolAgo="$(date +'%s' -d "$(date -d "@$today") - $eolPeriod")"
-eolAge="$(( $today - $eolAgo ))"
+eolAgo="$(date -d "$eolPeriod ago" +'%s')"
+eolAge="$(( today - eolAgo ))"
+
 eols=()
 
 dateFormat='%Y-%m-%d'
