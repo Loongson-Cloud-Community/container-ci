@@ -1,71 +1,118 @@
 #!/bin/bash
 set -eo pipefail
 
-REGISTRY="lcr.loongnix.cn"
-ORG="library"
-PROJ="gcc"
+# ============================================================
+# 主控脚本：协调 GCC 镜像的构建流程
+# 功能：
+#   1. 生成 versions.json 和 Dockerfile
+#   2. 遍历所有主版本，调用 process_version.sh 构建
+#   3. 提交 Git 变更
+# 注意：不生成 latest 标签
+# ============================================================
 
-log() { echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"; }
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROCESSED_FILE="${SCRIPT_DIR}/processed_versions.txt"
+VERSIONS_JSON="${SCRIPT_DIR}/template/versions.json"
 
-PROCESSED_FILE="processed_versions.txt"
+# ---------- 日志函数 ----------
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
+}
 
-main() {
-    # 1. 生成 versions.json 和所有 Dockerfile
-    log "Generating GCC Dockerfiles..."
-    cd template
-    ./update.sh
-    cd ..
+# ---------- 错误处理 ----------
+die() {
+    log "ERROR: $*" >&2
+    exit 1
+}
 
-    # 2. 获取所有主版本号（13-16）
-    VERSIONS=$(./fetch_versions.sh)
-    if [ -z "$VERSIONS" ]; then
-        log "No versions found"
-        exit 1
+# ---------- 检查依赖 ----------
+check_dependencies() {
+    command -v jq >/dev/null 2>&1 || die "jq is required"
+    command -v git >/dev/null 2>&1 || die "git is required"
+    command -v docker >/dev/null 2>&1 || die "docker is required"
+}
+
+# ---------- 生成版本和 Dockerfile ----------
+generate_all_versions() {
+    log "Generating versions.json and Dockerfiles..."
+    cd "${SCRIPT_DIR}/template" || die "Cannot enter template directory"
+    ./update.sh || die "update.sh failed"
+    cd "${SCRIPT_DIR}" || die "Cannot return to script directory"
+}
+
+# ---------- 获取所有主版本 ----------
+get_all_majors() {
+    if [ ! -f "$VERSIONS_JSON" ]; then
+        die "$VERSIONS_JSON not found"
+    fi
+    jq -r 'keys[]' "$VERSIONS_JSON" 2>/dev/null | sort -n || true
+}
+
+# ---------- 检查版本是否已构建 ----------
+is_version_built() {
+    local gcc_version="$1"
+    grep -Fxq "$gcc_version" "$PROCESSED_FILE" 2>/dev/null
+}
+
+# ---------- 提交变更到 Git ----------
+git_commit_changes() {
+    if ! git rev-parse --git-dir >/dev/null 2>&1; then
+        log "Not a git repository, skipping commit"
+        return 0
     fi
 
-    # 3. 对每个版本，检查是否已构建（记录具体源码版本号）
-    for ver in $VERSIONS; do
-        DOCKERFILE="template/$ver/Dockerfile"
-        GCC_VERSION=$(grep -E '^ENV GCC_VERSION' "$DOCKERFILE" | awk '{print $3}')
-        if [ -z "$GCC_VERSION" ]; then
+    git reset --quiet
+    git add "$PROCESSED_FILE" template/ 2>/dev/null || true
+
+    if git diff --cached --quiet; then
+        log "No changes to commit"
+        return 0
+    fi
+
+    git config user.name "Huang Yang" || true
+    git config user.email "huangyang@loongson.cn" || true
+    git commit -m "Update GCC images" || true
+    git pull --rebase || true
+    git push origin main || true
+    log "Changes committed and pushed"
+}
+
+# ---------- 主函数 ----------
+main() {
+    check_dependencies
+
+    generate_all_versions
+
+    local versions
+    versions="$(get_all_majors)"
+    if [ -z "$versions" ]; then
+        die "No versions found in $VERSIONS_JSON"
+    fi
+
+    for ver in $versions; do
+        local dockerfile="${SCRIPT_DIR}/template/$ver/Dockerfile"
+        if [ ! -f "$dockerfile" ]; then
+            log "WARNING: $dockerfile not found, skipping $ver"
+            continue
+        fi
+        local gcc_version
+        gcc_version="$(grep -E '^ENV GCC_VERSION' "$dockerfile" | awk '{print $3}')"
+        if [ -z "$gcc_version" ]; then
             log "WARNING: Cannot get GCC_VERSION for $ver, skipping"
             continue
         fi
-        # 检查 processed_versions.txt 中是否已记录该具体版本
-        if grep -Fxq "$GCC_VERSION" "$PROCESSED_FILE" 2>/dev/null; then
-            log "Version $ver ($GCC_VERSION) already built, skipping"
+        if is_version_built "$gcc_version"; then
+            log "Version $ver ($gcc_version) already built, skipping"
             continue
         fi
-        log "Building version $ver ($GCC_VERSION)..."
-        ./process_version.sh "$ver"
-        echo "$GCC_VERSION" >> "$PROCESSED_FILE"
+        log "Building version $ver ($gcc_version)..."
+        "${SCRIPT_DIR}/process_version.sh" "$ver" || die "process_version.sh failed for $ver"
+        echo "$gcc_version" >> "$PROCESSED_FILE"
     done
 
-    # 4. 推送 latest（指向最新版本）
-    # 获取最大的主版本号（按数字排序）
-    LATEST_VER=$(echo "$VERSIONS" | tail -1)
-    if [ -n "$LATEST_VER" ]; then
-        LATEST_GCC=$(grep -E '^ENV GCC_VERSION' "template/$LATEST_VER/Dockerfile" | awk '{print $3}')
-        if [ -n "$LATEST_GCC" ]; then
-            docker tag "${REGISTRY}/${ORG}/${PROJ}:${LATEST_VER}" "${REGISTRY}/${ORG}/${PROJ}:latest"
-            docker push "${REGISTRY}/${ORG}/${PROJ}:latest"
-            log "Pushed latest (pointing to $LATEST_GCC)"
-        fi
-    fi
+    git_commit_changes
 
-    # 5. Git 提交
-    if git rev-parse --git-dir >/dev/null 2>&1; then
-        git add "$PROCESSED_FILE" template/ 2>/dev/null || true
-        if ! git diff --cached --quiet; then
-            git config user.name "Huang Yang" || true
-            git config user.email "huangyang@loongson.cn" || true
-            git commit -m "Update GCC images" || true
-            git pull --rebase || true
-            git push origin main || true
-        fi
-    fi
-
-    log "CI finished."
+    log "CI finished successfully"
 }
 
-main
+main "$@"
