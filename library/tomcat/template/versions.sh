@@ -6,7 +6,7 @@ set -Eeuo pipefail
 # 输出到当前目录（即 template/）的 versions.json
 # ============================================================
 
-cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"   # 确保在 template 目录下
+cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 versions=( "$@" )
 if [ ${#versions[@]} -eq 0 ]; then
@@ -17,19 +17,19 @@ else
 fi
 versions=( "${versions[@]%/}" )
 
-# 支持的变体（仅 LoongArch 可用的）
-# 扩展：如需添加新变体，直接在此数组中增加条目
+# 仅使用 temurin 基础镜像的 Debian 变体（JDK 和 JRE）
+# 官方 Tomcat 无 Alpine 版本，故不包含 Alpine
 allVariants='[
-  "jdk8/debian-forky",
-  "jdk11/debian-forky",
-  "jdk17/debian-forky",
-  "jdk21/debian-forky",
-  "jdk25/debian-forky",
   "jdk8/temurin",
   "jdk11/temurin",
   "jdk17/temurin",
   "jdk21/temurin",
-  "jdk25/temurin"
+  "jdk25/temurin",
+  "jre8/temurin",
+  "jre11/temurin",
+  "jre17/temurin",
+  "jre21/temurin",
+  "jre25/temurin"
 ]'
 export allVariants
 
@@ -90,5 +90,4 @@ for version in "${versions[@]}"; do
     ')"
 done
 
-# 输出到当前目录（即 template/）
 jq <<<"$json" -S . > versions.json
