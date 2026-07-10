@@ -1,85 +1,150 @@
 #!/bin/bash
 set -eo pipefail
 
-log() { echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"; }
+# ============================================================
+# 构建并推送 Traefik 指定版本镜像
+# 流程：
+#   1. 克隆源码并 checkout 指定 tag
+#   2. 应用补丁（若有）
+#   3. 编译 LoongArch 二进制
+#   4. 准备构建上下文并构建镜像
+#   5. 推送标签（版本号、主次版本、主版本，无 latest）
+# ============================================================
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REGISTRY="lcr.loongnix.cn"
 ORG="library"
 PROJ="traefik"
 REPO_URL="https://github.com/traefik/traefik.git"
+TEMPLATE_BASE="${SCRIPT_DIR}/template"
 
-if [ $# -ne 1 ]; then
+# ---------- 日志 ----------
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
+}
+
+# ---------- 错误处理 ----------
+die() {
+    log "ERROR: $*" >&2
+    exit 1
+}
+
+# ---------- 用法 ----------
+usage() {
     echo "Usage: $0 <version>"
     exit 1
-fi
-
-VERSION="$1"
-TAG="v$VERSION"
-PROJECT_ROOT="$PWD"
-TEMP_DIR="$(mktemp -d)"
-
-cleanup() {
-    rm -rf "$TEMP_DIR"
 }
-trap cleanup EXIT
 
-log "Cloning Traefik repository (tag $TAG)..."
-git clone --depth 1 --branch "$TAG" "$REPO_URL" "$TEMP_DIR"
+# ---------- 校验输入 ----------
+validate_input() {
+    if [ $# -ne 1 ]; then
+        usage
+    fi
+    VERSION="$1"
+    TAG="v$VERSION"
+    log "Processing version $VERSION (tag $TAG)"
+}
 
-cd "$TEMP_DIR"
+# ---------- 克隆仓库 ----------
+clone_repo() {
+    local work_dir="$1"
+    log "Cloning Traefik repository (tag $TAG)..."
+    git clone --depth 1 --branch "$TAG" "$REPO_URL" "$work_dir" || die "git clone failed"
+}
 
-# 应用补丁
-log "Applying patches from $PROJECT_ROOT/patches/..."
-PATCHES_DIR="$PROJECT_ROOT/patches"
-if [ -d "$PATCHES_DIR" ]; then
-    # 按顺序应用所有 .patch 文件
-    for patch_file in "$PATCHES_DIR"/*.patch; do
+# ---------- 应用补丁 ----------
+apply_patches() {
+    local work_dir="$1"
+    local patches_dir="${SCRIPT_DIR}/patches"
+    if [ ! -d "$patches_dir" ]; then
+        log "WARNING: Patches directory not found, skipping"
+        return 0
+    fi
+    log "Applying patches from $patches_dir..."
+    cd "$work_dir" || die "Cannot enter work directory"
+    for patch_file in "$patches_dir"/*.patch; do
         if [ -f "$patch_file" ]; then
             log "Applying $patch_file"
-            patch -p1 < "$patch_file" || {
-                log "ERROR: Failed to apply $patch_file"
-                exit 1
-            }
+            patch -p1 < "$patch_file" || die "Failed to apply $patch_file"
         fi
     done
-else
-    log "WARNING: $PATCHES_DIR not found, skipping patches"
-fi
+    cd - >/dev/null || die "Cannot return"
+}
 
-# 修改 Dockerfile 基础镜像
-log "Modifying Dockerfile base image..."
-sed -i 's|^FROM alpine:.*$|FROM lcr.loongnix.cn/library/alpine:3.24|' Dockerfile
+# ---------- 构建二进制 ----------
+build_binary() {
+    local work_dir="$1"
+    log "Building Traefik binary for loong64..."
+    cd "$work_dir" || die "Cannot enter work directory"
+    make binary-linux-loong64 || die "make failed"
+    cd - >/dev/null || die "Cannot return"
+}
 
-# 移除 syntax 指令（不兼容 loong64）
-sed -i '/^# syntax=docker\/dockerfile/d' Dockerfile
+# ---------- 准备构建上下文 ----------
+prepare_build_context() {
+    local work_dir="$1"
+    log "Preparing build context in template directory..."
 
-# 编译 LoongArch 二进制
-log "Building Traefik binary for loong64 using make..."
-make binary-linux-loong64
+    # 确保 template 目录存在
+    mkdir -p "$TEMPLATE_BASE"
 
-# 准备 template 目录
-log "Copying build context to project template directory..."
-PROJECT_TEMPLATE="$PROJECT_ROOT/template"
-rm -rf "$PROJECT_TEMPLATE"
-mkdir -p "$PROJECT_TEMPLATE"
+    # 如果 Dockerfile 不存在，则从源码复制一份并修改
+    if [ ! -f "$TEMPLATE_BASE/Dockerfile" ]; then
+        log "Dockerfile not found in template, copying from source..."
+        cp "$work_dir/Dockerfile" "$TEMPLATE_BASE/Dockerfile" || die "Cannot copy Dockerfile from source"
+        # 修改基础镜像和换源逻辑
+        sed -i 's|^FROM alpine:.*$|FROM lcr.loongnix.cn/library/alpine:3.24|' "$TEMPLATE_BASE/Dockerfile"
+        sed -i '/RUN apk add/i RUN apk update || (sed -i '\''s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g'\'' /etc/apk/repositories && apk update)' "$TEMPLATE_BASE/Dockerfile"
+    fi
 
-cp Dockerfile "$PROJECT_TEMPLATE/"
-mkdir -p "$PROJECT_TEMPLATE/dist/linux/loong64"
-cp dist/linux/loong64/traefik "$PROJECT_TEMPLATE/dist/linux/loong64/"
+    # 复制二进制文件（覆盖旧文件）
+    mkdir -p "$TEMPLATE_BASE/dist/linux/loong64"
+    cp "$work_dir/dist/linux/loong64/traefik" "$TEMPLATE_BASE/dist/linux/loong64/" || die "Cannot copy traefik binary"
+}
 
-IMAGE_NAME="${REGISTRY}/${ORG}/${PROJ}"
-MAJOR_MINOR="${VERSION%.*}"
-MAJOR="${VERSION%%.*}"
+# ---------- 构建并推送镜像 ----------
+build_and_push() {
+    local image_name="${REGISTRY}/${ORG}/${PROJ}"
+    local version="$VERSION"
+    local major_minor="${version%.*}"
+    local major="${version%%.*}"
 
-# 构建镜像
-log "Building ${IMAGE_NAME}:${VERSION}"
-docker build --network host -t "${IMAGE_NAME}:${VERSION}" "$PROJECT_TEMPLATE"
-docker push "${IMAGE_NAME}:${VERSION}"
+    log "Building ${image_name}:${version}"
+    docker build --network host -t "${image_name}:${version}" "$TEMPLATE_BASE" || die "docker build failed"
 
-for alias in "$VERSION" "$MAJOR_MINOR" "$MAJOR" "latest"; do
-    docker tag "${IMAGE_NAME}:${VERSION}" "${IMAGE_NAME}:${alias}"
-    docker push "${IMAGE_NAME}:${alias}"
-    log "Pushed alias: ${alias}"
-done
+    # 推送标签（无 latest）
+    local tags=("$version" "$major_minor" "$major")
+    for tag in "${tags[@]}"; do
+        docker tag "${image_name}:${version}" "${image_name}:${tag}" || die "docker tag failed for $tag"
+        log "Pushing ${image_name}:${tag}"
+        docker push "${image_name}:${tag}" || die "docker push failed for $tag"
+    done
 
-log "Completed processing version $VERSION"
+    log "Push completed for version $version"
+}
+
+# ---------- 清理 ----------
+cleanup() {
+    if [ -n "$TEMP_DIR" ] && [ -d "$TEMP_DIR" ]; then
+        rm -rf "$TEMP_DIR"
+        log "Cleaned up temporary directory"
+    fi
+}
+
+# ---------- 主函数 ----------
+main() {
+    validate_input "$@"
+
+    TEMP_DIR="$(mktemp -d)"
+    trap cleanup EXIT
+
+    clone_repo "$TEMP_DIR"
+    apply_patches "$TEMP_DIR"
+    build_binary "$TEMP_DIR"
+    prepare_build_context "$TEMP_DIR"
+    build_and_push
+
+    log "Completed processing version $VERSION"
+}
+
+main "$@"
