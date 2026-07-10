@@ -233,7 +233,7 @@ RUN set -eux; \
 # smoke test
 	catalina.sh version
 {{ ) else ( -}}
-COPY --from=tomcat:{{ .version }}-jdk{{ java_version }}-{{ vendor_variant }} $CATALINA_HOME $CATALINA_HOME
+COPY --from={{ "lcr.loongnix.cn/library/tomcat:" + .version + "-jdk" + java_version + "-" + vendor_variant }} $CATALINA_HOME $CATALINA_HOME
 RUN set -eux; \
 {{ if is_apt then ( -}}
 	apt-get update; \

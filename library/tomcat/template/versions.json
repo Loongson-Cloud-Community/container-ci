@@ -2,42 +2,42 @@
   "10.1": {
     "sha512": "2fa1866ec647d4222b07ea937a4cc266adee219a1a8870107e72fc2349248dd1e32b157fa18108451f4c6e3b162f0fdfbdd11dd7855d4e49a2f0f609004a77f3",
     "variants": [
-      "jdk11/debian-forky",
-      "jdk17/debian-forky",
-      "jdk21/debian-forky",
-      "jdk25/debian-forky",
       "jdk11/temurin",
       "jdk17/temurin",
       "jdk21/temurin",
-      "jdk25/temurin"
+      "jdk25/temurin",
+      "jre11/temurin",
+      "jre17/temurin",
+      "jre21/temurin",
+      "jre25/temurin"
     ],
     "version": "10.1.57"
   },
   "11.0": {
     "sha512": "a2fb1bd511735bd3d135b87f628d2b1f71a43aed7c4d7511e770092e571bad6d5ad9e97a580852119770477fd86d7ed156d83d3cee2854bce260725ce48934d0",
     "variants": [
-      "jdk17/debian-forky",
-      "jdk21/debian-forky",
-      "jdk25/debian-forky",
       "jdk17/temurin",
       "jdk21/temurin",
-      "jdk25/temurin"
+      "jdk25/temurin",
+      "jre17/temurin",
+      "jre21/temurin",
+      "jre25/temurin"
     ],
     "version": "11.0.24"
   },
   "9.0": {
     "sha512": "07eb6d9639c3e69af81171a16ccff1c19b7fd5b2e87e3646851f0a3f42a4ce3c1bf128fbe40fc978a08935ba4f0400ef3b43ded3e470b9aaf23b97a9e1fa0858",
     "variants": [
-      "jdk8/debian-forky",
-      "jdk11/debian-forky",
-      "jdk17/debian-forky",
-      "jdk21/debian-forky",
-      "jdk25/debian-forky",
       "jdk8/temurin",
       "jdk11/temurin",
       "jdk17/temurin",
       "jdk21/temurin",
-      "jdk25/temurin"
+      "jdk25/temurin",
+      "jre8/temurin",
+      "jre11/temurin",
+      "jre17/temurin",
+      "jre21/temurin",
+      "jre25/temurin"
     ],
     "version": "9.0.120"
   }
