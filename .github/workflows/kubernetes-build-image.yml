@@ -1,4 +1,4 @@
-name: 'kubernetes-build-image'
+name: 'kubernetes::build-image'
 
 on:
   schedule:
