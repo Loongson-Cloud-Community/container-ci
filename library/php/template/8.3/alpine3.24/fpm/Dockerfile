@@ -4,7 +4,10 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/alpine:3.22
+FROM lcr.loongnix.cn/library/alpine:3.24
+
+# 尝试更新 Alpine 源，若失败则自动切换到中科大镜像
+RUN apk update || (sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && apk update)
 
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
@@ -56,9 +59,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
 
-ENV PHP_VERSION 8.3.31
-ENV PHP_URL="https://www.php.net/distributions/php-8.3.31.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.31.tar.xz.asc"
-ENV PHP_SHA256="66410cee07f4b2baeb0843140bb2a2b52ef930b5cf9b3d6e6d158b33aae8fa37"
+ENV PHP_VERSION 8.3.32
+ENV PHP_URL="https://www.php.net/distributions/php-8.3.32.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.32.tar.xz.asc"
+ENV PHP_SHA256="8698ec1f9402fa5e5e872ae3d0916b62f5f27503c1fbfc9cc3521e113355ea92"
 
 RUN set -eux; \
 	\
