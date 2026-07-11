@@ -4,7 +4,10 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/alpine:3.22
+FROM lcr.loongnix.cn/library/alpine:3.24
+
+# 尝试更新 Alpine 源，若失败则自动切换到中科大镜像
+RUN apk update || (sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && apk update)
 
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
@@ -54,11 +57,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-ENV GPG_KEYS 1198C0117593497A5EC5C199286AF1F9897469DC C28D937575603EB4ABB725861C0779DC5C0A9DE4 AFD8691FDAEDF03BDF6E460563F15A9B715376CA
+ENV GPG_KEYS AFD8691FDAEDF03BDF6E460563F15A9B715376CA 9D7F99A0CB8F05C8A6958D6256A97AF7600A39A6 0616E93D95AF471243E26761770426E17EBBB3DD
 
-ENV PHP_VERSION 8.3.31
-ENV PHP_URL="https://www.php.net/distributions/php-8.3.31.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.3.31.tar.xz.asc"
-ENV PHP_SHA256="66410cee07f4b2baeb0843140bb2a2b52ef930b5cf9b3d6e6d158b33aae8fa37"
+ENV PHP_VERSION 8.4.23
+ENV PHP_URL="https://www.php.net/distributions/php-8.4.23.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.4.23.tar.xz.asc"
+ENV PHP_SHA256="1ab9f52008414e43bb2427ffa288eff2a4de39e1a830f957e800ba368d887a72"
 
 RUN set -eux; \
 	\
@@ -163,10 +166,6 @@ RUN set -eux; \
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
 		--with-pear \
 		\
-# bundled pcre does not support JIT on riscv64/loongarch64
-# https://github.com/PCRE2Project/pcre2/commits/pcre2-10.41/src/sljit/sljitNativeRISCV_64.c
-# https://github.com/php/php-src/tree/php-8.3.0/ext/pcre/pcre2lib
-                $(case "$gnuArch" in *riscv64*|*loongarch64*) echo '--without-pcre-jit' ;; esac) \
 	; \
 	make -j "$(nproc)"; \
 	find -type f -name '*.a' -delete; \
