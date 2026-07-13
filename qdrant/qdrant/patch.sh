@@ -67,23 +67,47 @@ EOF
         sed -i '/RUN cargo chef cook/e cat /tmp/insert_block' "$context/Dockerfile"
     fi
 
-    # 1.18.2 无条件启用 pyroscope 的 backend-pprof-rs，后者的 2.0.6 版本内部硬编码 framehop_unwinder（不支持loongarch）
-    # 故暂时跳过 pyroscope 集成，待 framehop 与 pyroscope-rs 适配后在引入
+
+    # 1.18.2 无条件启用 pyroscope 的 backend-pprof-rs，后者的 2.0.6 版本内部硬编码 framehop_unwinder
     if [ "$ver_num" -ge 1018002 ]; then
-	local pyroscope_line=$(grep 'pyroscope =' "$context/Cargo.toml")
-	sed -i '/pyroscope = {/d' "$context/Cargo.toml"
-	cat << EOF > /tmp/insert_block
+        # 跳过 pyroscope 集成
+        #skip_pyroscope
+        # 使用已适配的 framehop 和 pyroscope-rs
+        pyroscope_ver=$(awk '
+  prev && /^version = "/ {
+    sub(/^version = "/, "")
+    sub(/"$/, "")
+    print
+    exit
+  }
+  /^name = "pyroscope"$/ { prev = 1; next }
+  { prev = 0 }
+' "$context/Cargo.lock")
+        if grep -q '^[[:space:]]*\[patch\.crates-io\][[:space:]]*$' "$context/Cargo.toml"; then
+            sed -i '/\[patch.crates-io\]/a\
+pyroscope = { git = "https://github.com/Chris-wh233/pyroscope-rs-loongarch64.git", branch = "__PYROSCOPE_BRANCH__" }' "$context/Cargo.toml"
+        else
+            echo "[patch.crates-io]" >> "$context/Cargo.toml"
+            echo "pyroscope = { git = "https://github.com/Chris-wh233/pyroscope-rs-loongarch64.git", branch = "__PYROSCOPE_BRANCH__" }" >> "$context/Cargo.toml"
+        fi
+        sed -i "s/__PYROSCOPE_BRANCH__/lib-$pyroscope_ver-loongarch64/" "$context/Cargo.toml"
+    fi
+}
+
+skip_pyroscope()
+{
+    local pyroscope_line=$(grep 'pyroscope =' "$context/Cargo.toml")
+    sed -i '/pyroscope = {/d' "$context/Cargo.toml"
+    cat << EOF > /tmp/insert_block
 [target.'cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64")))'.dependencies]
 $pyroscope_line
 EOF
-        cat "/tmp/insert_block" >> "$context/Cargo.toml"
+    cat "/tmp/insert_block" >> "$context/Cargo.toml"
 
-	sed -i 's/cfg(target_os = "linux")/cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64")))/' "$context/src/common/pyroscope_state.rs"
-	sed -i 's/cfg(not(target_os = "linux"))/cfg(not(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64"))))/' "$context/src/common/pyroscope_state.rs"
-
-	sed -i 's/cfg(target_os = "linux")/cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64")))/' "$context/src/common/debugger.rs"
-	sed -i 's/cfg(not(target_os = "linux"))/cfg(not(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64"))))/' "$context/src/common/debugger.rs"
-    fi
+    sed -i 's/cfg(target_os = "linux")/cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64")))/' "$context/src/common/pyroscope_state.rs"
+    sed -i 's/cfg(not(target_os = "linux"))/cfg(not(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64"))))/' "$context/src/common/pyroscope_state.rs"
+    sed -i 's/cfg(target_os = "linux")/cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64")))/' "$context/src/common/debugger.rs"
+    sed -i 's/cfg(not(target_os = "linux"))/cfg(not(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64"))))/' "$context/src/common/debugger.rs"
 }
 
 patch()
