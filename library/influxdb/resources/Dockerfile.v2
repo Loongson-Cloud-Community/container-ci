@@ -1,0 +1,52 @@
+FROM lcr.loongnix.cn/library/alpine:latest
+
+RUN echo 'hosts: files dns' >> /etc/nsswitch.conf
+RUN apk add --no-cache \
+      bash \
+      ca-certificates \
+      curl \
+      run-parts \
+      setpriv \
+      tzdata && \
+    update-ca-certificates
+
+# Install dasel for configuration parsing
+ENV DASEL_VERSION=__DASEL_VER__
+RUN curl -fLo /usr/local/bin/dasel "https://github.com/loongarch64-releases/dasel/releases/download/${DASEL_VERSION}/dasel_linux_loong64" && \
+    chmod +x /usr/local/bin/dasel
+
+RUN addgroup -S -g 1000 influxdb && \
+    adduser -S -G influxdb -u 1000 -h /home/influxdb -s /bin/sh influxdb && \
+    mkdir -p /home/influxdb && \
+    chown -R influxdb:influxdb /home/influxdb
+
+# Install the infuxd server
+ENV INFLUXDB_VERSION=__INFLUXDB_VER__
+RUN curl -fL -o /usr/local/bin/influxd "https://github.com/loongarch64-releases/influxdb/releases/download/v${INFLUXDB_VERSION}/influxd" && \
+    chmod +x /usr/local/bin/influxd
+
+# Install the influx CLI
+ENV INFLUX_CLI_VERSION=__INFLUX_CLI_VER__
+RUN curl -fL -o /usr/local/bin/influx "https://github.com/loongarch64-releases/influx-cli/releases/download/v${INFLUX_CLI_VERSION}/influx" && \
+    chmod +x /usr/local/bin/influx
+
+# Create standard directories expected by the entry-point.
+RUN mkdir /docker-entrypoint-initdb.d && \
+    mkdir -p /var/lib/influxdb2 && \
+    chown -R influxdb:influxdb /var/lib/influxdb2 && \
+    mkdir -p /etc/influxdb2 && \
+    chown -R influxdb:influxdb /etc/influxdb2
+VOLUME /var/lib/influxdb2 /etc/influxdb2
+
+COPY default-config.yml /etc/defaults/influxdb2/config.yml
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["influxd"]
+
+EXPOSE 8086
+
+ENV INFLUX_CONFIGS_PATH=/etc/influxdb2/influx-configs
+ENV INFLUXD_INIT_PORT=9999
+ENV INFLUXD_INIT_PING_ATTEMPTS=600
+ENV DOCKER_INFLUXDB_INIT_CLI_CONFIG_NAME=default
