@@ -1,0 +1,40 @@
+FROM lcr.loongnix.cn/library/alpine:latest
+
+RUN apk add --no-cache \
+      bash \
+      ca-certificates \
+      tzdata && \
+    update-ca-certificates
+
+ENV INFLUXDB_VERSION=__INFLUXDB_VER__
+
+RUN apk add --no-cache --virtual .build-deps \ 
+      curl \
+      tar && \
+    curl -fsSLO "https://github.com/loongarch64-releases/influxdb/releases/download/v${INFLUXDB_VERSION}/influxdb-bins.tar.gz" && \
+    tar -xf influxdb-bins.tar.gz -C /usr/bin \
+      --wildcards \
+      '*/influx' \
+      '*/influx_inspect' \
+      '*/influxd' && \
+    rm influxdb-bins.tar.gz && \
+    apk del .build-deps
+
+COPY influxdb.conf /etc/influxdb/influxdb.conf
+
+RUN addgroup --system --gid 1500 influxdb && \
+    adduser --system --uid 1500 --ingroup influxdb --home /var/lib/influxdb --shell /bin/false influxdb && \
+    mkdir -p /var/lib/influxdb && \
+    mkdir -p /var/log/influxdb && \
+    chown influxdb:influxdb /var/lib/influxdb && \
+    chown influxdb:influxdb /var/log/influxdb && \
+    chmod 0750 /var/lib/influxdb && \
+    chmod 0750 /var/log/influxdb
+
+EXPOSE 8086
+VOLUME /var/lib/influxdb
+COPY entrypoint.sh /entrypoint.sh
+COPY init-influxdb.sh /init-influxdb.sh
+USER influxdb
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["influxd"]
