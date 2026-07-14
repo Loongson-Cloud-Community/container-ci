@@ -3,7 +3,7 @@ set -eo pipefail
 
 # ============================================================
 # 获取最新 Jetty 版本，更新 Dockerfile，生成 versions.json
-# 支持 JDK 和 JRE 变体
+# 支持 JDK 和 JRE 变体，根据大版本动态适配 Java 版本
 # ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,13 +11,13 @@ cd "$SCRIPT_DIR/template" || { echo "template directory not found"; exit 1; }
 
 # ---------- 配置 ----------
 MAJORS=("12.1" "12.0" "10" "9.4")
-VARIANTS=(
-    "jdk17" "jdk17-alpine"
-    "jdk21" "jdk21-alpine"
-    "jdk25" "jdk25-alpine"
-    "jre17" "jre17-alpine"
-    "jre21" "jre21-alpine"
-    "jre25" "jre25-alpine"
+
+# 定义每个大版本支持的 Java 版本（JDK 和 JRE）
+declare -A SUPPORTED_JAVA_VERSIONS=(
+    ["9.4"]="11 17 21 25"
+    ["10"]="11 17 21 25"
+    ["12.0"]="17 21 25"
+    ["12.1"]="17 21 25"
 )
 
 # ---------- 日志 ----------
@@ -29,6 +29,18 @@ log() {
 die() {
     log "ERROR: $*" >&2
     exit 1
+}
+
+# ---------- 根据大版本生成变体列表 ----------
+generate_variants() {
+    local major="$1"
+    local java_versions="${SUPPORTED_JAVA_VERSIONS[$major]}"
+    local variants=()
+    for java_ver in $java_versions; do
+        variants+=("jdk$java_ver" "jdk$java_ver-alpine")
+        variants+=("jre$java_ver" "jre$java_ver-alpine")
+    done
+    echo "${variants[@]}"
 }
 
 # ---------- 确保目录存在并创建初始 Dockerfile ----------
@@ -43,7 +55,7 @@ ensure_variant_dir() {
     local base_tag
     if [[ "$variant" == jdk* ]]; then
         java_version="${variant#jdk}"
-        java_version="${java_version%%-*}"  # 去掉 -alpine 后缀
+        java_version="${java_version%%-*}"
         base_tag="${java_version}-jdk"
     elif [[ "$variant" == jre* ]]; then
         java_version="${variant#jre}"
@@ -66,7 +78,8 @@ EOF
 # ---------- 更新所有变体的 Dockerfile ----------
 update_all_variants() {
     for major in "${MAJORS[@]}"; do
-        for variant in "${VARIANTS[@]}"; do
+        variants=($(generate_variants "$major"))
+        for variant in "${variants[@]}"; do
             ensure_variant_dir "$major" "$variant"
             log "Updating eclipse-temurin/$major/$variant"
             ./update.sh "eclipse-temurin/$major/$variant" >/dev/null 2>&1 || die "update.sh failed for $major/$variant"

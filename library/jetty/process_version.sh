@@ -4,12 +4,7 @@ set -eo pipefail
 # ============================================================
 # 构建并推送单个 Jetty 大版本的所有变体镜像
 # 支持 JDK 和 JRE 变体，标签与上游保持一致
-# 标签格式：
-#   Debian JDK:  <major>-jdk<JavaVer>-eclipse-temurin
-#   Debian JRE:  <major>-jre<JavaVer>-eclipse-temurin
-#   Alpine JDK:  <major>-jdk<JavaVer>-alpine-eclipse-temurin
-#   Alpine JRE:  <major>-jre<JavaVer>-alpine-eclipse-temurin
-#   （同时生成完整版本标签）
+# 根据大版本动态适配 Java 版本
 # ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,19 +12,6 @@ REGISTRY="lcr.loongnix.cn"
 ORG="library"
 PROJ="jetty"
 VERSIONS_JSON="${SCRIPT_DIR}/versions.json"
-
-# ---------- 变体定义 ----------
-# 格式: "<base>:<variant_spec>"
-# base: "debian" 或 "alpine"
-# variant_spec: "jdk17", "jdk21", "jdk25", "jre17", "jre21", "jre25"
-VARIANTS=(
-    "debian:jdk17" "alpine:jdk17"
-    "debian:jdk21" "alpine:jdk21"
-    "debian:jdk25" "alpine:jdk25"
-    "debian:jre17" "alpine:jre17"
-    "debian:jre21" "alpine:jre21"
-    "debian:jre25" "alpine:jre25"
-)
 
 # ---------- 日志函数 ----------
 log() {
@@ -69,47 +51,85 @@ build_and_push() {
         log "Tagged $base_tag as $tag"
     done
 
-    docker push "$base_tag" || die "docker push failed for $base_tag"
-    for tag in "${extra_tags[@]}"; do
-        docker push "$tag" || die "docker push failed for $tag"
-    done
+#    docker push "$base_tag" || die "docker push failed for $base_tag"
+#    for tag in "${extra_tags[@]}"; do
+#        docker push "$tag" || die "docker push failed for $tag"
+#    done
 }
 
 # ---------- 生成标签列表 ----------
 generate_tags() {
     local base_image="$1"       # debian 或 alpine
     local variant_type="$2"     # jdk 或 jre
-    local java_version="$3"     # 17,21,25
-    local major="$4"
-    local tag_version="$5"
+    local java_version="$3"     # 11,17,21,25
+    local major="$4"            # 如 12.1, 9.4
+    local tag_version="$5"      # 如 12.1.11
     local registry_org_proj="$6"
 
-    local base_tag=""
-    local extra_tags=()
+    local tags=()
 
+    # 1. 带 Java 版本的主要标签（包含 -eclipse-temurin 和不带）
     if [[ "$base_image" == "alpine" ]]; then
-        base_tag="${registry_org_proj}:${major}-${variant_type}${java_version}-alpine-eclipse-temurin"
-        extra_tags+=(
-            "${registry_org_proj}:${tag_version}-${variant_type}${java_version}-alpine-eclipse-temurin"
-        )
+        # 带 -eclipse-temurin
+        tags+=("${registry_org_proj}:${major}-${variant_type}${java_version}-alpine-eclipse-temurin")
+        tags+=("${registry_org_proj}:${tag_version}-${variant_type}${java_version}-alpine-eclipse-temurin")
+        # 不带 -eclipse-temurin
+        tags+=("${registry_org_proj}:${major}-${variant_type}${java_version}-alpine")
+        tags+=("${registry_org_proj}:${tag_version}-${variant_type}${java_version}-alpine")
     else
-        base_tag="${registry_org_proj}:${major}-${variant_type}${java_version}-eclipse-temurin"
-        extra_tags+=(
-            "${registry_org_proj}:${tag_version}-${variant_type}${java_version}-eclipse-temurin"
-        )
+        tags+=("${registry_org_proj}:${major}-${variant_type}${java_version}-eclipse-temurin")
+        tags+=("${registry_org_proj}:${tag_version}-${variant_type}${java_version}-eclipse-temurin")
+        tags+=("${registry_org_proj}:${major}-${variant_type}${java_version}")
+        tags+=("${registry_org_proj}:${tag_version}-${variant_type}${java_version}")
     fi
 
-    echo "$base_tag"
-    for tag in "${extra_tags[@]}"; do
-        echo "$tag"
-    done
+    # 2. 对 JDK 且为最新 Java 版本（25），生成不带 Java 版本和 variant_type 的通用标签
+    #    （这些标签不带 -eclipse-temurin 和带 -eclipse-temurin 的版本均已生成）
+    if [[ "$variant_type" == "jdk" && "$java_version" == "25" ]]; then
+        if [[ "$base_image" == "alpine" ]]; then
+            tags+=("${registry_org_proj}:${major}-alpine-eclipse-temurin")
+            tags+=("${registry_org_proj}:${tag_version}-alpine-eclipse-temurin")
+            tags+=("${registry_org_proj}:${major}-alpine")
+            tags+=("${registry_org_proj}:${tag_version}-alpine")
+        else
+            tags+=("${registry_org_proj}:${major}-eclipse-temurin")
+            tags+=("${registry_org_proj}:${tag_version}-eclipse-temurin")
+            tags+=("${registry_org_proj}:${major}")
+            tags+=("${registry_org_proj}:${tag_version}")
+        fi
+    fi
+
+    # 3. 对 Jetty 9（major == "9.4"），额外生成以 "9" 开头的短别名
+    if [[ "$major" == "9.4" ]]; then
+        local short_major="9"
+        if [[ "$base_image" == "alpine" ]]; then
+            tags+=("${registry_org_proj}:${short_major}-${variant_type}${java_version}-alpine-eclipse-temurin")
+            tags+=("${registry_org_proj}:${short_major}-${variant_type}${java_version}-alpine")
+        else
+            tags+=("${registry_org_proj}:${short_major}-${variant_type}${java_version}-eclipse-temurin")
+            tags+=("${registry_org_proj}:${short_major}-${variant_type}${java_version}")
+        fi
+        # 如果是最新 Java 版本，也生成不带 Java 版本的短别名
+        if [[ "$variant_type" == "jdk" && "$java_version" == "25" ]]; then
+            if [[ "$base_image" == "alpine" ]]; then
+                tags+=("${registry_org_proj}:${short_major}-alpine-eclipse-temurin")
+                tags+=("${registry_org_proj}:${short_major}-alpine")
+            else
+                tags+=("${registry_org_proj}:${short_major}-eclipse-temurin")
+                tags+=("${registry_org_proj}:${short_major}")
+            fi
+        fi
+    fi
+
+    # 去重并输出
+    printf "%s\n" "${tags[@]}" | sort -u
 }
 
 # ---------- 处理单个变体 ----------
 process_variant() {
     local base_image="$1"       # debian 或 alpine
     local variant_type="$2"     # jdk 或 jre
-    local java_version="$3"     # 17,21,25
+    local java_version="$3"     # 11,17,21,25
     local major="$4"
     local tag_version="$5"
     local registry_org_proj="$6"
@@ -154,6 +174,26 @@ main() {
     fi
 
     log "Processing $major ($full_version)"
+
+    # 定义每个大版本支持的 Java 版本
+    declare -A SUPPORTED_JAVA_VERSIONS=(
+        ["9.4"]="11 17 21 25"
+        ["10"]="11 17 21 25"
+        ["12.0"]="17 21 25"
+        ["12.1"]="17 21 25"
+    )
+
+    local java_versions="${SUPPORTED_JAVA_VERSIONS[$major]}"
+    if [ -z "$java_versions" ]; then
+        die "Unsupported major version $major"
+    fi
+
+    # 构建变体列表
+    local VARIANTS=()
+    for java_ver in $java_versions; do
+        VARIANTS+=("debian:jdk$java_ver" "alpine:jdk$java_ver")
+        VARIANTS+=("debian:jre$java_ver" "alpine:jre$java_ver")
+    done
 
     local registry_org_proj="${REGISTRY}/${ORG}/${PROJ}"
 
