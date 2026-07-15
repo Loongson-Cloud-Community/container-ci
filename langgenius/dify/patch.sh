@@ -115,8 +115,8 @@ adapt_tailwindcss_v4()
     local lightningcss_ver=$(sed -n 's/^[[:space:]]*lightningcss@\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\).*/\1/p' "$context/pnpm-lock.yaml" | head -n 1)
     local tailwindcss_ver=$(sed -n 's/^[[:space:]]*tailwindcss@\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\).*/\1/p' "$context/pnpm-lock.yaml" | head -n 1)
 
-    wget -O "$context/web/liblightningcss_node.so" --quiet --show-progress "https://github.com/loongarch64-releases/lightningcss/releases/download/v$lightningcss_ver/liblightningcss_node.so"
-    wget -O "$context/web/libtailwind_oxide.so" --quiet --show-progress "https://github.com/loongarch64-releases/tailwindcss/releases/download/v$tailwindcss_ver/libtailwind_oxide.so"
+    wget -O "$context/web/liblightningcss_node.so" --quiet --show-progress "https://github.com/loongarch64-releases/lightningcss/releases/download/v$lightningcss_ver/liblightningcss_node_musl.so"
+    wget -O "$context/web/libtailwind_oxide.so" --quiet --show-progress "https://github.com/loongarch64-releases/tailwindcss/releases/download/v$tailwindcss_ver/libtailwind_oxide_musl.so"
 
     cat << 'EOF' > "$context/web/css-patch.sh"
 #!/bin/sh
