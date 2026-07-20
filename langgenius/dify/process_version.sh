@@ -61,7 +61,7 @@ prepare()
 
     pushd "$RESOURCES"
     wget -O $version-src.tar.gz --quiet --show-progress https://github.com/$ORG/$PROJ/archive/refs/tags/$version.tar.gz
-    ./update.sh "$version" || {
+    ./dockerfile-maker.sh "$version" || {
         log ERROR "update.sh script failed for version: $version"
         exit 1
     }
@@ -80,11 +80,9 @@ build_component()
     local base_context="$2"
     local variant="$3"
 
-    if [ "$component" == "api" ]; then # 适应1.14.0中web构建环境变化
-        local context="$base_context/$component"
-    elif [ "$component" == "web" ]; then
-        local context="$base_context"
-    fi
+    # 1.14.0 时 web 构建环境从 web/ 转为根目录
+    # 1.15.0 时 api 构建环境从 api/ 转为根目录
+    local context="$base_context"
 
     local dockerfile="$base_context/$component/Dockerfile"
 
