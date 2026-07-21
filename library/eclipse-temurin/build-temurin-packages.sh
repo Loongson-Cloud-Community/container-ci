@@ -73,14 +73,66 @@ if [ "$MAJOR" -eq 8 ]; then
         exit 1
     fi
 else
-    # 使用 jlink 生成 JRE（模块列表可从 x86 获取，这里简化）
-    JRE_MODULES="java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.prefs,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.unsupported"
+    # 公共模块（所有 Java 11+ 版本共有）
+    BASE_MODULES="java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.se,java.security.jgss,java.security.sasl,java.smartcardio,java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto,jdk.accessibility,jdk.charsets,jdk.crypto.cryptoki,jdk.dynalink,jdk.httpserver,jdk.jdwp.agent,jdk.jfr,jdk.jsobject,jdk.localedata,jdk.management,jdk.management.jfr,jdk.naming.dns,jdk.naming.rmi,jdk.net,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,jdk.zipfs"
+
+    # 各版本特有模块
+    MODULES_11_SPECIFIC="jdk.aot,jdk.internal.ed,jdk.internal.le,jdk.internal.vm.compiler,jdk.internal.vm.compiler.management,jdk.management.agent,jdk.naming.ldap,jdk.pack,jdk.scripting.nashorn,jdk.scripting.nashorn.shell"
+    MODULES_17_SPECIFIC="jdk.incubator.foreign,jdk.incubator.vector,jdk.nio.mapmode"
+    MODULES_21_SPECIFIC="jdk.incubator.vector,jdk.nio.mapmode"
+    MODULES_25_SPECIFIC="jdk.graal.compiler,jdk.graal.compiler.management,jdk.incubator.vector,jdk.nio.mapmode"
+
+    case "$MAJOR" in
+        11)
+            JRE_MODULES="${BASE_MODULES},${MODULES_11_SPECIFIC}"
+            ;;
+        17)
+            JRE_MODULES="${BASE_MODULES},${MODULES_17_SPECIFIC}"
+            ;;
+        21)
+            JRE_MODULES="${BASE_MODULES},${MODULES_21_SPECIFIC}"
+            ;;
+        25)
+            JRE_MODULES="${BASE_MODULES},${MODULES_25_SPECIFIC}"
+            ;;
+        *)
+            echo "不支持的 Java 版本: $MAJOR" >&2
+            exit 1
+            ;;
+    esac
+
+    # 过滤实际存在的模块
+    get_existing_modules() {
+        local modules_list="$1"
+        local jmods_dir="$JDK_TARGET_DIR/jmods"
+        local existing_modules=""
+        IFS=',' read -ra mod_array <<< "$modules_list"
+        for mod in "${mod_array[@]}"; do
+            if [ -f "$jmods_dir/$mod.jmod" ]; then
+                if [ -z "$existing_modules" ]; then
+                    existing_modules="$mod"
+                else
+                    existing_modules="$existing_modules,$mod"
+                fi
+            else
+                echo "警告: 模块 $mod 不存在，已跳过" >&2
+            fi
+        done
+        echo "$existing_modules"
+    }
+
+    JRE_MODULES_EXISTING=$(get_existing_modules "$JRE_MODULES")
+    if [ -z "$JRE_MODULES_EXISTING" ]; then
+        echo "错误: 没有可用的 JRE 模块" >&2
+        exit 1
+    fi
+
     rm -rf "$WORK_DIR/jre-loongarch"
     "$JDK_TARGET_DIR/bin/jlink" \
         --module-path "$JDK_TARGET_DIR/jmods" \
-        --add-modules "$JRE_MODULES" \
-        --output "$WORK_DIR/jre-loongarch" \
-        --compress=2
+        --add-modules "$JRE_MODULES_EXISTING" \
+        --output "$WORK_DIR/jre-loongarch"
+#        --compress=2
     JRE_SRC="$WORK_DIR/jre-loongarch"
 fi
 

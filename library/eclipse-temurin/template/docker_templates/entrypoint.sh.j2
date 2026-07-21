@@ -1,4 +1,4 @@
-{%- if os == "ubuntu" -%}
+{%- if os == "ubuntu" or os == "debian" -%}
 #!/usr/bin/env bash
 {%- else -%}
 #!/usr/bin/env sh
@@ -134,7 +134,7 @@ if [ -n "$USE_SYSTEM_CA_CERTS" ]; then
         # The reason why this is not part of the opt-in is because it leaves open the option to mount certificates at the
         # system location, for whatever reason.
         if [ -d /certificates ] && [ "$(ls -A /certificates 2>/dev/null)" ]; then
-            {%- if os == "ubuntu" or os == "alpine-linux" %}
+            {%- if os == "ubuntu" or os == "alpine-linux" or os == "debian" %}
             find -L /certificates -path '*/..*' -prune -o -type f -name "*crt" -print 2>/dev/null | while IFS= read -r _crt; do
                 _rel="${_crt#/certificates/}"
                 _dst_rel="${_rel//_/__}"
@@ -151,7 +151,7 @@ if [ -n "$USE_SYSTEM_CA_CERTS" ]; then
             {%- endif %}
         fi
 
-        {%- if os == "ubuntu" or os == "alpine-linux" %}
+        {%- if os == "ubuntu" or os == "alpine-linux" or os == "debian" %}
         update-ca-certificates
         {%- elif os == "ubi-minimal" %}
         update-ca-trust

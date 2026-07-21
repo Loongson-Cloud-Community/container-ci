@@ -89,7 +89,7 @@ main() {
         echo "$full_version" >> "$PROCESSED_FILE"
     done
 
-    git_commit_changes
+#    git_commit_changes
     log "CI finished successfully"
 }
 
