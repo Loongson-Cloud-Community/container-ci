@@ -4,8 +4,8 @@ set -eo pipefail
 # ============================================================
 # 构建单个 Eclipse Temurin 版本的所有变体，并推送到仓库
 # 标签规范：
-#   Debian JDK:  <major>-jdk-forky, <tag_version>-jdk-forky
-#   Debian JRE:  <major>-jre-forky, <tag_version>-jre-forky
+#   Debian JDK:  <major>-jdk-forky, <tag_version>-jdk-forky, <major>-jdk, <tag_version>-jdk, <major>, <tag_version>
+#   Debian JRE:  <major>-jre-forky, <tag_version>-jre-forky, <major>-jre, <tag_version>-jre
 #   Alpine JDK:  <major>-alpine, <tag_version>-alpine, <major>-jdk-alpine, <tag_version>-jdk-alpine
 #   Alpine JRE:  <major>-jre-alpine, <tag_version>-jre-alpine
 # （不生成 latest 标签）
@@ -48,17 +48,17 @@ build_and_push() {
     fi
 
     log "Building $base_tag from $dockerfile"
-    docker build --network host -t "$base_tag" -f "$dockerfile" "$variant_dir" || die "docker build failed for $base_tag"
+    docker build --no-cache --network host -t "$base_tag" -f "$dockerfile" "$variant_dir" || die "docker build failed for $base_tag"
 
     for tag in "${extra_tags[@]}"; do
         docker tag "$base_tag" "$tag" || die "docker tag failed for $tag"
         log "Tagged $base_tag as $tag"
     done
 
-    docker push "$base_tag" || die "docker push failed for $base_tag"
-    for tag in "${extra_tags[@]}"; do
-        docker push "$tag" || die "docker push failed for $tag"
-    done
+#    docker push "$base_tag" || die "docker push failed for $base_tag"
+#    for tag in "${extra_tags[@]}"; do
+#        docker push "$tag" || die "docker push failed for $tag"
+#    done
 
     # 清理该目录下的 tarball
     rm -f "$variant_dir"/*.tar.gz 2>/dev/null || true
@@ -68,9 +68,9 @@ build_and_push() {
 # ---------- 生成标签列表 ----------
 generate_tags() {
     local variant_type="$1"    # jdk 或 jre
-    local base_image="$2"      # debian/forky 或 alpine/3.24 等
-    local major="$3"
-    local tag_version="$4"
+    local base_image="$2"      # debian/forky 或 alpine/3.24
+    local major="$3"           # Java 大版本，如 8,11,17,21,25
+    local tag_version="$4"     # 完整版本（下划线分隔），如 11.0.31_11
     local registry_org_proj="$5"
 
     local base_tag=""
@@ -78,27 +78,37 @@ generate_tags() {
 
     if [[ "$base_image" == debian/* ]]; then
         if [ "$variant_type" = "jdk" ]; then
+            # 主标签（带 -forky）
             base_tag="${registry_org_proj}:${major}-jdk-forky"
-            extra_tags+=(
+            extra_tags=(
                 "${registry_org_proj}:${tag_version}-jdk-forky"
+                # 简化标签（不带 -forky）
+                "${registry_org_proj}:${major}-jdk"
+                "${registry_org_proj}:${tag_version}-jdk"
+                # 通用版本标签（不带 Java 版本和 variant_type）
+                "${registry_org_proj}:${major}"
+                "${registry_org_proj}:${tag_version}"
             )
         else # jre
             base_tag="${registry_org_proj}:${major}-jre-forky"
-            extra_tags+=(
+            extra_tags=(
                 "${registry_org_proj}:${tag_version}-jre-forky"
+                "${registry_org_proj}:${major}-jre"
+                "${registry_org_proj}:${tag_version}-jre"
+                # JRE 不生成通用版本标签
             )
         fi
     elif [[ "$base_image" == alpine/* ]]; then
         if [ "$variant_type" = "jdk" ]; then
             base_tag="${registry_org_proj}:${major}-alpine"
-            extra_tags+=(
+            extra_tags=(
                 "${registry_org_proj}:${tag_version}-alpine"
                 "${registry_org_proj}:${major}-jdk-alpine"
                 "${registry_org_proj}:${tag_version}-jdk-alpine"
             )
         else # jre
             base_tag="${registry_org_proj}:${major}-jre-alpine"
-            extra_tags+=(
+            extra_tags=(
                 "${registry_org_proj}:${tag_version}-jre-alpine"
             )
         fi

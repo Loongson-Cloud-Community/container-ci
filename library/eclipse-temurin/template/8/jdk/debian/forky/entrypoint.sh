@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # ------------------------------------------------------------------------------
 #             NOTE: THIS FILE IS GENERATED VIA "generate_dockerfiles.py"
 #
@@ -133,7 +133,14 @@ if [ -n "$USE_SYSTEM_CA_CERTS" ]; then
         # The reason why this is not part of the opt-in is because it leaves open the option to mount certificates at the
         # system location, for whatever reason.
         if [ -d /certificates ] && [ "$(ls -A /certificates 2>/dev/null)" ]; then
+            find -L /certificates -path '*/..*' -prune -o -type f -name "*crt" -print 2>/dev/null | while IFS= read -r _crt; do
+                _rel="${_crt#/certificates/}"
+                _dst_rel="${_rel//_/__}"
+                _dst_rel="${_dst_rel//\//_}"
+                cp -L "$_crt" "/usr/local/share/ca-certificates/${_dst_rel}"
+            done
         fi
+        update-ca-certificates
     else
         # If we are not root, we cannot update the system truststore. That's bad news for tools like `curl` and `wget`,
         # but since the JVM is the primary focus here, we can live with that.

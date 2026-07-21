@@ -28,6 +28,17 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         wget \
+	libgssapi-krb5-2 \
+	libkrb5-3 \
+	libkrb5support0 \
+	libk5crypto3 \
+	libkeyutils1 \
+	libldap2 \
+	libsasl2-2 \
+	libnghttp2-14 \
+	libssh2-1t64 \
+	libsqlite3-0 \
+	p11-kit \
         locales \
     && rm -rf /var/lib/apt/lists/* \
     && localedef -i en_US -c -f UTF-8 en_US.UTF-8
