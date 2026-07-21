@@ -1,0 +1,27 @@
+FROM lcr.loongnix.cn/library/debian:forky-slim AS debug
+
+RUN groupadd -g 10001 pyroscope \
+ && useradd -u 10001 -g pyroscope -d /data -M -s /usr/sbin/nologin pyroscope \
+ && mkdir -p /data /data-compactor /data-metastore \
+ && chown -R 10001:10001 /data /data-compactor /data-metastore
+
+FROM lcr.loongnix.cn/distroless/static-debian12:latest
+
+COPY --from=debug /etc/passwd /etc/passwd
+COPY --from=debug /etc/group /etc/group
+
+VOLUME /data
+COPY --chown=pyroscope:pyroscope --from=debug /data /data
+VOLUME /data-compactor
+COPY --chown=pyroscope:pyroscope --from=debug /data /data-compactor
+VOLUME /data-metastore
+COPY --chown=pyroscope:pyroscope --from=debug /data /data-metastore
+
+COPY pyroscope.yaml /etc/pyroscope/config.yaml
+COPY profilecli /usr/bin/profilecli
+COPY pyroscope /usr/bin/pyroscope
+
+USER 10001:10001
+EXPOSE 4040
+ENTRYPOINT ["/usr/bin/pyroscope"]
+CMD ["-config.file=/etc/pyroscope/config.yaml"]
