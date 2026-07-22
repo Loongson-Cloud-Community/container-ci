@@ -8,8 +8,19 @@ PROJ="tomcat"
 VERSIONS_JSON="${SCRIPT_DIR}/template/versions.json"
 TEMPLATE_BASE="${SCRIPT_DIR}/template"
 
+# ---------- 日志函数 ----------
 log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
+}
+
+# ---------- 错误函数 ----------
+# 用法：error "message"          # 仅打印红色错误
+#       error "message" true     # 打印红色错误并退出
+error() {
+    echo -e "\033[31m[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1\033[0m" >&2
+    if [ "${2:-false}" = "true" ]; then
+        exit 1
+    fi
 }
 
 usage() {
@@ -22,14 +33,12 @@ validate_input() {
         usage
     fi
     if [ ! -f "$VERSIONS_JSON" ]; then
-        log "ERROR: $VERSIONS_JSON not found. Run ci.sh first."
-        exit 1
+        error "$VERSIONS_JSON not found. Run ci.sh first." true
     fi
     MAJOR="$1"
     FULL_VERSION="$(jq -r ".\"$MAJOR\".version" "$VERSIONS_JSON")"
     if [ -z "$FULL_VERSION" ] || [ "$FULL_VERSION" = "null" ]; then
-        log "ERROR: Cannot find version for $MAJOR in $VERSIONS_JSON"
-        exit 1
+        error "Cannot find version for $MAJOR in $VERSIONS_JSON" true
     fi
     TAG_VERSION="$(echo "$FULL_VERSION" | tr '+' '_')"
     log "Processing $MAJOR ($FULL_VERSION) -> tag version: $TAG_VERSION"
@@ -48,26 +57,26 @@ build_and_push() {
     fi
 
     log "Building $base_tag from $dockerfile"
-    docker build --network host -t "$base_tag" -f "$dockerfile" "$build_context" || {
-        log "ERROR: docker build failed for $base_tag"
+    docker build --no-cache --network host -t "$base_tag" -f "$dockerfile" "$build_context" || {
+        error "docker build failed for $base_tag"
         return 1
     }
 
     for tag in "${extra_tags[@]}"; do
         docker tag "$base_tag" "$tag" || {
-            log "ERROR: docker tag failed for $tag"
+            error "docker tag failed for $tag"
             return 1
         }
         log "Tagged $base_tag as $tag"
     done
 
     docker push "$base_tag" || {
-        log "ERROR: docker push failed for $base_tag"
+        error "docker push failed for $base_tag"
         return 1
     }
     for tag in "${extra_tags[@]}"; do
         docker push "$tag" || {
-            log "ERROR: docker push failed for $tag"
+            error "docker push failed for $tag"
             return 1
         }
     done
@@ -95,11 +104,31 @@ generate_tags() {
         "${registry_org_proj}:${tag_version}-${variant_type}${java_version}"
     )
 
-    # 4. 默认标签（不带 Java 版本），指向当前构建版本（会被后续覆盖，保留最高版本）
-    extra_tags+=(
-        "${registry_org_proj}:${major}"
-        "${registry_org_proj}:${tag_version}"
-    )
+    # 4. 对所有变体生成短别名（如 9-jdk11, 9-jre11）
+    local major_num="${major%%.*}"
+    if [ "$major_num" != "$major" ]; then
+        extra_tags+=(
+            "${registry_org_proj}:${major_num}-${variant_type}${java_version}-temurin-forky"
+            "${registry_org_proj}:${major_num}-${variant_type}${java_version}-temurin"
+            "${registry_org_proj}:${major_num}-${variant_type}${java_version}"
+        )
+    fi
+
+    # 5. 对 JDK 25（最新版本）额外生成通用版本标签（不带 Java 版本和 variant_type）
+    if [[ "$variant_type" == "jdk" && "$java_version" == "25" ]]; then
+        extra_tags+=(
+            "${registry_org_proj}:${major}-temurin"
+            "${registry_org_proj}:${tag_version}-temurin"
+            "${registry_org_proj}:${major}"
+            "${registry_org_proj}:${tag_version}"
+        )
+        if [ "$major_num" != "$major" ]; then
+            extra_tags+=(
+                "${registry_org_proj}:${major_num}-temurin"
+                "${registry_org_proj}:${major_num}"
+            )
+        fi
+    fi
 
     echo "$base_tag"
     for tag in "${extra_tags[@]}"; do
@@ -138,7 +167,7 @@ process_all_variants() {
 
         local tag_list
         tag_list="$(generate_tags "$variant_type" "$java_version" "$major" "$tag_version" "$registry_org_proj")" || {
-            log "WARNING: Failed to generate tags for $variant_dir"
+            error "Failed to generate tags for $variant_dir"
             continue
         }
         if [ -z "$tag_list" ]; then
@@ -150,9 +179,7 @@ process_all_variants() {
         local base_tag="${tags_array[0]}"
         local extra_tags=("${tags_array[@]:1}")
 
-        build_and_push "$dockerfile" "$variant_dir" "$base_tag" "${extra_tags[@]}" || {
-            log "WARNING: Build failed for $variant_dir, but continuing"
-        }
+	build_and_push "$dockerfile" "$variant_dir" "$base_tag" "${extra_tags[@]}"
     done < <(find "$TEMPLATE_BASE/$major" -path "*/jdk*/temurin/Dockerfile" -o -path "*/jre*/temurin/Dockerfile" 2>/dev/null || true)
 }
 

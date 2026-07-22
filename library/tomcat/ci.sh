@@ -92,7 +92,7 @@ main() {
     done
 
     # 5. Git 提交
-    #git_commit_changes
+    git_commit_changes
 
     log "CI finished successfully"
 }

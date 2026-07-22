@@ -20,6 +20,13 @@ ENV TOMCAT_VERSION 11.0.24
 ENV TOMCAT_SHA512 a2fb1bd511735bd3d135b87f628d2b1f71a43aed7c4d7511e770092e571bad6d5ad9e97a580852119770477fd86d7ed156d83d3cee2854bce260725ce48934d0
 
 COPY --from=lcr.loongnix.cn/library/tomcat:11.0.24-jdk21-temurin $CATALINA_HOME $CATALINA_HOME
+
+# 创建 setenv.sh，加载所有默认模块（解决 JRE 环境下模块缺失问题）
+RUN mkdir -p $CATALINA_BASE/bin && \
+    echo 'JAVA_OPTS="$JAVA_OPTS --add-modules ALL-DEFAULT"' > $CATALINA_BASE/bin/setenv.sh && \
+    echo 'CATALINA_OPTS="$CATALINA_OPTS --add-modules ALL-DEFAULT"' >> $CATALINA_BASE/bin/setenv.sh && \
+    chmod +x $CATALINA_BASE/bin/setenv.sh
+
 RUN set -eux; \
 	apt-get update; \
 	xargs -rt apt-get install -y --no-install-recommends < "$TOMCAT_NATIVE_LIBDIR/.dependencies.txt"; \

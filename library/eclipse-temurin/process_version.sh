@@ -55,10 +55,10 @@ build_and_push() {
         log "Tagged $base_tag as $tag"
     done
 
-#    docker push "$base_tag" || die "docker push failed for $base_tag"
-#    for tag in "${extra_tags[@]}"; do
-#        docker push "$tag" || die "docker push failed for $tag"
-#    done
+    docker push "$base_tag" || die "docker push failed for $base_tag"
+    for tag in "${extra_tags[@]}"; do
+        docker push "$tag" || die "docker push failed for $tag"
+    done
 
     # 清理该目录下的 tarball
     rm -f "$variant_dir"/*.tar.gz 2>/dev/null || true

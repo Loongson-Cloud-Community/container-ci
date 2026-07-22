@@ -20,6 +20,13 @@ ENV TOMCAT_VERSION 9.0.120
 ENV TOMCAT_SHA512 07eb6d9639c3e69af81171a16ccff1c19b7fd5b2e87e3646851f0a3f42a4ce3c1bf128fbe40fc978a08935ba4f0400ef3b43ded3e470b9aaf23b97a9e1fa0858
 
 COPY --from=lcr.loongnix.cn/library/tomcat:9.0.120-jdk8-temurin $CATALINA_HOME $CATALINA_HOME
+
+# 创建 setenv.sh，加载所有默认模块（解决 JRE 环境下模块缺失问题）
+RUN mkdir -p $CATALINA_BASE/bin && \
+    echo 'JAVA_OPTS="$JAVA_OPTS --add-modules ALL-DEFAULT"' > $CATALINA_BASE/bin/setenv.sh && \
+    echo 'CATALINA_OPTS="$CATALINA_OPTS --add-modules ALL-DEFAULT"' >> $CATALINA_BASE/bin/setenv.sh && \
+    chmod +x $CATALINA_BASE/bin/setenv.sh
+
 RUN set -eux; \
 	apt-get update; \
 	xargs -rt apt-get install -y --no-install-recommends < "$TOMCAT_NATIVE_LIBDIR/.dependencies.txt"; \
