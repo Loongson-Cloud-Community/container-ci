@@ -67,27 +67,35 @@ ENV GOFLAGS=-mod=vendor
 
 # buildkit-version builds stage with version/revision info
 FROM buildkit-base AS buildkit-version
+ARG BUILDKIT_VERSION
 # TODO: PKG should be inferred from go modules
-RUN --mount=target=. <<'EOT'
-  git rev-parse HEAD 2>/dev/null || {
-    echo >&2 "Failed to get git revision, make sure --build-arg BUILDKIT_CONTEXT_KEEP_GIT_DIR=1 is set when building from Git directly"
-    exit 1
-  }
-  set -ex
-  export PKG=github.com/moby/buildkit VERSION=$(git describe --match 'v[0-9]*' --dirty='.m' --always --tags) REVISION=$(git rev-parse HEAD)$(if ! git diff --no-ext-diff --quiet --exit-code; then echo .m; fi);
-  echo "-X ${PKG}/version.Version=${VERSION} -X ${PKG}/version.Revision=${REVISION} -X ${PKG}/version.Package=${PKG}" > /tmp/.ldflags;
-  echo -n "${VERSION}" > /tmp/.version;
-EOT
+RUN if [ -n "${HTTP_PROXY}" ]; then git config --global http.proxy "${HTTP_PROXY}"; fi && \
+    if [ -n "${HTTPS_PROXY}" ]; then git config --global https.proxy "${HTTPS_PROXY}"; fi && \
+    if [ -n "${HTTP_PROXY}" ]; then git config --global url."${HTTP_PROXY}://".insteadOf "http://"; fi && \
+    if [ -n "${HTTPS_PROXY}" ]; then git config --global url."${HTTPS_PROXY}://".insteadOf "https://"; fi
+RUN git clone --branch "v${BUILDKIT_VERSION}" --depth 1 "https://github.com/moby/buildkit.git" /src/buildkit-source
+RUN set -ex && \
+    cd /src/buildkit-source && \
+    export PKG=github.com/moby/buildkit VERSION=$(git describe --match 'v[0-9]*' --dirty='.m' --always --tags) REVISION=$(git rev-parse HEAD); \
+    echo "-X ${PKG}/version.Version=${VERSION} -X ${PKG}/version.Revision=${REVISION} -X ${PKG}/version.Package=${PKG}" > /tmp/.ldflags; \
+    echo -n "${VERSION}" > /tmp/.version;
 
 # buildctl builds test cli binary
 FROM buildkit-base AS buildctl
+ARG BUILDKIT_VERSION
 ENV CGO_ENABLED=0
 ARG TARGETPLATFORM
 ARG GOBUILDFLAGS
-RUN --mount=target=. --mount=target=/root/.cache,type=cache \
+RUN if [ -n "${HTTP_PROXY}" ]; then git config --global http.proxy "${HTTP_PROXY}"; fi && \
+    if [ -n "${HTTPS_PROXY}" ]; then git config --global https.proxy "${HTTPS_PROXY}"; fi && \
+    if [ -n "${HTTP_PROXY}" ]; then git config --global url."${HTTP_PROXY}://".insteadOf "http://"; fi && \
+    if [ -n "${HTTPS_PROXY}" ]; then git config --global url."${HTTPS_PROXY}://".insteadOf "https://"; fi
+RUN git clone --branch "v${BUILDKIT_VERSION}" --depth 1 "https://github.com/moby/buildkit.git" /src/buildkit-source
+RUN --mount=target=/root/.cache,type=cache \
   --mount=target=/go/pkg/mod,type=cache \
   --mount=source=/tmp/.ldflags,target=/tmp/.ldflags,from=buildkit-version <<EOT
   set -ex
+  cd /src/buildkit-source
   xx-go build ${GOBUILDFLAGS} -ldflags "$(cat /tmp/.ldflags)" -o /usr/bin/buildctl ./cmd/buildctl
   xx-verify --static /usr/bin/buildctl
   if [ "$(xx-info os)" = "linux" ]; then /usr/bin/buildctl --version; fi
@@ -95,6 +103,7 @@ EOT
 
 # buildkitd builds daemon binary
 FROM buildkit-base AS buildkitd
+ARG BUILDKIT_VERSION
 # BUILDKITD_TAGS defines additional Go build tags for compiling buildkitd
 ARG BUILDKITD_TAGS
 ARG TARGETPLATFORM
@@ -103,10 +112,16 @@ ARG VERIFYFLAGS="--static"
 ARG CGO_ENABLED=0
 ARG BUILDKIT_DEBUG
 ARG GOGCFLAGS=${BUILDKIT_DEBUG:+"all=-N -l"}
-RUN --mount=target=. --mount=target=/root/.cache,type=cache \
+RUN if [ -n "${HTTP_PROXY}" ]; then git config --global http.proxy "${HTTP_PROXY}"; fi && \
+    if [ -n "${HTTPS_PROXY}" ]; then git config --global https.proxy "${HTTPS_PROXY}"; fi && \
+    if [ -n "${HTTP_PROXY}" ]; then git config --global url."${HTTP_PROXY}://".insteadOf "http://"; fi && \
+    if [ -n "${HTTPS_PROXY}" ]; then git config --global url."${HTTPS_PROXY}://".insteadOf "https://"; fi
+RUN git clone --branch "v${BUILDKIT_VERSION}" --depth 1 "https://github.com/moby/buildkit.git" /src/buildkit-source
+RUN --mount=target=/root/.cache,type=cache \
   --mount=target=/go/pkg/mod,type=cache \
   --mount=source=/tmp/.ldflags,target=/tmp/.ldflags,from=buildkit-version <<EOT
   set -ex
+  cd /src/buildkit-source
   xx-go build ${GOBUILDFLAGS} -gcflags="${GOGCFLAGS}" -ldflags "$(cat /tmp/.ldflags) -extldflags '-static'" -tags "osusergo netgo static_build seccomp ${BUILDKITD_TAGS}" -o /usr/bin/buildkitd ./cmd/buildkitd
   xx-verify ${VERIFYFLAGS} /usr/bin/buildkitd
 
@@ -215,7 +230,67 @@ COPY --link --from=releaser /out/ /
 FROM alpine:${ALPINE_VERSION} AS buildkit-export-alpine
 RUN apk update; apk add --no-cache fuse3 git openssh pigz xz iptables ip6tables \
   && ln -s fusermount3 /usr/bin/fusermount
-COPY --link examples/buildctl-daemonless/buildctl-daemonless.sh /usr/bin/
+COPY --chmod=755 <<'DEMONLESS_EOF' /usr/bin/buildctl-daemonless.sh
+#!/bin/sh
+# buildctl-daemonless.sh spawns ephemeral buildkitd for executing buildctl.
+#
+# Usage: buildctl-daemonless.sh build ...
+#
+# Flags for buildkitd can be specified as $BUILDKITD_FLAGS .
+#
+# The script is compatible with BusyBox shell.
+set -eu
+
+: ${BUILDCTL=buildctl}
+: ${BUILDCTL_CONNECT_RETRIES_MAX=10}
+: ${BUILDKITD=buildkitd}
+: ${BUILDKITD_FLAGS=}
+: ${ROOTLESSKIT=rootlesskit}
+
+# $tmp holds the following files:
+# * pid
+# * addr
+# * log
+tmp=$(mktemp -d /tmp/buildctl-daemonless.XXXXXX)
+trap "kill $(cat $tmp/pid) || true; wait $(cat $tmp/pid) || true; rm -rf $tmp" EXIT
+
+startBuildkitd() {
+    addr=
+    helper=
+    if [ $(id -u) = 0 ]; then
+        addr=unix:///run/buildkit/buildkitd.sock
+    else
+        addr=unix://$XDG_RUNTIME_DIR/buildkit/buildkitd.sock
+        helper=$ROOTLESSKIT
+    fi
+    $helper $BUILDKITD $BUILDKITD_FLAGS --addr=$addr >$tmp/log 2>&1 &
+    pid=$!
+    echo $pid >$tmp/pid
+    echo $addr >$tmp/addr
+}
+
+# buildkitd supports NOTIFY_SOCKET but as far as we know, there is no easy way
+# to wait for NOTIFY_SOCKET activation using busybox-builtin commands...
+waitForBuildkitd() {
+    addr=$(cat $tmp/addr)
+    try=0
+    max=$BUILDCTL_CONNECT_RETRIES_MAX
+    until $BUILDCTL --addr=$addr debug workers >/dev/null 2>&1; do
+        if [ $try -gt $max ]; then
+            echo >&2 "could not connect to $addr after $max trials"
+            echo >&2 "========== log =========="
+            cat >&2 $tmp/log
+            exit 1
+        fi
+        sleep $(awk "BEGIN{print (100 + $try * 20) * 0.001}")
+        try=$(expr $try + 1)
+    done
+}
+
+startBuildkitd
+waitForBuildkitd
+$BUILDCTL --addr=$(cat $tmp/addr) "$@"
+DEMONLESS_EOF
 VOLUME /var/lib/buildkit
 
 FROM debian:trixie AS buildkit-export-debian
@@ -229,7 +304,67 @@ RUN apt-get update \
     iptables \
     ca-certificates \
   && rm -rf /var/lib/apt/lists/*
-COPY --link examples/buildctl-daemonless/buildctl-daemonless.sh /usr/bin/
+COPY --chmod=755 <<'DEMONLESS_EOF' /usr/bin/buildctl-daemonless.sh
+#!/bin/sh
+# buildctl-daemonless.sh spawns ephemeral buildkitd for executing buildctl.
+#
+# Usage: buildctl-daemonless.sh build ...
+#
+# Flags for buildkitd can be specified as $BUILDKITD_FLAGS .
+#
+# The script is compatible with BusyBox shell.
+set -eu
+
+: ${BUILDCTL=buildctl}
+: ${BUILDCTL_CONNECT_RETRIES_MAX=10}
+: ${BUILDKITD=buildkitd}
+: ${BUILDKITD_FLAGS=}
+: ${ROOTLESSKIT=rootlesskit}
+
+# $tmp holds the following files:
+# * pid
+# * addr
+# * log
+tmp=$(mktemp -d /tmp/buildctl-daemonless.XXXXXX)
+trap "kill $(cat $tmp/pid) || true; wait $(cat $tmp/pid) || true; rm -rf $tmp" EXIT
+
+startBuildkitd() {
+    addr=
+    helper=
+    if [ $(id -u) = 0 ]; then
+        addr=unix:///run/buildkit/buildkitd.sock
+    else
+        addr=unix://$XDG_RUNTIME_DIR/buildkit/buildkitd.sock
+        helper=$ROOTLESSKIT
+    fi
+    $helper $BUILDKITD $BUILDKITD_FLAGS --addr=$addr >$tmp/log 2>&1 &
+    pid=$!
+    echo $pid >$tmp/pid
+    echo $addr >$tmp/addr
+}
+
+# buildkitd supports NOTIFY_SOCKET but as far as we know, there is no easy way
+# to wait for NOTIFY_SOCKET activation using busybox-builtin commands...
+waitForBuildkitd() {
+    addr=$(cat $tmp/addr)
+    try=0
+    max=$BUILDCTL_CONNECT_RETRIES_MAX
+    until $BUILDCTL --addr=$addr debug workers >/dev/null 2>&1; do
+        if [ $try -gt $max ]; then
+            echo >&2 "could not connect to $addr after $max trials"
+            echo >&2 "========== log =========="
+            cat >&2 $tmp/log
+            exit 1
+        fi
+        sleep $(awk "BEGIN{print (100 + $try * 20) * 0.001}")
+        try=$(expr $try + 1)
+    done
+}
+
+startBuildkitd
+waitForBuildkitd
+$BUILDCTL --addr=$(cat $tmp/addr) "$@"
+DEMONLESS_EOF
 VOLUME /var/lib/buildkit
 
 FROM buildkit-export-${EXPORT_BASE} AS buildkit-export
@@ -492,7 +627,13 @@ COPY --link --from=binaries / /usr/bin/
 
 # integration-tests prepares an image suitable for running all tests
 FROM integration-tests-base AS integration-tests
-COPY . .
+ARG BUILDKIT_VERSION
+RUN if [ -n "${HTTP_PROXY}" ]; then git config --global http.proxy "${HTTP_PROXY}"; fi && \
+    if [ -n "${HTTPS_PROXY}" ]; then git config --global https.proxy "${HTTPS_PROXY}"; fi && \
+    if [ -n "${HTTP_PROXY}" ]; then git config --global url."${HTTP_PROXY}://".insteadOf "http://"; fi && \
+    if [ -n "${HTTPS_PROXY}" ]; then git config --global url."${HTTPS_PROXY}://".insteadOf "https://"; fi
+RUN git clone --branch "v${BUILDKIT_VERSION}" --depth 1 "https://github.com/moby/buildkit.git" /src
+WORKDIR /src
 ENV BUILDKIT_RUN_NETWORK_INTEGRATION_TESTS=1 BUILDKIT_CNI_INIT_LOCK_PATH=/run/buildkit_cni_bridge.lock
 
 FROM integration-tests AS dev-env
@@ -507,7 +648,67 @@ RUN adduser -D -u 1000 user \
   && echo user:100000:65536 | tee /etc/subuid | tee /etc/subgid
 COPY --link --from=rootlesskit /rootlesskit /usr/bin/
 COPY --link --from=binaries / /usr/bin/
-COPY --link examples/buildctl-daemonless/buildctl-daemonless.sh /usr/bin/
+COPY --chmod=755 <<'DEMONLESS_EOF' /usr/bin/buildctl-daemonless.sh
+#!/bin/sh
+# buildctl-daemonless.sh spawns ephemeral buildkitd for executing buildctl.
+#
+# Usage: buildctl-daemonless.sh build ...
+#
+# Flags for buildkitd can be specified as $BUILDKITD_FLAGS .
+#
+# The script is compatible with BusyBox shell.
+set -eu
+
+: ${BUILDCTL=buildctl}
+: ${BUILDCTL_CONNECT_RETRIES_MAX=10}
+: ${BUILDKITD=buildkitd}
+: ${BUILDKITD_FLAGS=}
+: ${ROOTLESSKIT=rootlesskit}
+
+# $tmp holds the following files:
+# * pid
+# * addr
+# * log
+tmp=$(mktemp -d /tmp/buildctl-daemonless.XXXXXX)
+trap "kill $(cat $tmp/pid) || true; wait $(cat $tmp/pid) || true; rm -rf $tmp" EXIT
+
+startBuildkitd() {
+    addr=
+    helper=
+    if [ $(id -u) = 0 ]; then
+        addr=unix:///run/buildkit/buildkitd.sock
+    else
+        addr=unix://$XDG_RUNTIME_DIR/buildkit/buildkitd.sock
+        helper=$ROOTLESSKIT
+    fi
+    $helper $BUILDKITD $BUILDKITD_FLAGS --addr=$addr >$tmp/log 2>&1 &
+    pid=$!
+    echo $pid >$tmp/pid
+    echo $addr >$tmp/addr
+}
+
+# buildkitd supports NOTIFY_SOCKET but as far as we know, there is no easy way
+# to wait for NOTIFY_SOCKET activation using busybox-builtin commands...
+waitForBuildkitd() {
+    addr=$(cat $tmp/addr)
+    try=0
+    max=$BUILDCTL_CONNECT_RETRIES_MAX
+    until $BUILDCTL --addr=$addr debug workers >/dev/null 2>&1; do
+        if [ $try -gt $max ]; then
+            echo >&2 "could not connect to $addr after $max trials"
+            echo >&2 "========== log =========="
+            cat >&2 $tmp/log
+            exit 1
+        fi
+        sleep $(awk "BEGIN{print (100 + $try * 20) * 0.001}")
+        try=$(expr $try + 1)
+    done
+}
+
+startBuildkitd
+waitForBuildkitd
+$BUILDCTL --addr=$(cat $tmp/addr) "$@"
+DEMONLESS_EOF
 # Kubernetes runAsNonRoot requires USER to be numeric
 USER 1000:1000
 ENV HOME=/home/user

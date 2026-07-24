@@ -39,10 +39,13 @@ done < "$OUTPUT_DIR/original.Dockerfile"
 echo "Generating Dockerfile from template..."
 cp "$TEMPLATE_FILE" "$OUTPUT_DIR/Dockerfile"
 
-# 替换模板中的 ARG 变量
+# 注入 BUILDKIT_VERSION（模板需要此变量来 clone 对应版本的源码，替换所有 stage 内的声明）
+sed -i "s/^ARG BUILDKIT_VERSION$/ARG BUILDKIT_VERSION=$VERSION/g" "$OUTPUT_DIR/Dockerfile"
+
+# 替换模板中的 ARG 变量（跳过 BUILDKIT_VERSION，已单独处理）
 for arg_name in "${!args_map[@]}"; do
+  [[ "$arg_name" == "BUILDKIT_VERSION" ]] && continue
   arg_value="${args_map[$arg_name]}"
-  # 在 macOS 上需要使用 -i '' 而不是 -i
   if sed --version 2>&1 | grep -q GNU; then
     sed -i "s/^ARG[[:space:]]*$arg_name\\(=.*\\)\\{0,1\\}$/ARG $arg_name=$arg_value/" "$OUTPUT_DIR/Dockerfile"
   else
@@ -50,8 +53,4 @@ for arg_name in "${!args_map[@]}"; do
   fi
 done
 
-git clone --depth 1 -b v$VERSION https://github.com/moby/buildkit &&  \
-find buildkit/ -mindepth 1 -maxdepth 1 -not -name "Dockerfile" -not -name ".git" -exec cp -r {} "$OUTPUT_DIR/" \;
-
 echo "Successfully generated Dockerfile in $OUTPUT_DIR/"
-rm -rf buildkit
