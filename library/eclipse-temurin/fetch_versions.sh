@@ -85,11 +85,10 @@ main() {
     for major in "${majors[@]}"; do
         log "Processing JDK $major ..."
         local temurin_version
-        temurin_version="$(fetch_temurin_version "$major")"
-        if [ -z "$temurin_version" ]; then
+        temurin_version="$(fetch_temurin_version "$major")" || {
             log "  No release found for JDK $major"
             continue
-        fi
+        }
         log "  Temurin version: $temurin_version"
 
         local loongarch_version
@@ -97,18 +96,21 @@ main() {
         log "  LoongArch version: $loongarch_version"
 
         local download_url
-        download_url="$(find_loongarch_tarball "$major" "$loongarch_version")"
+        download_url="$(find_loongarch_tarball "$major" "$loongarch_version")" || true
         if [ -z "$download_url" ]; then
-            log "  No matching file found in FTP for version $loongarch_version"
+            log "  WARNING: No matching file found in FTP for version $loongarch_version, skipping"
             continue
         fi
         log "  Found: $download_url"
 
         local file_name="${download_url##*/}"
         local internal_version
-        internal_version="$(echo "$file_name" | grep -oP 'loongson\K[0-9.]+')"
+        internal_version="$(echo "$file_name" | grep -oP 'loongson\K[0-9.]+' || echo '')"
+        if [ -z "$internal_version" ]; then
+            log "  WARNING: Could not extract internal version from $file_name, using empty"
+        fi
 
-        # 写入 JSON
+        # 写入 JSON（即使 internal_version 为空也正常写入）
         jq --arg major "$major" \
            --arg version "$temurin_version" \
            --arg internal "$internal_version" \
