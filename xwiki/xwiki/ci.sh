@@ -10,7 +10,6 @@ main()
 {
     # 1.获取要构建的版本
     readarray -t versions <<< $(./fetch_versions.sh)
-    versions=("16.10.14" "17.10.7")
 
     if [[ -z "$versions" ]]; then
         log INFO "No versions need updating"
