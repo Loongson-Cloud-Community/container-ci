@@ -70,7 +70,8 @@ main() {
     local versions
     versions="$(get_all_majors)"
     if [ -z "$versions" ]; then
-        die "No versions found in $VERSIONS_JSON"
+	log "WARNING: No versions found in $VERSIONS_JSON, skipping build"
+        exit 0
     fi
 
     for ver in $versions; do
