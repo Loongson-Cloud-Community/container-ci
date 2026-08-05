@@ -1,11 +1,11 @@
-FROM rust:RUST_VER-trixie-slim AS planner
+FROM rust:RUST_VER-forky-slim AS planner
 WORKDIR /qdrant
 COPY . .
 RUN cargo install --version 0.1.73 cargo-chef \
     && cargo chef prepare --recipe-path recipe.json
 
 
-FROM rust:RUST_VER-trixie-slim AS builder
+FROM rust:RUST_VER-forky-slim AS builder
 WORKDIR /qdrant
 
 RUN apt-get update \
@@ -37,7 +37,7 @@ RUN cargo install --version 0.10.0 cargo-sbom \
     && cargo sbom > qdrant.spdx.json
 
 
-FROM rust:RUST_VER-trixie-slim
+FROM rust:RUST_VER-forky-slim
 WORKDIR /qdrant
 
 ARG APP=/qdrant
