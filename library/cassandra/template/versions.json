@@ -1,0 +1,42 @@
+{
+  "4.0": {
+    "version": "4.0.21",
+    "sha512": "4135fe4302fbd84a215b9d70daeca9c2fef1cfb5d5f6f198ecc57e258743c50a526cc6bc9e4a04e93239412483c1ba146e67e161d0037c40ed7740561b1551ef",
+    "java": {
+      "version": "11"
+    },
+    "debian": {
+      "version": "forky"
+    }
+  },
+  "4.1": {
+    "version": "4.1.12",
+    "sha512": "cea0acc8aa52b44798dc45ff5edc26f910f5e4025f40d5f4a3b6728ac8d2aaacf9da0aebeb997c0d0039e7034a9478b9af57e1546b45428d7a7638fc61e75dc8",
+    "java": {
+      "version": "11"
+    },
+    "debian": {
+      "version": "forky"
+    }
+  },
+  "5.0": {
+    "version": "5.0.9",
+    "sha512": "beaf3df6342ef1a0ccc83fa80214f250b32c35cfbb1af591b00e3fd539eef0915bc3b89f0e7ae73f6d50cbb03f6075c4e4cf32d3c46ff9c33f745542fcc925df",
+    "java": {
+      "version": "17"
+    },
+    "debian": {
+      "version": "forky"
+    }
+  },
+  "6.0": {
+    "version": "6.0-alpha2",
+    "sha512": "64577a7e48068f6602396370765898364712cf22c95632c11e216b729c3db3e1eefe5d74ba173dd18a995b9c3964af455c0ca8bdecd3975120f3521754985734",
+    "java": {
+      "version": "21"
+    },
+    "debian": {
+      "version": "forky"
+    }
+  }
+}
