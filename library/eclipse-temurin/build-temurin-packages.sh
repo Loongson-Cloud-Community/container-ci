@@ -74,10 +74,11 @@ if [ "$MAJOR" -eq 8 ]; then
     fi
 else
     # 公共模块（所有 Java 11+ 版本共有）
-    BASE_MODULES="java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.se,java.security.jgss,java.security.sasl,java.smartcardio,java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto,jdk.accessibility,jdk.charsets,jdk.crypto.cryptoki,jdk.dynalink,jdk.httpserver,jdk.jdwp.agent,jdk.jfr,jdk.jsobject,jdk.localedata,jdk.management,jdk.management.jfr,jdk.naming.dns,jdk.naming.rmi,jdk.net,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,jdk.zipfs"
+    # 添加缺失的模块：jdk.internal.vm.ci, jdk.internal.vm.compiler, jdk.internal.vm.compiler.management, jdk.management.agent, jdk.xml.dom
+    BASE_MODULES="java.base,java.compiler,java.datatransfer,java.desktop,java.instrument,java.logging,java.management,java.management.rmi,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.se,java.security.jgss,java.security.sasl,java.smartcardio,java.sql,java.sql.rowset,java.transaction.xa,java.xml,java.xml.crypto,jdk.accessibility,jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.dynalink,jdk.httpserver,jdk.jdwp.agent,jdk.jfr,jdk.jsobject,jdk.localedata,jdk.management,jdk.management.jfr,jdk.naming.dns,jdk.naming.rmi,jdk.net,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,jdk.zipfs,jdk.internal.vm.ci,jdk.internal.vm.compiler,jdk.internal.vm.compiler.management,jdk.management.agent,jdk.xml.dom"
 
     # 各版本特有模块
-    MODULES_11_SPECIFIC="jdk.aot,jdk.internal.ed,jdk.internal.le,jdk.internal.vm.compiler,jdk.internal.vm.compiler.management,jdk.management.agent,jdk.naming.ldap,jdk.pack,jdk.scripting.nashorn,jdk.scripting.nashorn.shell"
+    MODULES_11_SPECIFIC="jdk.aot,jdk.internal.ed,jdk.internal.le,jdk.naming.ldap,jdk.pack,jdk.scripting.nashorn,jdk.scripting.nashorn.shell"
     MODULES_17_SPECIFIC="jdk.incubator.foreign,jdk.incubator.vector,jdk.nio.mapmode"
     MODULES_21_SPECIFIC="jdk.incubator.vector,jdk.nio.mapmode"
     MODULES_25_SPECIFIC="jdk.graal.compiler,jdk.graal.compiler.management,jdk.incubator.vector,jdk.nio.mapmode"
