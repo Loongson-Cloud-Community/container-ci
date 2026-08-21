@@ -137,50 +137,96 @@ generate_tags() {
     return 0
 }
 
+# ---------- 构建单个变体 ----------
+build_variant() {
+    local dockerfile="$1"
+    local major="$2"
+    local tag_version="$3"
+    local registry_org_proj="$4"
+
+    local variant_dir="$(dirname "$dockerfile")"
+    local java_dir="$(basename "$(dirname "$variant_dir")")"
+    local variant_type
+    local java_version
+
+    if [[ "$java_dir" == jdk* ]]; then
+        variant_type="jdk"
+        java_version="${java_dir#jdk}"
+    elif [[ "$java_dir" == jre* ]]; then
+        variant_type="jre"
+        java_version="${java_dir#jre}"
+    else
+        log "WARNING: Unknown java dir: $java_dir, skipping"
+        return 0
+    fi
+
+    local base_image="$(basename "$variant_dir")"
+    if [[ "$base_image" != "temurin" ]]; then
+        log "Skipping non-temurin variant: $variant_dir"
+        return 0
+    fi
+
+    local tag_list
+    tag_list="$(generate_tags "$variant_type" "$java_version" "$major" "$tag_version" "$registry_org_proj")" || {
+        error "Failed to generate tags for $variant_dir"
+        return 1
+    }
+    if [ -z "$tag_list" ]; then
+        log "WARNING: No tags generated for $variant_dir, skipping"
+        return 0
+    fi
+
+    mapfile -t tags_array <<< "$tag_list"
+    local base_tag="${tags_array[0]}"
+    local extra_tags=("${tags_array[@]:1}")
+
+    build_and_push "$dockerfile" "$variant_dir" "$base_tag" "${extra_tags[@]}"
+}
+
+# ---------- 处理所有变体（JDK 优先） ----------
 process_all_variants() {
     local major="$1"
     local tag_version="$2"
     local registry_org_proj="${REGISTRY}/${ORG}/${PROJ}"
 
-    # 查找所有 jdk*/temurin 和 jre*/temurin Dockerfile
+    # 收集所有 JDK 和 JRE 的 Dockerfile
+    local jdk_files=()
+    local jre_files=()
+
     while IFS= read -r dockerfile; do
-        local variant_dir="$(dirname "$dockerfile")"
-        local java_dir="$(basename "$(dirname "$variant_dir")")"   # 如 jdk8
-        local variant_type
-        local java_version
-        if [[ "$java_dir" == jdk* ]]; then
-            variant_type="jdk"
-            java_version="${java_dir#jdk}"
-        elif [[ "$java_dir" == jre* ]]; then
-            variant_type="jre"
-            java_version="${java_dir#jre}"
-        else
-            log "WARNING: Unknown java dir: $java_dir, skipping"
-            continue
+        # 判断是 jdk 还是 jre
+        if [[ "$dockerfile" =~ /jdk[0-9]+/temurin/Dockerfile$ ]]; then
+            jdk_files+=("$dockerfile")
+        elif [[ "$dockerfile" =~ /jre[0-9]+/temurin/Dockerfile$ ]]; then
+            jre_files+=("$dockerfile")
         fi
+    done < <(find "$TEMPLATE_BASE/$major" -type f \( -path "*/jdk*/temurin/Dockerfile" -o -path "*/jre*/temurin/Dockerfile" \) 2>/dev/null || true)
 
-        local base_image="$(basename "$variant_dir")"              # 应为 temurin
-        if [[ "$base_image" != "temurin" ]]; then
-            log "Skipping non-temurin variant: $variant_dir"
-            continue
-        fi
+    # 检查是否有任何变体
+    if [ ${#jdk_files[@]} -eq 0 ] && [ ${#jre_files[@]} -eq 0 ]; then
+        log "WARNING: No variants found for $major"
+        return 0
+    fi
 
-        local tag_list
-        tag_list="$(generate_tags "$variant_type" "$java_version" "$major" "$tag_version" "$registry_org_proj")" || {
-            error "Failed to generate tags for $variant_dir"
-            continue
-        }
-        if [ -z "$tag_list" ]; then
-            log "WARNING: No tags generated for $variant_dir, skipping"
-            continue
-        fi
+    # 第一轮：构建所有 JDK 变体
+    if [ ${#jdk_files[@]} -gt 0 ]; then
+        log "=== Building JDK variants for $major ($tag_version) ==="
+        for dockerfile in "${jdk_files[@]}"; do
+            build_variant "$dockerfile" "$major" "$tag_version" "$registry_org_proj"
+        done
+    else
+        log "No JDK variants found for $major"
+    fi
 
-        mapfile -t tags_array <<< "$tag_list"
-        local base_tag="${tags_array[0]}"
-        local extra_tags=("${tags_array[@]:1}")
-
-	build_and_push "$dockerfile" "$variant_dir" "$base_tag" "${extra_tags[@]}"
-    done < <(find "$TEMPLATE_BASE/$major" -path "*/jdk*/temurin/Dockerfile" -o -path "*/jre*/temurin/Dockerfile" 2>/dev/null || true)
+    # 第二轮：构建所有 JRE 变体（依赖 JDK 镜像已存在）
+    if [ ${#jre_files[@]} -gt 0 ]; then
+        log "=== Building JRE variants for $major ($tag_version) ==="
+        for dockerfile in "${jre_files[@]}"; do
+            build_variant "$dockerfile" "$major" "$tag_version" "$registry_org_proj"
+        done
+    else
+        log "No JRE variants found for $major"
+    fi
 }
 
 main() {
