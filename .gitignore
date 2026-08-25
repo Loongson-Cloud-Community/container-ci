@@ -1,1 +1,4 @@
 library/adminer/template/
+library/api-firewall/template/src/
+library/api-firewall/*.tmp
+library/api-firewall/*.log
