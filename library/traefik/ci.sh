@@ -87,7 +87,7 @@ main() {
     echo "$version" >> "$PROCESSED_FILE"
     log "Recorded $version in $PROCESSED_FILE"
 
-    #git_commit_changes "$version"
+    git_commit_changes "$version"
 
     log "CI finished successfully"
 }
