@@ -1,2 +1,22 @@
-template/dist/
-template/**/traefik
+# Go 编译器
+.go/
+
+# 构建产物
+template/*/
+!template/.gitkeep
+
+# 版本跟踪
+processed_versions.txt
+versions.json
+
+# 临时文件
+*.tmp
+*.log
+*.pid
+*.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
