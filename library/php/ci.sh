@@ -30,7 +30,8 @@ main()
     ./update.sh
     popd >/dev/null
 
-    # 1. 获取需要构建的版本（仅未处理过的版本）
+    # 1. 获取需要构建的完整版本列表（如 8.5.9）
+    # fetch_versions.sh 现在返回完整版本号
     IFS=$'\n' versions=($(./fetch_versions.sh))
 
     if [[ -z "$versions" ]]; then
@@ -48,7 +49,8 @@ main()
         update_versions_file "processed_versions.txt" "${version}"
     done
 
-    git_commit "${versions[*]}"
+    # 提交变更
+   # git_commit "${versions[*]}"
 
     log INFO "All Versions:\n$(cat processed_versions.txt)"
 }

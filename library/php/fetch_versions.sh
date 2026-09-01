@@ -10,12 +10,28 @@ fetch_versions() {
     fi
 
     # 获取所有主版本（keys），过滤掉包含 "-rc" 的
-    local versions=$(jq -r 'keys[] | select(contains("-rc") | not)' "$VERSIONS_JSON" | sort -V)
+    local major_versions=$(jq -r 'keys[] | select(contains("-rc") | not)' "$VERSIONS_JSON" | sort -V)
 
-    # 增量模式：过滤 ignore_versions.txt 和 processed_versions.txt
-    echo "$versions" \
-        | grep -Fxv -f ignore_versions.txt \
-        | { grep -Fxv -f processed_versions.txt || [ $? -eq 1 ]; }
+    # 对于每个主版本，获取对应的完整版本号
+    for major in $major_versions; do
+        local full_version=$(jq -r ".\"$major\".version" "$VERSIONS_JSON")
+        
+        if [ -z "$full_version" ] || [ "$full_version" = "null" ]; then
+            continue
+        fi
+
+        # 检查完整版本是否已处理
+        if grep -Fxq "$full_version" processed_versions.txt 2>/dev/null; then
+            continue
+        fi
+
+        # 检查是否在忽略列表中
+        if grep -Fxq "$full_version" ignore_versions.txt 2>/dev/null; then
+            continue
+        fi
+
+        echo "$full_version"
+    done
 }
 
 fetch_versions
