@@ -34,6 +34,12 @@ is_latest_alpine() {
     [[ "$alpine_ver" == "$latest" ]]
 }
 
+# 从完整版本号提取主版本（8.5.9 -> 8.5）
+get_major_from_full() {
+    local full_version="$1"
+    echo "$full_version" | grep -oE '^[0-9]+\.[0-9]+'
+}
+
 # 构建并推送单个变体
 build_and_push_variant() {
     local major_minor="$1"
@@ -114,11 +120,17 @@ build_and_push_variant() {
 # 处理一个主版本（如 8.4）
 process_version() {
     local major_minor="$1"
-    local full_version=$(get_full_version "$major_minor")
+    local full_version="$2"
+    
+    if [[ -z "$full_version" ]]; then
+        full_version=$(get_full_version "$major_minor")
+    fi
+    
     if [[ -z "$full_version" || "$full_version" == "null" ]]; then
         log ERROR "Full version not found for $major_minor in versions.json"
         exit 1
     fi
+    
     log INFO "Processing $major_minor (full version: $full_version)"
 
     local dockerfiles=$(find "./template/$major_minor" -name 'Dockerfile' -type f)
@@ -128,14 +140,22 @@ process_version() {
     done
 }
 
-# 主入口（保持与 ci.sh 的调用一致）
+# 主入口：接收完整版本号（如 8.5.9）
 process() {
-    local version="$1"
-    if [[ ! -d "./template/$version" ]]; then
-        log ERROR "template/$version directory not found"
+    local full_version="$1"
+    local major_minor=$(get_major_from_full "$full_version")
+    
+    if [[ -z "$major_minor" ]]; then
+        log ERROR "Cannot extract major version from $full_version"
         return 1
     fi
-    process_version "$version"
+    
+    if [[ ! -d "./template/$major_minor" ]]; then
+        log ERROR "template/$major_minor directory not found"
+        return 1
+    fi
+    
+    process_version "$major_minor" "$full_version"
 }
 
 process "$1"
