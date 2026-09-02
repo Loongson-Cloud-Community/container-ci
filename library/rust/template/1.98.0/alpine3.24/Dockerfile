@@ -1,0 +1,31 @@
+FROM lcr.loongnix.cn/library/alpine:3.24
+
+LABEL org.opencontainers.image.source=https://github.com/rust-lang/docker-rust
+
+RUN apk add --no-cache \
+        ca-certificates \
+        gcc
+
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH \
+    RUST_VERSION=1.98.0
+
+RUN set -eux; \
+    apkArch="$(apk --print-arch)"; \
+    case "$apkArch" in \
+        aarch64) rustArch='aarch64-unknown-linux-musl'; rustupSha256='1ddf36182ac5d1782dbeefcb9bea7f5f9412d88f4a0d5047b1564a223624e8c6' ;; \
+        x86_64) rustArch='x86_64-unknown-linux-musl'; rustupSha256='331228566cc931f32cd684f9bebc5956a5e5d7394c8d5de595f196a658ab98e6' ;; \
+        loongarch64) rustArch='loongarch64-unknown-linux-musl'; rustupSha256='9deac3ea405a1b9f3abde5a62b3b9e59b6bb8e4c1623b82ba1f8aa07e7bbbb69' ;; \
+        *) echo >&2 "unsupported architecture: $apkArch"; exit 1 ;; \
+    esac; \
+    url="https://static.rust-lang.org/rustup/archive/1.29.1/${rustArch}/rustup-init"; \
+    wget "$url"; \
+    echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
+    chmod +x rustup-init; \
+    ./rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
+    rm rustup-init; \
+    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
+    rustup --version; \
+    cargo --version; \
+    rustc --version;
