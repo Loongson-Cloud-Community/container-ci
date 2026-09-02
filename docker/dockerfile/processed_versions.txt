@@ -102,5 +102,7 @@ dockerfile/1.26.0-rc1
 dockerfile/1.26.0-rc1-labs
 dockerfile/1.26.0-rc2
 dockerfile/1.26.0-rc2-labs
+dockerfile/1.27.0
+dockerfile/1.27.0-labs
 dockerfile/1.27.0-rc1
 dockerfile/1.27.0-rc1-labs
