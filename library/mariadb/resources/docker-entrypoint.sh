@@ -225,7 +225,7 @@ docker_create_db_directories() {
 }
 
 _mariadb_version() {
-	echo -n "12.3.1-MariaDB"
+	echo -n "__MARIADB_VER__-MariaDB"
 }
 
 # initializes the database directory
@@ -281,6 +281,7 @@ docker_setup_env() {
 	# env variables related to master
 	file_env 'MARIADB_MASTER_HOST'
 	file_env 'MARIADB_MASTER_PORT' 3306
+	file_env 'MARIADB_USER_HOST' '%'
 
 	# set MARIADB_ from MYSQL_ when it is unset and then make them the same value
 	: "${MARIADB_ALLOW_EMPTY_ROOT_PASSWORD:=${MYSQL_ALLOW_EMPTY_PASSWORD:-}}"
@@ -708,6 +709,13 @@ _main() {
 		elif _check_if_upgrade_is_needed; then
 			docker_mariadb_upgrade "$@"
 		fi
+		for password_var in ROOT_ REPLICATION_ ''; do
+			unset MARIADB_${password_var}PASSWORD MARIADB_${password_var}PASSWORD_HASH \
+				MYSQL_${password_var}PASSWORD \
+				MARIADB_${password_var}FILE MYSQL_${password_var}FILE
+		done
+		unset MYSQL_ROOT_HOST MYSQL_ROOT_HOST_FILE \
+			MARIADB_ROOT_HOST MARIADB_ROOT_HOST_FILE
 	fi
 	exec "$@"
 }

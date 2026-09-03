@@ -30,6 +30,7 @@ RUN set -eux; \
 		gpgv \
 		libjemalloc2 \
 		libtcmalloc-minimal4t64 \
+		systemd-standalone-tmpfiles \
 		pwgen \
 		tzdata \
 		xz-utils \

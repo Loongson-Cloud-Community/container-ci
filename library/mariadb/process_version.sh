@@ -63,6 +63,7 @@ prepare()
     cp "$RESOURCES/healthcheck.sh" $context
     cp "$RESOURCES/Dockerfile.template" "$context/Dockerfile"
     sed -i "s/__MARIADB_VER__/$version/" "$context/Dockerfile"
+    sed -i "s/__MARIADB_VER__/$version/" "$context/docker-entrypoint.sh"
 }
 
 # build_variant $variant $context
