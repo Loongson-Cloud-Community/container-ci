@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM nginx:1.31.5-alpine
+FROM nginx:1.31.6-alpine
 
 RUN set -x \
     && apkArch="$(cat /etc/apk/arch)" \
