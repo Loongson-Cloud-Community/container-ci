@@ -13,7 +13,12 @@ target_dir="$version"
 # web
 dockerfile_web()
 {
-    sed -i -E 's#^(FROM[[:space:]]+node:)([0-9]+)(\.[0-9]+)*-alpine([0-9.]+)?#\1\2-alpine3.23#' "$target_dir/web/Dockerfile"
+    if grep -q "NODE_VERSION" "$target_dir/web/Dockerfile"; then
+        sed -i -E 's#^(ARG[[:space:]]+NODE_VERSION=)([0-9]+)(\.[0-9]+)*#\1\2#' "$target_dir/web/Dockerfile"
+        sed -i -E 's#^(FROM[[:space:]]+node:\$\{NODE_VERSION\})-alpine([0-9.]+)?#\1-alpine3.23#' "$target_dir/web/Dockerfile"
+    else
+	sed -i -E 's#^(FROM[[:space:]]+node:)([0-9]+)(\.[0-9]+)*-alpine([0-9.]+)?#\1\2-alpine3.23#' "$target_dir/web/Dockerfile"
+    fi
 
     if [ "$ver_num" -ge 1012000 ]; then
         sed -i "/RUN pnpm build/i \\
@@ -33,6 +38,12 @@ RUN ./swc-patch.sh && ./css-patch.sh" "$target_dir/web/Dockerfile"
 	sed -i '/pnpm install --frozen-lockfile/i \
 RUN pnpm install --lockfile-only' "$target_dir/web/Dockerfile"
     fi
+
+    # pnpm v12 使用 rust 重写，上游发布 loongarch 版本之前需要保留此补丁
+    if [ "$ver_num" -ge 1017001 ]; then
+        sed -i -E 's#("packageManager": ")pnpm@[0-9.]+(")#\1pnpm@11.27.1\2#' "$target_dir/package.json"
+    fi
+
 }
 
 # api
