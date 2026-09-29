@@ -20,3 +20,7 @@ if [ "$MAJOR_VER" -eq 1 ] && [ "$MINOR_VER" -le 16 ]; then
     sed -i '/dpkgArch=/,/tini -h/d' "$CONTEXT/Dockerfile"
     sed -i '/TINI_VERSION/d' "$CONTEXT/Dockerfile"
 fi
+
+# jemalloc 5.3.0 与 GCC 16 的兼容性问题(5.4.0 已修复)
+sed -i "/cd jemalloc-/a \\
+ && sed -i 's/std::__throw_bad_alloc();/throw std::bad_alloc();/' src/jemalloc_cpp.cpp \\\\" "$CONTEXT/Dockerfile"
