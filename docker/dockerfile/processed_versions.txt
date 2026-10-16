@@ -106,3 +106,10 @@ dockerfile/1.27.0
 dockerfile/1.27.0-labs
 dockerfile/1.27.0-rc1
 dockerfile/1.27.0-rc1-labs
+dockerfile/1.27.1
+dockerfile/1.27.1-labs
+dockerfile/1.28.0
+dockerfile/1.28.0-labs
+dockerfile/1.28.0-rc1
+dockerfile/1.28.0-rc1-labs
+dockerfile/1.28.0-rc2
