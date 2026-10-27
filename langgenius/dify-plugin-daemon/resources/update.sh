@@ -28,7 +28,8 @@ EOF
 
 pushd docker
 cp "local.dockerfile" ..
-sed -i '/^FROM ubuntu/c\FROM debian:forky' "../local.dockerfile"
+sed -i '/^FROM golang:/c\FROM lcr.loongnix.cn/library/golang:latest AS builder' "../local.dockerfile"
+sed -i '/^FROM ubuntu/c\FROM lcr.loongnix.cn/library/debian:forky' "../local.dockerfile"
 sed -i '/EXTERNALLY-MANAGED/d' "../local.dockerfile"
 sed -i '/update-alternatives/d' "../local.dockerfile"
 sed -i 's/python3.12-dev//' "../local.dockerfile"
@@ -60,7 +61,8 @@ sed -i '/COPY --from=builder/a\
 COPY --from=builder \/app\/uv.toml \/etc\/uv\/uv.toml' "../local.dockerfile"
 
 cp "serverless.dockerfile" ..
-sed -i '/^FROM alpine/c\FROM alpine:3.23' "../serverless.dockerfile"
+sed -i '/^FROM golang:/c\FROM lcr.loongnix.cn/library/golang:alpine AS builder' "../serverless.dockerfile"
+sed -i '/^FROM alpine/c\FROM lcr.loongnix.cn/library/alpine:latest' "../serverless.dockerfile"
 popd
 popd
 
