@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM lcr.loongnix.cn/library/ruby:3.3-slim-forky
+FROM lcr.loongnix.cn/library/ruby:3.3-forky
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
@@ -62,9 +62,9 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMINE_VERSION 6.0.11
-ENV REDMINE_DOWNLOAD_URL https://www.redmine.org/releases/redmine-6.0.11.tar.gz
-ENV REDMINE_DOWNLOAD_SHA256 7c5fc0d968c61e0deb4c90ceff6073e58dd19aedfcb840f02ce615da8af2cd9e
+ENV REDMINE_VERSION 6.0.12
+ENV REDMINE_DOWNLOAD_URL https://www.redmine.org/releases/redmine-6.0.12.tar.gz
+ENV REDMINE_DOWNLOAD_SHA256 9df2d08cff4264a2f49b380666018ac388cc17cddd75594c58cf55833f6d021b
 ENV RAILS_LOG_TO_STDOUT true
 
 RUN set -eux; \
