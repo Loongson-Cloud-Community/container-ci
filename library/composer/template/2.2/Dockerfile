@@ -1,4 +1,4 @@
-FROM php:8-alpine AS binary-with-runtime
+FROM lcr.loongnix.cn/library/php:8.5-alpine AS binary-with-runtime
 
 RUN set -eux ; \
   apk add --no-cache --virtual .composer-rundeps \
@@ -22,7 +22,7 @@ memory_limit=-1\n\
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_HOME=/tmp
-ENV COMPOSER_VERSION=2.2.31
+ENV COMPOSER_VERSION=2.2.32
 
 RUN set -eux ; \
   # install necessary/useful extensions not included in base image
