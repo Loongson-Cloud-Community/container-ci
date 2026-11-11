@@ -113,5 +113,7 @@ dockerfile/1.28.0-labs
 dockerfile/1.28.0-rc1
 dockerfile/1.28.0-rc1-labs
 dockerfile/1.28.0-rc2
+dockerfile/1.29.0
+dockerfile/1.29.0-labs
 dockerfile/1.29.0-rc1
 dockerfile/1.29.0-rc1-labs
