@@ -7,7 +7,7 @@ readonly PROJ='influxdb'
 readonly TAGS_COUNT='1'
 readonly STRIP_VERSION_PREFIX='true'
 
-declare -a IGNORE_VERSIONS=()
+declare -a IGNORE_VERSIONS=("2.10.0")
 
 readonly VERSION_REGEX='^v[1-9]+.[0-9]+.[0-9]+$'
 
