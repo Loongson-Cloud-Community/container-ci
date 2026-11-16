@@ -40,6 +40,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && uv pip install -p /home/nacos/.venv/bin/python \
         cisco-ai-skill-scanner==2.0.4 \
         --extra-index-url https://mirrors.loong64.com/pypi/simple \
+        --index-strategy unsafe-first-match \
     && apt-get purge -y --auto-remove \
          build-essential \
          rustc \
