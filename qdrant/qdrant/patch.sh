@@ -29,10 +29,10 @@ pub(crate) const MIN_DIM_SIZE_SIMD: usize = usize::MAX;' "$context/lib/segment/s
                     if let Some(colon_pos) = line.find('\'':'\'') {\
                         let flags_str = &line[colon_pos + 1..].trim();\
                         if flags_str.contains("lsx") {\
-                            cpu_flags.push("lsx".to_string());\
+                            cpu_flags.push("lsx".into());\
                         }\
                         if flags_str.contains("lasx") {\
-                            cpu_flags.push("lasx".to_string());\
+                            cpu_flags.push("lasx".into());\
                         }\
                         break;\
                     }\
